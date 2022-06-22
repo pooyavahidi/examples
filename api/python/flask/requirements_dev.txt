@@ -1,0 +1,8 @@
+wheel
+locust
+pylint
+pycodestyle
+black
+
+# Get the main packages
+-r requirements.txt
