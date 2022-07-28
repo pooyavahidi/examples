@@ -1,0 +1,11 @@
+pylint
+pycodestyle
+black
+setuptools
+pytest
+aws-cdk.core
+aws-cdk.aws-ecr
+aws-cdk.aws-codepipeline
+aws-cdk.aws-codepipeline-actions
+aws-cdk.aws-codecommit
+aws-cdk.aws-codebuild
