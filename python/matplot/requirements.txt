@@ -1,0 +1,7 @@
+pylint
+pycodestyle
+black
+pytest
+numpy
+pandas
+matplotlib
