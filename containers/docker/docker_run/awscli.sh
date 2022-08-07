@@ -7,6 +7,7 @@ function dsh-awscli-auth-keychain {
     local __secret_access_key
     local __creds
     local __keychain_item_name
+    local __image_name
     local __env_file
 
     # Validations
@@ -14,7 +15,10 @@ function dsh-awscli-auth-keychain {
     [[ -z $__keychain_item_name ]] && echo "Keychain item name is missing" \
         && return 1
 
-    __env_file=$2
+    __image_name=$2
+    [[ -z $__image_name ]] && __image_name=pv/awscli-shell
+
+    __env_file=$3
     [[ -z $__env_file ]] && echo "env file is missing" \
         && return 1
 
@@ -31,7 +35,7 @@ function dsh-awscli-auth-keychain {
         --env AWS_DEFAULT_OUTPUT=json \
         --env-file $__env_file \
         --hostname dsh-awscli-auth-${__keychain_item_name} \
-        pv/awscli-shell
+        ${__image_name}
 }
 
 function dsh-awscli-docker {
