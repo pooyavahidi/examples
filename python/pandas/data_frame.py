@@ -48,6 +48,7 @@ def retrieve_from_df():
     }
 
     df = pd.DataFrame(solar_system_data)
+    print(df)
 
     # Reading values of column "planet"
     planets = df.planet
@@ -85,6 +86,12 @@ def retrieve_from_df():
     # The following provides the same result as above. 0 and 2 are indexes of
     # columns planet and moons
     print(df.iloc[3, [0, 2]])
+
+    # Print number of total moons of all planets
+    print(df.sum().loc["moons"])
+
+    # Print number of total moons of planets which has radius > 25,000KM
+    print(df[df["radius in km"] > 25000].sum().loc["moons"])
 
 
 def modify_df():

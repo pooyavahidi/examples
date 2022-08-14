@@ -50,16 +50,16 @@ def plot_tangent():
     # Matplot is not able to show the small values in the tangent curve because
     # the range of y is so large. So, we limit it to -4 to 4 and then cut down
     # anythine after 10 to remove the continuous line to the next curve.
-    plt.ylim([-4, 4])
+    plt.ylim(-4, 4)
     tol = 10
     y[y > tol] = np.nan
     y[y < -tol] = np.nan
     plt.plot(x, y)
 
 
-plot_x_squared()
+# plot_x_squared()
 # plot_sin()
-# plot_tangent()
 # plot_sin_cosin()
+plot_tangent()
 
 plt.show()
