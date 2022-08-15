@@ -40,6 +40,7 @@ function dsh-awscli-auth-keychain {
 
 function dsh-awscli-docker {
     local __name
+    local __image_name
     __name="awscli-docker"
 
     __image_name=$1
@@ -48,6 +49,6 @@ function dsh-awscli-docker {
     docker run -it --rm --name $__name \
         -v ${WORKSPACE}:/home/dev/workspace \
         -v /var/run/docker.sock:/var/run/docker.sock \
-        --hostname $_name \
+        --hostname $__name \
         ${__image_name}
 }
