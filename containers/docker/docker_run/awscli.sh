@@ -42,9 +42,12 @@ function dsh-awscli-docker {
     local __name
     __name="awscli-docker"
 
+    __image_name=$1
+    [[ -z $__image_name ]] && __image_name=pv/awscli-shell
+
     docker run -it --rm --name $__name \
         -v ${WORKSPACE}:/home/dev/workspace \
         -v /var/run/docker.sock:/var/run/docker.sock \
         --hostname $_name \
-        pv/awscli-slim-shell
+        ${__image_name}
 }
