@@ -8,11 +8,11 @@ function d-hugo-run() {
 
     docker container run --rm -p 1313:1313 \
         -v $__hugo_workspace:/home/dev/workspace \
-        pv/hugo:latest \
+        pv/hugo-shell:latest \
         hugo -D server -s workspace --bind 0.0.0.0
 }
 
-function dsh-hugo() {
+function d-hugo-shell() {
     local __hugo_workspace
     __hugo_workspace=$1
 
@@ -31,7 +31,7 @@ function d-hugo-build {
 
     docker container run --rm \
         -v $__hugo_workspace:/home/dev/workspace \
-        pv/hugo:latest \
+        pv/hugo-shell:latest \
         hugo -s workspace
 
 }
