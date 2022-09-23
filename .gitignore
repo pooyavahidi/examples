@@ -1,6 +1,36 @@
+# Ignore all executable files
+# Ignore everything
+*
+
+# Unignore all with extensions (executable files in linux systems usually have no extension)
+!*.*
+
+# Unignore all dirs
+!*/
+
+# Binaries for programs and plugins in Windows
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+
+# General ignores
 # macOS finder specific files
 .DS_Store
 
 # vim swap files
 *.swp
 
+# Golang ignores
+# Test binary, built with `go test -c`
+*.test
+
+# Output of the go coverage tool, specifically when used with LiteIDE
+*.out
+
+# Dependency directories (remove the comment below to include it)
+# vendor/
+
+# Go workspace file
+go.work
