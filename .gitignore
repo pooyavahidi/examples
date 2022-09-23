@@ -1,0 +1,6 @@
+# macOS finder specific files
+.DS_Store
+
+# vim swap files
+*.swp
+
