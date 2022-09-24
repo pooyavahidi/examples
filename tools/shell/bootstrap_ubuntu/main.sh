@@ -6,8 +6,8 @@
 # Install prerequisite tools and packages
 #######################################
 function install_prerequisites() {
+  set -eux; \
   sudo apt update; \
-  sudo apt upgrade; \
   sudo apt install -y \
         dirmngr \
         curl \
@@ -37,7 +37,7 @@ function install_prerequisites() {
     # bootstrap the dotfile.
     cd $HOME/workspace/dotfiles; \
     ./bootstrap.sh; \
-    cd \
+    cd $HOME; \
     \
     # Change shell to zsh
     sudo chsh $USER -s $(which zsh);
