@@ -21,4 +21,8 @@ func main() {
 
 	// Print from farewell package within the current module
 	fmt.Println(farewell.Farewell("mate"))
+
+	// The following will result in compile error as unexported functions are not
+	// accessible outside of a package:
+	// farewell.unexportedFunc()
 }
