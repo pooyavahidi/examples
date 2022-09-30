@@ -27,21 +27,22 @@ function install_prerequisites() {
         pylint \
         pycodestyle \
         black \
-        git-remote-codecommit; \
-    \
+        git-remote-codecommit;
+
+
     # Create workspace directories and clone git repos.
-    mkdir -p $HOME/workspace/temp; \
-    cd $HOME/workspace; \
-    git clone https://github.com/pooyavahidi/dotfiles; \
-    git clone https://github.com/pooyavahidi/docker-library; \
-    \
-    # bootstrap the dotfile.
-    cd $HOME/workspace/dotfiles; \
-    ./bootstrap.sh; \
-    cd $HOME; \
-    \
+    mkdir -p $HOME/workspace/temp
+    cd $HOME/workspace
+    [[ ! -d "dotfiles" ]] && git clone https://github.com/pooyavahidi/dotfiles
+    [[ ! -d "docker-library" ]] && git clone https://github.com/pooyavahidi/docker-library
+
+    # bootstrap the dotfiles
+    cd $HOME/workspace/dotfiles
+    ./bootstrap.sh
+    cd $HOME
+
     # Change shell to zsh
-    sudo chsh $USER -s $(which zsh);
+    sudo chsh $USER -s $(which zsh)
 }
 
 #######################################
