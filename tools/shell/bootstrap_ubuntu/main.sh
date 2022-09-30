@@ -20,7 +20,8 @@ function install_prerequisites() {
         unzip \
         vim \
         wget \
-        zsh; \
+        zsh \
+        xz-utils; \
     pip3 install -U \
         pylint \
         pycodestyle \
