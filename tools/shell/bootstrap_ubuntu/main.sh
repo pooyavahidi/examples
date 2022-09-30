@@ -10,13 +10,14 @@ function install_prerequisites() {
   sudo apt install -y \
         dirmngr \
         curl \
-        gnupg \
         git \
+        gnupg \
         python3 \
         python3-venv \
         python3-pip \
         rsync \
         tree \
+        tmux \
         unzip \
         vim \
         wget \
