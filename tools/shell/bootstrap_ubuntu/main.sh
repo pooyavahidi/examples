@@ -65,6 +65,8 @@ function install_awscli() {
     gpg --verify awscliv2.zip.sig awscliv2.zip; \
     unzip -oq awscliv2.zip; \
     sudo ./aws/install --update; \
+    rm awscliv2.zip awscliv2.zip.sig awscli_public_key; \
+    rm -rf aws; \
     aws --version;
 }
 
@@ -108,9 +110,7 @@ function install_golang() {
 
 #######################################
 # Install Docker
-# Arguments:
-#   None
-########################################
+#######################################
 function install_docker() {
     sudo apt-get update; \
     sudo apt-get install -y \
@@ -134,10 +134,9 @@ function install_docker() {
 
 #######################################
 # Install nodejs
-# Arguments:
-#   None
-########################################
+#######################################
 function install_nodejs() {
+    # Using official script at https://github.com/nodejs/docker-node/blob/main/16/bullseye/Dockerfile
     export NODE_VERSION=16.17.1 \
     && ARCH= && dpkgArch="$(dpkg --print-architecture)" \
     && case "${dpkgArch##*-}" in \
@@ -149,7 +148,6 @@ function install_nodejs() {
       i386) ARCH='x86';; \
       *) echo "unsupported architecture"; exit 1 ;; \
     esac \
-    # gpg keys listed at https://github.com/nodejs/node#release-keys
     && for key in \
       4ED778F539E3634C779C87C6D7062848A1AB005C \
       141F07595B7B3FFE74309A937405533BE57C7D57 \
@@ -169,16 +167,26 @@ function install_nodejs() {
         gpg --batch --keyserver hkps://keys.openpgp.org --recv-keys "$key" || \
         gpg --batch --keyserver keyserver.ubuntu.com --recv-keys "$key" ; \
     done \
+    && cd ${HOME}/workspace/temp \
     && curl -fsSLO --compressed "https://nodejs.org/dist/v$NODE_VERSION/node-v$NODE_VERSION-linux-$ARCH.tar.xz" \
     && curl -fsSLO --compressed "https://nodejs.org/dist/v$NODE_VERSION/SHASUMS256.txt.asc" \
     && gpg --batch --decrypt --output SHASUMS256.txt SHASUMS256.txt.asc \
     && grep " node-v$NODE_VERSION-linux-$ARCH.tar.xz\$" SHASUMS256.txt | sha256sum -c - \
-    && tar -xJf "node-v$NODE_VERSION-linux-$ARCH.tar.xz" -C /usr/local --strip-components=1 --no-same-owner \
+    && sudo tar -xJf "node-v$NODE_VERSION-linux-$ARCH.tar.xz" -C /usr/local --strip-components=1 --no-same-owner \
     && rm "node-v$NODE_VERSION-linux-$ARCH.tar.xz" SHASUMS256.txt.asc SHASUMS256.txt \
-    && ln -s /usr/local/bin/node /usr/local/bin/nodejs \
-    # Test the installation
+    && sudo ln -s /usr/local/bin/node /usr/local/bin/nodejs \
     && node --version \
     && npm --version
+
+}
+
+#######################################
+# Install awscdk
+########################################
+function install_awscdk() {
+    sudo npm -g install typescript; \
+    sudo npm -g install aws-cdk; \
+    cdk --version;
 }
 
 #########################################
@@ -187,20 +195,40 @@ function install_nodejs() {
 #   command line
 ########################################
 function main() {
-    set -eux
     export DEBIAN_FRONTEND=noninteractive
 
+    # Keep track of starting directory to get back to it after the installations.
+    __starting_dir=$(pwd)
+
+    set -eux
     install_prerequisites
     install_awscli
     install_golang
     install_nodejs
+    install_awscdk
     install_docker
 
     # Final update and upgrade
     sudo apt update && sudo apt upgrade -y
 
+    # Summary of all installations.
+    python3 --version
+    pip3 --version
+    aws --version
+    go version
+    nodejs --version
+    npm --version
+    tsc --verison
+    cdk --version
+    docker --version
+    docker compose version
+
+    set +x
+    # Go back to the starting directory
+    cd $__starting_dir
+
     echo --------------------------
-    echo zsh shell will be active from next login
+    echo Reboot before using
 }
 
 main "${@}"
