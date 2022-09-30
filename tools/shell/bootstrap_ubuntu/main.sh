@@ -61,7 +61,7 @@ function install_awscli() {
     wget -O awscliv2.zip "${url}" --progress=dot:giga; \
     wget -O awscliv2.zip.sig "${url}.sig" --progress=dot:giga; \
     \
-# Verify the signature of downloaded packages
+    # Verify the signature of downloaded packages
     gpg --import $HOME/workspace/docker-library/awscli/debian/awscli_public_key; \
     gpg --verify awscliv2.zip.sig awscliv2.zip; \
     unzip -oq awscliv2.zip; \
@@ -93,8 +93,8 @@ function install_golang() {
     echo "$sha256 *go.tgz" | sha256sum --strict --check -; \
     \
     export GNUPGHOME="$(mktemp -d)"; \
-# Verify the signature of downloaded packages
-# https://www.google.com/linuxrepositories/
+    # Verify the signature of downloaded packages
+    # https://www.google.com/linuxrepositories/
     gpg --batch --keyserver keyserver.ubuntu.com --recv-keys 'EB4C 1BFD 4F04 2F6D DDCC EC91 7721 F63B D38B 4796'; \
     gpg --batch --verify go.tgz.asc go.tgz; \
     gpgconf --kill all; \
@@ -103,7 +103,7 @@ function install_golang() {
     sudo tar -C /usr/local -xzf go.tgz; \
     rm go.tgz; \
     \
-# Verify installation and set the environment variables.
+    # Verify installation and set the environment variables.
     /usr/local/go/bin/go version; \
     echo 'export GOPATH="$HOME/go"' >> ${HOME}/.extra; \
     echo 'export PATH="/usr/local/go/bin:$GOPATH/bin:$PATH"' >> ${HOME}/.extra
@@ -124,13 +124,13 @@ function install_docker() {
     echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu \
       $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null; \
 
-   sudo apt-get update; \
-   sudo apt-get install -y docker-ce docker-ce-cli containerd.io docker-compose-plugin; \
-   \
-# Setup docker user and group
-   sudo usermod -aG docker $USER; \
-   docker --version; \
-   docker compose version;
+    sudo apt-get update; \
+    sudo apt-get install -y docker-ce docker-ce-cli containerd.io docker-compose-plugin; \
+    \
+    # Setup docker user and group
+    sudo usermod -aG docker $USER; \
+    docker --version; \
+    docker compose version;
 }
 
 #######################################
