@@ -218,7 +218,7 @@ function main() {
     go version
     nodejs --version
     npm --version
-    tsc --verison
+    tsc --version
     cdk --version
     docker --version
     docker compose version
