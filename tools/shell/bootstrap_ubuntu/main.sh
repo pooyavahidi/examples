@@ -215,7 +215,7 @@ function main() {
     python3 --version
     pip3 --version
     aws --version
-    go version
+    /usr/local/go/bin/go version
     nodejs --version
     npm --version
     tsc --version
