@@ -90,20 +90,17 @@ function install_golang() {
             ;; \
         *) echo "error: unsupported architecture ${dpkgArch}"; exit 1 ;; \
     esac; \
+    cd $HOME/workspace/temp; \
     wget -O go.tgz.asc "${url}.asc" --progress=dot:giga; \
     wget -O go.tgz "${url}" --progress=dot:giga; \
     echo "$sha256 *go.tgz" | sha256sum --strict --check -; \
     \
-    export GNUPGHOME="$(mktemp -d)"; \
     # Verify the signature of downloaded packages
     # https://www.google.com/linuxrepositories/
     gpg --batch --keyserver keyserver.ubuntu.com --recv-keys 'EB4C 1BFD 4F04 2F6D DDCC EC91 7721 F63B D38B 4796'; \
     gpg --batch --verify go.tgz.asc go.tgz; \
-    gpgconf --kill all; \
-    rm -rf "$GNUPGHOME" go.tgz.asc; \
-    \
     sudo tar -C /usr/local -xzf go.tgz; \
-    rm go.tgz; \
+    rm go.tgz go.tgz.asc; \
     \
     # Verify installation and set the environment variables.
     /usr/local/go/bin/go version; \
