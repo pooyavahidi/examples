@@ -67,7 +67,7 @@ function install_awscli() {
     gpg --verify awscliv2.zip.sig awscliv2.zip; \
     unzip -oq awscliv2.zip; \
     sudo ./aws/install --update; \
-    rm awscliv2.zip awscliv2.zip.sig awscli_public_key; \
+    rm awscliv2.zip awscliv2.zip.sig; \
     rm -rf aws; \
     aws --version;
 }
