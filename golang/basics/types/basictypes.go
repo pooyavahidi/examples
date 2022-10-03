@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"math/cmplx"
+	"strconv"
 )
 
 var (
@@ -49,4 +50,70 @@ func main() {
 	fmt.Printf("Type: %T Value: %v Character: %c\n", Rune, Rune, Rune)
 	fmt.Printf("Type: %T Value: %v\n", z64, z64)
 	fmt.Printf("Type: %T Value: %v\n", z128, z128)
+
+	typeInference()
+	typeConversion()
+	stringConversion()
+}
+
+func typeInference() {
+	// When a variable declared without explicit type, the variable's type is
+	// inferred from the value on the right hand side.
+
+	f := 2.35 // float64
+
+	a := f // a is type of float64
+
+	fmt.Printf("a is of type %T\n", a)
+
+}
+func typeConversion() {
+	var i int = 5
+	var f float64 = float64(i)
+	var u uint = uint(f)
+
+	fmt.Println(i, f, u)
+
+	// The simplifed version of above
+	a := 5
+	b := float64(a)
+	c := uint(b)
+
+	fmt.Println(a, b, c)
+
+	// Unlike C, Go requires explicit conversion, the following raises complie
+	// error:
+	// 		var d int = 5
+	// 		var e float64 = d
+}
+
+func stringConversion() {
+	var i int = 5
+
+	s := string(i)
+	// This string(int) will output the rune of given value
+	fmt.Printf("String of %v is %q\n", i, s)
+
+	// The most common way of numeric conversion is using Atoi (string to int)
+	// and Itoa (int to string) functions in strconv package.
+	s = strconv.Itoa(i)
+	fmt.Printf("String of %v is %q\n", i, s)
+
+	// Conver from string
+	i, err := strconv.Atoi("5")
+	fmt.Println(i)
+
+	// Parse string to other types
+	a, err := strconv.ParseInt("5", 10, 32)
+	b, err := strconv.ParseUint("5", 10, 32)
+	c, err := strconv.ParseBool("true")
+	d, err := strconv.ParseFloat("5.32", 32)
+
+	fmt.Printf("a(%[1]T)=%[1]v, b(%[2]T)=%[2]v, c(%[3]T)=%[3]v, d(%[4]T)=%[4]v",
+		a, b, c, d)
+
+	if err != nil {
+		fmt.Println(err)
+	}
+
 }
