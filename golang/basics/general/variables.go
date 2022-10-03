@@ -12,16 +12,11 @@ var variable1 bool
 func main() {
 	// Function level variables. They are usually have short names.
 	var i int
-
 	var f float64
-
 	r := "ready"
-
-	// Variable declaration also initialize the variable to it's zero value.
-	// zero value for numeric types is 0
-	// zero value for boolean is false
-	// zero value for string is ""
 	fmt.Println(i, f, variable1, r)
+
+	zeroValues()
 
 	// A variable can be defined in the 4 following ways:
 	a := ""           // Commonly used for function variables
@@ -32,6 +27,7 @@ func main() {
 	fmt.Printf("%q %q %q %q\n", a, b, c, d)
 
 	multipleDeclarations()
+
 }
 
 func multipleDeclarations() {
@@ -44,4 +40,16 @@ func multipleDeclarations() {
 	var x, y = 1, 2
 
 	fmt.Println(a, b, c, i, j, x, y)
+}
+
+func zeroValues() {
+	// Variable declaration initializes the variable to its zero value.
+	// zero value for numeric types is 0
+	// zero value for boolean is false
+	// zero value for string is ""
+	var i int
+	var f float64
+	var b bool
+	var s string
+	fmt.Printf("%v %v %v %q\n", i, f, b, s)
 }
