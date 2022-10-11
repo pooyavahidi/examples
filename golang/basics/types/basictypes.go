@@ -15,6 +15,15 @@ var (
 
 	// When you need integer, you should use `int` unless you have a specific
 	// reason to use a sized or unsigned integer.
+
+	// Note, << operator is shifting a 1 bit left. for example, 1<<100 shifts
+	// a 1 bit left 100 places. In other words, the binary number that is 1
+	// followed by 100 zeroes.
+	// Obviously, only 1 and 0 can be shifted as
+	// we are in the base-2 binary. So, something like 2<<100 is not compilable.
+	// >> operator does the reverse action. 1>>100 shifts a 1 bit right 100
+	// places.
+
 	MaxInt      int    = 1<<63 - 1
 	MaxInt8     int8   = 1<<7 - 1
 	MaxInt16    int16  = 1<<15 - 1
@@ -51,9 +60,17 @@ func main() {
 	fmt.Printf("Type: %T Value: %v\n", z64, z64)
 	fmt.Printf("Type: %T Value: %v\n", z128, z128)
 
+	fmt.Println("--- Type Inference")
 	typeInference()
+
+	fmt.Println("--- Type Conversion")
 	typeConversion()
+
+	fmt.Println("--- String Converstion")
 	stringConversion()
+
+	fmt.Println("--- Numeric Constants")
+	numericConstants()
 }
 
 func typeInference() {
@@ -91,7 +108,7 @@ func stringConversion() {
 	var i int = 5
 
 	s := string(i)
-	// This string(int) will output the rune of given value
+	// This string(int) will output the string of rune.
 	fmt.Printf("String of %v is %q\n", i, s)
 
 	// The most common way of numeric conversion is using Atoi (string to int)
@@ -109,11 +126,61 @@ func stringConversion() {
 	c, err := strconv.ParseBool("true")
 	d, err := strconv.ParseFloat("5.32", 32)
 
-	fmt.Printf("a(%[1]T)=%[1]v, b(%[2]T)=%[2]v, c(%[3]T)=%[3]v, d(%[4]T)=%[4]v",
+	fmt.Printf("a(%[1]T)=%[1]v, b(%[2]T)=%[2]v, c(%[3]T)=%[3]v, d(%[4]T)=%[4]v\n",
 		a, b, c, d)
 
 	if err != nil {
 		fmt.Println(err)
 	}
+}
+
+func numericConstants() {
+	// Numeric constant are high-precision values
+
+	// The following yields error as variable b infered to be int and int cannot
+	// accept such a large number.
+	// var big = 1 << 100
+
+	// However, it can be done with constants
+	const (
+		huge = 1e1000
+		Pi   = 3.14159265358979323846264338327950288419716939937510582097494459
+		Pi2  = Pi / 2
+		// Shifting a 1 bit to left by 100 places. i.e. the binary number
+		// that is 1 followed by 100 zeros.
+		big = 1 << 100
+
+		// Shift it right again 99 places, so we end up with 1<<1 which is 2.
+		small = big >> 99
+	)
+	// These numbers can't be assigned to printed, The yields overflow error,
+	// as they should. However, they can be used in arithmatics, and that's
+	// why they are important for precise calculation.
+	// For example, using Pi in a calculation with the higher precision,
+	// produce a better result
+	pi := float64(Pi)
+
+	fmt.Println("Pi with lost precision is", pi)
+	// Note, that arithmatic with higher precision numbers carry the high
+	// precision until the result is assigned.
+	fmt.Println("Pi/2 with high precision", Pi*1.3897)
+	fmt.Println("Pi/2 with low precision", pi*1.3897)
+
+	// Another example
+	fmt.Println(small * 10)  // 20
+	fmt.Println(small * 0.1) // 0.2
+	// The following throw a compiler error as it tries to convert big
+	// to an int type which results in an overflow.
+	// i := big
+
+	f := big * 0.1
+	// This can be done as Float64 can show large numbers by
+	// losing the precision
+	fmt.Printf("%v (%T)\n", f, f)
+
+	// Note that the following returns a compiler error as int can store
+	// maximum a 64-bit integer:
+	// big := 1 << 100
+	// So, only constant variables can define such bit numbers.
 
 }
