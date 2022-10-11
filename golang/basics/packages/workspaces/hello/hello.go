@@ -16,6 +16,12 @@ func main() {
 	log.SetPrefix("greetings: ")
 	log.SetFlags(0)
 
+	// Print the version of the greetings package.
+	fmt.Println("Calling greetings package version", greetings.Version)
+
+	// Set the greetings package level variable to show more info.
+	greetings.ShowInfo = true
+
 	// If an error was returned, print it to the console and exit the program.
 	message, err := greetings.Hello("mate")
 	if err != nil {
@@ -23,19 +29,22 @@ func main() {
 	}
 
 	// If no error was returned, print from our own greetings module to
-	// the console
+	// the console.
 	fmt.Println(message)
 
-	// Print from another package in greetings module
+	// Print from another package in greetings module.
 	fmt.Println(deutsch.GutenTag())
 
-	// Print from the Quote function which calls an external module
+	// Print from the Quote function which calls an external module.
 	message = GetQuote()
 	fmt.Println(message)
 
 	// Print a reverse word using the external modul golang.org/x/example
 	fmt.Println("Reverse of Hello is", stringutil.Reverse("Hello"))
 
-	// Print from farewell package within the current module
+	// Change an exported package level variable.
+	farewell.EndingPunctuation = "!!!"
+
+	// Print from farewell package within the current module.
 	fmt.Println(farewell.Farewell("mate"))
 }
