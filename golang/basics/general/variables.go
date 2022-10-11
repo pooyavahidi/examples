@@ -6,8 +6,11 @@ import "fmt"
 // variables and can't be defined using the := construct.
 var variable1 bool
 
-// So, this is no possible at the package level:
+// So, this way of assignment is not possible at the package level.
 // variable2 := bool
+
+// Constant are declared like variables
+const Pi = 3.14
 
 func main() {
 	// Function level variables. They are usually have short names.
@@ -27,6 +30,16 @@ func main() {
 	fmt.Printf("%q %q %q %q\n", a, b, c, d)
 
 	multipleDeclarations()
+
+	// Constants can be defined at both package and function levels.
+	const e = 2.71828
+
+	fmt.Println("Constant value of Pi is", Pi)
+	fmt.Println("Constant value of e is", e)
+
+	// Constants cannot be changed. The followings throw compile error:
+	// e = 2.71
+	// Pi = 3.14
 
 }
 
