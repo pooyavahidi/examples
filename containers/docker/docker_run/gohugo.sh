@@ -1,5 +1,8 @@
 #!/bin/sh
 
+# functions to run, build and develop websites using gohugo
+
+
 function d-hugo-run() {
     local __hugo_workspace
     __hugo_workspace=$1
