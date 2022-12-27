@@ -5,9 +5,12 @@ import (
 )
 
 func main() {
-	// Go has only one looping construct which is `for` loop.
+	// Go has only one looping construct which is the `for` loop.
 
-	// Traditional for loop
+	// for loop has three components:
+	//  	init: executed before the first iteration.
+	//  	condition: evaluated before every iteration.
+	//		post: executed at the end of every iteration.
 	for i := 0; condition(i); i = post(i) {
 		fmt.Println("execute body with index", i)
 		fmt.Println("---------")
