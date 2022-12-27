@@ -183,4 +183,14 @@ func numericConstants() {
 	// big := 1 << 100
 	// So, only constant variables can define such bit numbers.
 
+	// Constants don't have a specific type. They are untyped.
+	// An untyped constants take the type needed by its context.
+	fmt.Println(needInt(small))
+	fmt.Println(needFloat(small))
+
+	// The following throw overflow error
+	// fmt.Println(needInt(big))
+
 }
+func needInt(x int) int           { return x * 10 }
+func needFloat(x float64) float64 { return x * 0.1 }
