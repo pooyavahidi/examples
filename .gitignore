@@ -2,11 +2,14 @@
 # Ignore everything
 *
 
+# Unignore all dirs
+!*/
+
 # Unignore all with extensions (executable files in linux systems usually have no extension)
 !*.*
 
-# Unignore all dirs
-!*/
+# Unignore files without extensions which are not executables
+!Dockerfile
 
 # Binaries for programs and plugins in Windows
 *.exe
