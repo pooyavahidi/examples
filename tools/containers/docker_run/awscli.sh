@@ -37,7 +37,7 @@ function d-awscli-auth-keychain-shell {
         --env AWS_DEFAULT_REGION=us-east-1 \
         --env AWS_DEFAULT_OUTPUT=json \
         --env-file $__env_file \
-        --hostname dsh-awscli-auth-${__keychain_item_name} \
+        --hostname dsh-awscli-auth-$(echo ${__keychain_item_name} | sed 's/\./-/') \
         ${__image_name} ${__command}
 }
 
