@@ -38,12 +38,12 @@ function d-awscli-auth-keychain-shell {
         ${__image_name} ${__command}
 }
 
-function d-awscli-docker-shell {
+function d-awscli() {
     local __name
     local __image_name
     __name="awscli-docker"
 
-    [[ -z "${__image_name:=$1}" ]] && __image_name=pv/awscli-shell
+    [[ -z "${__image_name:=$1}" ]] && __image_name=pv/awscli
 
     docker run -it --rm --name $__name \
         -v ${WORKSPACE}:/home/dev/workspace \

@@ -4,7 +4,7 @@ from abc import ABC, abstractmethod
 
 class bcolors:
     FAIL = "\033[91m"
-    ENDC = "\033[0m"
+    RESET = "\033[0m"
 
 
 class command(ABC):
@@ -44,7 +44,7 @@ def main():
 
             cmd.execute()
         except Exception as e:
-            print(bcolors.FAIL + str(e) + bcolors.ENDC)
+            print(bcolors.FAIL + str(e) + bcolors.RESET)
 
 
 if __name__ == "__main__":

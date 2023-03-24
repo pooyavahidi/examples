@@ -1,6 +1,6 @@
 #!/bin/sh
 
-function d-dev-shell() {
+function d-dev() {
     # Try to to attach to `dev` container if exists. If not, create one.
 
     if ! docker::container_attach dev; then
