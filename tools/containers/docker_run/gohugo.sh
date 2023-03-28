@@ -1,9 +1,7 @@
 #!/bin/sh
 
 # functions to run, build and develop websites using gohugo
-
-
-function d-hugo-run() {
+function d-hugo-server() {
     local __hugo_workspace
     __hugo_workspace=$1
 
@@ -11,11 +9,11 @@ function d-hugo-run() {
 
     docker container run --rm -p 1313:1313 \
         -v $__hugo_workspace:/home/dev/workspace \
-        pv/hugo-shell:latest \
+        ${DOCKER_LOCAL_REGISTRY}/hugo:latest \
         hugo -D server -s workspace --bind 0.0.0.0
 }
 
-function d-hugo-shell() {
+function d-hugo() {
     local __hugo_workspace
     __hugo_workspace=$1
 
@@ -23,8 +21,7 @@ function d-hugo-shell() {
 
     docker container run -it --rm -p 1314:1313 \
         -v $__hugo_workspace:/home/dev/workspace \
-        pv/hugo-shell:latest \
-        zsh
+        ${DOCKER_LOCAL_REGISTRY}/hugo:latest
 }
 
 function d-hugo-build {
@@ -34,7 +31,7 @@ function d-hugo-build {
 
     docker container run --rm \
         -v $__hugo_workspace:/home/dev/workspace \
-        pv/hugo-shell:latest \
+        ${DOCKER_LOCAL_REGISTRY}/hugo:latest \
         hugo -s workspace
 
 }

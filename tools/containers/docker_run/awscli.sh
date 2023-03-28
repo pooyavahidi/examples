@@ -2,7 +2,7 @@
 
 # Use macos keychain to keep the awscli credentials instead of a plain text file.
 # Each env variable must be kept in a separate line.
-function d-awscli-auth-keychain-shell {
+function d-awscli-creds-from-keychain {
     local __access_key_id
     local __secret_access_key
     local __creds
@@ -15,7 +15,8 @@ function d-awscli-auth-keychain-shell {
     [[ -z "${__keychain_item_name:=$1}" ]] && echo "Keychain item name is missing" \
         && return 1
 
-    [[ -z "${__image_name:=$2}" ]] && __image_name=pv/awscli-shell
+    [[ -z "${__image_name:=$2}" ]] \
+        && __image_name=${DOCKER_LOCAL_REGISTRY}/awscli-shell
 
     [[ -z "${__env_file:=$3}" ]] && echo "env file is missing" \
         && return 1
@@ -41,9 +42,10 @@ function d-awscli-auth-keychain-shell {
 function d-awscli() {
     local __name
     local __image_name
-    __name="awscli-docker"
+    __name="awscli"
 
-    [[ -z "${__image_name:=$1}" ]] && __image_name=pv/awscli
+    [[ -z "${__image_name:=$1}" ]] \
+        && __image_name=${DOCKER_LOCAL_REGISTRY}/awscli
 
     docker run -it --rm --name $__name \
         -v ${WORKSPACE}:/home/dev/workspace \
