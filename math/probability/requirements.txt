@@ -2,6 +2,3 @@ pylint
 pycodestyle
 black
 numpy
-pandas
-jupyter
-matplotlib
