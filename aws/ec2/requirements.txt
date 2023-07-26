@@ -1,5 +1,1 @@
-pylint
-pycodestyle
-black
-pytest
 boto3
