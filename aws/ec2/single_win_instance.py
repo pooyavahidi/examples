@@ -162,6 +162,7 @@ def main():
                 for instance in reservation["Instances"]:
                     print(instance["InstanceId"])
             print("use --cleanup option to terminate instances first")
+            sys.exit(1)
         else:
             ami_id = get_latest_image_id(ec2, args.ami_name_prefix)
             create_instance(
