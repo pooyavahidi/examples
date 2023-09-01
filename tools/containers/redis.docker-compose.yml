@@ -1,0 +1,19 @@
+version: '3.8'
+
+services:
+  redis:
+    image: redis/redis-stack
+    ports:
+      - '6379:6379'
+      - '8001:8001'
+    networks:
+      - redis_network
+    volumes:
+      - ${WORKSPACE}/data/redis:/data
+    environment:
+      # Enable both AOF and RDB persistence.
+      REDIS_ARGS: "--appendonly yes --auto-aof-rewrite-min-size 100mb --save 900 1"
+
+networks:
+  redis_network:
+    driver: bridge
