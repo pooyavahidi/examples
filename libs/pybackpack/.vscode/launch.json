@@ -1,0 +1,58 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Python: Current File (Integrated Terminal)",
+      "type": "python",
+      "request": "launch",
+      "program": "${file}",
+      "console": "integratedTerminal"
+    },
+    {
+      "name": "pytest: All Tests",
+      "type": "python",
+      "request": "launch",
+      "module": "pytest",
+      "args": [
+        "-s"
+      ],
+      "console": "integratedTerminal"
+    },
+    {
+      "name": "pytest: Current Module",
+      "type": "python",
+      "request": "launch",
+      "module": "pytest",
+      "args": [
+        "-s",
+        "--log-cli-level=INFO",
+        "${file}"
+      ],
+      "console": "integratedTerminal"
+    },
+    {
+      "name": "pytest: <test_module>",
+      "type": "python",
+      "request": "launch",
+      "module": "pytest",
+      "args": [
+        "-s",
+        "--log-cli-level=INFO",
+        "tests/test_module.py"
+      ],
+      "console": "integratedTerminal"
+    },
+    {
+      "name": "pytest: <test_module.py::test_method>",
+      "type": "python",
+      "request": "launch",
+      "module": "pytest",
+      "args": [
+        "-s",
+        "--log-cli-level=INFO",
+        "tests/test_module.py::test_method"
+      ],
+      "console": "integratedTerminal"
+    }
+  ]
+}

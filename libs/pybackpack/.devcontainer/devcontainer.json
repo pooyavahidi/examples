@@ -1,0 +1,21 @@
+{
+  "name": "vscode_pybackpack",
+  "dockerComposeFile": "docker-compose.yml",
+  "service": "devcontainer",
+  // Added from the root to access to .git for seeing the git status.
+  "workspaceFolder": "/workspace/libs/${localWorkspaceFolderBasename}",
+  "overrideCommand": false,
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ms-python.python",
+        "ms-python.black-formatter",
+        "ms-python.pylint",
+        "github.copilot"
+      ]
+    }
+  },
+  "remoteEnv": {
+    "REDIS_URL": "redis://host.docker.internal:6379"
+  }
+}
