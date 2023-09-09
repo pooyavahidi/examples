@@ -13,6 +13,7 @@ services:
     environment:
       # Enable both AOF and RDB persistence.
       REDIS_ARGS: "--appendonly yes --auto-aof-rewrite-min-size 100mb --save 900 1"
+    restart: unless-stopped
 
 networks:
   redis_network:
