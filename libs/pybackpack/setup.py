@@ -10,7 +10,7 @@ setuptools.setup(
     description="A collection of utilities and tools in Python.",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="https://github.com/pooyavahidi/examples/libs/pybackpack",
+    url="https://github.com/pooyavahidi/examples/tree/main/libs/pybackpack",
     packages=setuptools.find_packages(exclude=["tests*"]),
     classifiers=[
         "Programming Language :: Python :: 3",

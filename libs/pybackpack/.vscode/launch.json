@@ -31,14 +31,16 @@
       "console": "integratedTerminal"
     },
     {
-      "name": "pytest: <test_module>",
+      "name": "pytest: datastores",
       "type": "python",
       "request": "launch",
       "module": "pytest",
       "args": [
         "-s",
-        "--log-cli-level=INFO",
-        "tests/test_module.py"
+        "-p",
+        "no:warnings",
+        // "--log-cli-level=INFO",
+        "tests/test_datastores_redis.py"
       ],
       "console": "integratedTerminal"
     },

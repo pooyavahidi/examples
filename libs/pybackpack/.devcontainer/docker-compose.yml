@@ -16,7 +16,10 @@ services:
     command: sleep infinity
     networks:
       - pybackpack_network
-
+  redis:
+    image: redis/redis-stack
+    networks:
+      - pybackpack_network
 networks:
   pybackpack_network:
     driver: bridge
