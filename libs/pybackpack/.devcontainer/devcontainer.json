@@ -16,6 +16,7 @@
     }
   },
   "remoteEnv": {
-    "REDIS_URL": "redis://redis:6379"
+    "REDIS_URL": "redis://redis:6379",
+    "MONGODB_URL": "mongodb://mongo:27017"
   }
 }

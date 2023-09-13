@@ -15,12 +15,23 @@ RUN git config --global --add safe.directory '/workspace'
 RUN curl -fsSL https://packages.redis.io/gpg | sudo gpg --dearmor -o /usr/share/keyrings/redis-archive-keyring.gpg \
     && echo "deb [signed-by=/usr/share/keyrings/redis-archive-keyring.gpg] https://packages.redis.io/deb $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/redis.list \
     && sudo apt-get update \
-    && sudo apt-get install -y redis
+    && sudo apt-get install -y redis \
+    && redis-cli --version
 
+# Install mongosh using official instructions:
+# https://www.mongodb.com/docs/mongodb-shell/install/
+RUN wget -qO- https://www.mongodb.org/static/pgp/server-7.0.asc | sudo tee /etc/apt/trusted.gpg.d/server-7.0.asc \
+    && echo "deb [ arch=amd64,arm64 ] https://repo.mongodb.org/apt/ubuntu jammy/mongodb-org/7.0 multiverse" | sudo tee /etc/apt/sources.list.d/mongodb-org-7.0.list \
+    && sudo apt-get update \
+    && sudo apt-get install -y mongodb-mongosh \
+    && mongosh --version
+
+# Upgrade pip.
 RUN pip install -U pip
 
-# Install pythong packages.
+# Install python packages.
 RUN pip install --upgrade \
     pytest \
     pydantic \
-    redis
+    redis \
+    pymongo

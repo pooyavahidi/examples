@@ -9,10 +9,10 @@ services:
     image: ${DOCKER_LOCAL_REGISTRY}/vscode-pybackpack
     environment:
       REDIS_URL: ${REDIS_URL}
+      MONGODB_URL: ${MONGODB_URL}
     volumes:
       # Mount from the root to access .git in the vscode running in the container.
       - ../../..:/workspace:cached
-      - ${WORKSPACE}/data:/data:cached
     command: sleep infinity
     networks:
       - pybackpack_network
@@ -20,6 +20,11 @@ services:
     image: redis/redis-stack
     networks:
       - pybackpack_network
+  mongo:
+    image: mongo
+    networks:
+      - pybackpack_network
+
 networks:
   pybackpack_network:
     driver: bridge
