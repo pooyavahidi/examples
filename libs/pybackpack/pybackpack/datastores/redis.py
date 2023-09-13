@@ -1,4 +1,5 @@
 import os
+import json
 from typing import List, Type
 import redis
 from redis.commands.search.field import (
@@ -8,6 +9,7 @@ from redis.commands.search.field import (
     GeoField,
 )
 from redis.commands.search.indexDefinition import IndexDefinition, IndexType
+from redis.commands.search.query import Query
 
 from pydantic import BaseModel
 
@@ -81,6 +83,12 @@ class RedisDataStore:
 
         key = self._add_prefix(key, prefixes=[self.root_prefix])
         redis_client.json().set(key, json_path, value)
+
+    def keys(self, pattern: str) -> List[str]:
+        """Returns the keys for the given pattern."""
+
+        pattern = self._add_prefix(pattern, prefixes=[self.root_prefix])
+        return redis_client.keys(pattern)
 
     def get_json(self, key: str, json_path="$") -> dict:
         """Using JSON capability of Redis Stack.
@@ -271,3 +279,34 @@ class RedisDataStore:
                 return None
 
             raise ex
+
+    def search_on_json(
+        self,
+        index_name: str,
+        query: str,
+        offset: int = 0,
+        num: int = 10,
+        sort_by_field: str = None,
+        sort_asc: bool = True,
+    ) -> List:
+        """Searches the index for the given query."""
+
+        rs = redis_client.ft(self._get_key_for_index(index_name))
+
+        query_obj = Query(query).paging(offset, num)
+
+        if sort_by_field:
+            query_obj.sort_by(sort_by_field, asc=sort_asc)
+
+        res = rs.search(query=query_obj)
+
+        output = []
+        if res and res.docs and len(res.docs) > 0:
+            for doc in res.docs:
+                if hasattr(doc, "json"):
+                    output.append(json.loads(doc.json))
+                else:
+                    output.append(doc.__dict__)
+            return output
+
+        return output

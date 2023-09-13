@@ -1,8 +1,12 @@
+import json
+from pathlib import Path
 from typing import List
 
 
 from pydantic import BaseModel
 from pybackpack.datastores import RedisDataStore
+
+books_json_file = Path(__file__).parent / "test_datastores_books.json"
 
 
 class ChildModel(BaseModel):
@@ -32,6 +36,75 @@ def test_redis_simple_get_set():
 
     redis.delete("key1")
     assert redis.get_str("key1") is None
+
+
+def test_keys():
+    root_prefix = "test"
+    delimiter = ":"
+    redis = RedisDataStore(root_prefix=root_prefix, prefix_delimiter=delimiter)
+
+    redis.set_str("key1", "value1")
+    redis.set_str("key2", "value1")
+    keys = redis.keys("key*")
+    assert len(keys) == 2
+
+    redis.delete("key2")
+    redis.delete("key1")
+
+    # Test with root prefix
+    redis = RedisDataStore(root_prefix=root_prefix, prefix_delimiter=delimiter)
+    redis.set_str("key1", "value1")
+    keys = redis.keys("key*")
+    assert len(keys) == 1
+    assert keys[0].decode("utf-8") == f"{root_prefix}{delimiter}key1"
+    redis.delete("key1")
+
+    # Test wihtout root prefix (default)
+    redis = RedisDataStore(root_prefix=None, prefix_delimiter=delimiter)
+    redis.set_str("key1", "value1")
+    keys = redis.keys("key*")
+    assert keys[0].decode("utf-8") == "key1"
+    redis.delete("key1")
+
+    # Test wiht empty root prefix
+    redis = RedisDataStore(root_prefix="", prefix_delimiter=delimiter)
+    redis.set_str("key1", "value1")
+    keys = redis.keys("key*")
+    assert keys[0].decode("utf-8") == ":key1"
+    redis.delete("key1")
+
+    # Test json keys
+    redis = RedisDataStore(root_prefix=root_prefix, prefix_delimiter=delimiter)
+    redis.set_json("key1", {"name": "value1"})
+    keys = redis.keys("*")
+    assert len(keys) == 1
+    assert keys[0].decode("utf-8") == f"{root_prefix}{delimiter}key1"
+    redis.delete("key1")
+
+    # Test pydantic keys
+    redis = RedisDataStore(root_prefix=root_prefix, prefix_delimiter=delimiter)
+    redis.set_pydantic("key1", ParentModel(name="value1", age=10, children=[]))
+    keys = redis.keys("*")
+    assert len(keys) == 1
+    persist_schema = ParentModel.Config.schema_extra["persist_schema"]
+    assert (
+        keys[0].decode("utf-8")
+        == f"{root_prefix}{delimiter}{persist_schema}{delimiter}key1"
+    )
+    redis.delete_pydantic("key1", ParentModel)
+
+    # Test pydantic keys without root prefix
+    redis = RedisDataStore(root_prefix=None, prefix_delimiter=delimiter)
+    redis.set_pydantic("key1", ParentModel(name="value1", age=10, children=[]))
+    redis.set_pydantic("key2", ParentModel(name="value2", age=20, children=[]))
+    keys = redis.keys("*key*")
+    assert len(keys) == 2
+    persist_schema = ParentModel.Config.schema_extra["persist_schema"]
+    assert keys[0].decode("utf-8") == f"{persist_schema}{delimiter}key2"
+
+    # Clean up
+    for key in redis.keys("*key*"):
+        redis.delete(key)
 
 
 def test_redis_json():
@@ -202,3 +275,125 @@ def test_redis_create_index():
     # Delete the index
     redis.delete_index(index_name)
     assert redis.get_index_info(index_name) is None
+
+
+def test_redis_search_on_json():
+    # Load books fromt the test json file
+    with open(books_json_file, "r", encoding="utf-8") as file:
+        books = json.load(file)
+
+    redis = RedisDataStore()
+
+    # Remove all the books in redis
+    for key in redis.keys("book*"):
+        redis.delete(key)
+
+    # Set the books in redis
+    for book in books:
+        redis.set_json(f"book:{book['id']}", book)
+
+    index_name = "books"
+
+    # Delet the index if already exists
+    if redis.get_index_info(index_name):
+        redis.delete_index(index_name)
+
+    # Create index
+    schema = [
+        {"field": "$.title", "type": "text", "alias": "title"},
+        {"field": "$.year", "type": "number", "alias": "year"},
+        {"field": "$.description", "type": "text", "alias": "description"},
+        {"field": "$.topics", "type": "tag", "alias": "topics"},
+        {
+            "field": "$.authors[*].first_name",
+            "type": "text",
+            "alias": "author_first_name",
+        },
+        {
+            "field": "$.authors[*].last_name",
+            "type": "text",
+            "alias": "author_last_name",
+        },
+        {
+            "field": "$.authors[*].born",
+            "type": "number",
+            "alias": "author_born",
+        },
+    ]
+
+    redis.create_index_on_json(
+        index_name=index_name, schema=schema, key_prefixes_to_index=["book"]
+    )
+
+    # Check if index is created and get the index info
+    index_info = redis.get_index_info(index_name)
+    assert index_info["index_name"] == "idx:books"
+
+    # Search for an unknown title
+    result = redis.search_on_json(index_name=index_name, query="unknown")
+    assert len(result) == 0
+
+    # Search for a known title
+    result = redis.search_on_json(index_name=index_name, query="Deep Learning")
+    assert len(result) == 1
+
+    # Search for a partial name
+    result = redis.search_on_json(index_name=index_name, query="Deep")
+    assert len(result) == 1
+
+    # Search for all books between 2015 and 2024
+    result = redis.search_on_json(
+        index_name=index_name, query="@year:[2015 2024]"
+    )
+    assert len(result) == 3
+    assert {
+        "Deep Learning",
+        "Introduction to Linear Algebra 5th Edition",
+        "Introduction to Algorithms 4th Edition",
+    } <= {r["title"] for r in result}
+
+    # Find all books which at least one of their authors born betwen a range
+    result = redis.search_on_json(
+        index_name=index_name, query="@author_born:[1980 1990]"
+    )
+    assert len(result) == 1
+    assert result[0]["title"] == "Deep Learning"
+
+    # Find all books which at least related to one of the topics
+    result = redis.search_on_json(
+        index_name=index_name, query="@topics:{physics}"
+    )
+    assert len(result) == 2
+
+    # Find all books which are related to multiple topics AND togther.
+    result = redis.search_on_json(
+        index_name=index_name, query="@topics:{linear algebra} @topics:{math}"
+    )
+    assert len(result) == 1
+    assert {
+        "Introduction to Linear Algebra 5th Edition",
+    } <= {r["title"] for r in result}
+
+    # Find all books which are related to either of topics, OR together.
+    result = redis.search_on_json(
+        index_name=index_name, query="@topics:{linear algebra|physics}"
+    )
+    assert len(result) == 3
+    assert {
+        "A Brief History of Time",
+        "Introduction to Linear Algebra 5th Edition",
+    } <= {r["title"] for r in result}
+
+    # Find all books which their description contains "comprehensive" and the \
+    # title doesn't contain "Deep"
+    result = redis.search_on_json(
+        index_name=index_name,
+        query="@description:comprehensive -@title:Deep",
+    )
+    assert len(result) == 1
+    assert result[0]["title"] == "Introduction to Linear Algebra 5th Edition"
+
+    # Clean up
+    redis.delete_index(index_name)
+    for key in redis.keys("book*"):
+        redis.delete(key)

@@ -1,0 +1,123 @@
+[
+  {
+    "id": 1,
+    "title": "Deep Learning",
+    "year": 2016,
+    "topics": [
+      "math",
+      "neural networks",
+      "machine learning",
+      "deep learning"
+    ],
+    "description": "A comprehensive introduction to deep learning, providing a mathematical and conceptual background for understanding and  designing deep neural networks. This book is widely regarded as a standard  text in the field, written by some of its pioneering contributors.",
+    "authors": [
+      {
+        "first_name": "Ian",
+        "last_name": "Goodfellow",
+        "born": 1987
+      },
+      {
+        "first_name": "Yoshua",
+        "last_name": "Bengio",
+        "born": 1964
+      },
+      {
+        "first_name": "Aaron",
+        "last_name": "Courville",
+        "born": 1980
+      }
+    ]
+  },
+  {
+    "id": 2,
+    "title": "Introduction to Algorithms 4th Edition",
+    "year": 2022,
+    "topics": [
+      "math",
+      "computer science",
+      "algorithms"
+    ],
+    "description": "It covers a broad range of algorithms in depth, yet makes their design and analysis accessible to all levels of readers, with self-contained chapters and algorithms in pseudocode.",
+    "authors": [
+      {
+        "first_name": "Thomas",
+        "last_name": "Cormen",
+        "born": 1956
+      },
+      {
+        "first_name": "Charles",
+        "last_name": "Leiserson",
+        "born": 1953
+      },
+      {
+        "first_name": "Ronald",
+        "last_name": "Rivest",
+        "born": 1947
+      },
+      {
+        "first_name": "Clifford",
+        "last_name": "Stein",
+        "born": 1965
+      }
+    ]
+  },
+  {
+    "id": 3,
+    "title": "Introduction to Linear Algebra 5th Edition",
+    "year": 2016,
+    "topics": [
+      "linear algebra",
+      "math",
+      "vectors",
+      "matrices",
+      "eigenvalues"
+    ],
+    "description": "Gilbert Strang's 'Introduction to Linear Algebra' provides a foundational exploration of linear algebra, offering clarity in its teachings on vectors, matrices, and the essential properties of linear transformations. The book is widely regarded for its comprehensive approach and is used in many educational institutions around the world.",
+    "authors": [
+      {
+        "first_name": "Gilbert",
+        "last_name": "Strang",
+        "born": 1934
+      }
+    ]
+  },
+  {
+    "id": 4,
+    "title": "A Brief History of Time",
+    "year": 1988,
+    "topics": [
+      "physics",
+      "cosmology"
+    ],
+    "description": "A landmark volume in science writing by one of the great minds of our time, Stephen Hawking's book explores such profound questions as: How did the universe begin—and what made its start possible? Does time always flow forward? Is the universe unending—or are there boundaries? Are there other dimensions in space? What will happen when it all ends?",
+    "authors": [
+      {
+        "first_name": "Stephen",
+        "last_name": "Hawking",
+        "born": 1942
+      }
+    ]
+  },
+  {
+    "id": 5,
+    "title": "The Nature of Space and Time",
+    "year": 1996,
+    "topics": [
+      "physics",
+      "cosmology"
+    ],
+    "description": "The Nature of Space and Time is a book that documents a debate on physics and the philosophy of physics between the British theoretical physicists Roger Penrose and Stephen Hawking.",
+    "authors": [
+      {
+        "first_name": "Stephen",
+        "last_name": "Hawking",
+        "born": 1942
+      },
+      {
+        "first_name": "Roger",
+        "last_name": "Penrose",
+        "born": 1931
+      }
+    ]
+  }
+]
