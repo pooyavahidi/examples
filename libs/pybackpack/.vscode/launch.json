@@ -40,7 +40,7 @@
         "-p",
         "no:warnings",
         // "--log-cli-level=INFO",
-        "tests/test_datastores_redis.py"
+        "tests/test_datastores_mongo.py"
       ],
       "console": "integratedTerminal"
     },
