@@ -20,6 +20,9 @@ class RedisDataStore:
     """This class is a wrapper on top of redis client.
     It provides methods to get and set data, work with indexes and more.
     It also support pydantic models.
+
+    redis client object is directly accessible via the `client` attribute.
+    redis client uses the Redis URL set as REDIS_URL environment variable.
     """
 
     def __init__(
@@ -28,6 +31,7 @@ class RedisDataStore:
         prefix_delimiter: str = ":",
         index_prefix: str = "idx",
     ) -> None:
+        self.client = redis_client
         self.root_prefix = root_prefix
         self.prefix_delimiter = prefix_delimiter
         self.index_prefix = index_prefix
@@ -122,7 +126,7 @@ class RedisDataStore:
         if use_persist_schema_as_prefix:
             schema = model.Config.schema_extra.get("persist_schema")
             if not schema:
-                raise ValueError("persist_schema is not set in the model")
+                raise ValueError("persist_schema is not set for the model")
             return self._add_prefix(key, prefixes=[schema])
 
         return key
