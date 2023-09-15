@@ -29,9 +29,11 @@ RUN wget -qO- https://www.mongodb.org/static/pgp/server-7.0.asc | sudo tee /etc/
 # Upgrade pip.
 RUN pip install -U pip
 
-# Install python packages.
+# Install development packages.
 RUN pip install --upgrade \
     pytest \
-    pydantic \
-    redis \
-    pymongo
+    pycodestyle
+
+# Install requirements.
+COPY ../requirements.txt /tmp/requirements.txt
+RUN pip install -r /tmp/requirements.txt
