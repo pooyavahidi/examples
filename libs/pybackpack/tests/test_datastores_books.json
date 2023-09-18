@@ -14,17 +14,32 @@
       {
         "first_name": "Ian",
         "last_name": "Goodfellow",
-        "born": 1987
+        "born": 1987,
+        "institutions": [
+          "Apple Inc.",
+          "OpenAI",
+          "Google DeepMind",
+          "Google Brain"
+        ]
       },
       {
         "first_name": "Yoshua",
         "last_name": "Bengio",
-        "born": 1964
+        "born": 1964,
+        "institutions": [
+          "University of Montreal",
+          "Mila",
+          "Element AI"
+        ]
       },
       {
         "first_name": "Aaron",
         "last_name": "Courville",
-        "born": 1980
+        "born": 1980,
+        "institutions": [
+          "University of Montreal",
+          "Mila"
+        ]
       }
     ]
   },
@@ -42,22 +57,35 @@
       {
         "first_name": "Thomas",
         "last_name": "Cormen",
-        "born": 1956
+        "born": 1956,
+        "institutions": [
+          "Dartmouth College"
+        ]
       },
       {
         "first_name": "Charles",
         "last_name": "Leiserson",
-        "born": 1953
+        "born": 1953,
+        "institutions": [
+          "MIT"
+        ]
       },
       {
         "first_name": "Ronald",
         "last_name": "Rivest",
-        "born": 1947
+        "born": 1947,
+        "institutions": [
+          "MIT"
+        ]
       },
       {
         "first_name": "Clifford",
         "last_name": "Stein",
-        "born": 1965
+        "born": 1965,
+        "institutions": [
+          "Columbia University",
+          "Dartmouth College"
+        ]
       }
     ]
   },
@@ -77,7 +105,10 @@
       {
         "first_name": "Gilbert",
         "last_name": "Strang",
-        "born": 1934
+        "born": 1934,
+        "institutions": [
+          "MIT"
+        ]
       }
     ]
   },
@@ -94,7 +125,12 @@
       {
         "first_name": "Stephen",
         "last_name": "Hawking",
-        "born": 1942
+        "born": 1942,
+        "institutions": [
+          "University of Cambridge",
+          "California Institute of Technology",
+          "Perimeter Institute for Theoretical Physics"
+        ]
       }
     ]
   },
@@ -111,12 +147,23 @@
       {
         "first_name": "Stephen",
         "last_name": "Hawking",
-        "born": 1942
+        "born": 1942,
+        "institutions": [
+          "University of Cambridge",
+          "California Institute of Technology",
+          "Perimeter Institute for Theoretical Physics"
+        ]
       },
       {
         "first_name": "Roger",
         "last_name": "Penrose",
-        "born": 1931
+        "born": 1931,
+        "institutions": [
+          "Cornell University",
+          "Bedford College, London",
+          "Princeton University",
+          "Rice University"
+        ]
       }
     ]
   }

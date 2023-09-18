@@ -32,17 +32,34 @@ def books_dict():
     return books
 
 
-def test_mongo_crud(books_dict):
-    # Create a new MongoDataStore instance
-    mongo = MongoDataStore("pybackpack")
+@pytest.fixture
+def mongo():
+    # Set Up
+    mongo_ds = MongoDataStore("pybackpack")
+
+    # Clean up the database before the test
+    # drop all the collections
+    for collection_name in mongo_ds.db.list_collection_names():
+        mongo_ds.db.drop_collection(collection_name)
+
+    yield mongo_ds
+
+
+@pytest.fixture
+def books_col(mongo, books_dict):
+    col = mongo.collection("books")
+    col.insert_many(books_dict)
+
+    yield col
+
+    col.drop()
+
+
+def test_mongo_crud(mongo, books_dict):
     db = mongo.db
 
     collection_name = "books"
     col = mongo.collection(collection_name)
-
-    # If the collection exists, drop it. Mongo return without error if
-    # the collection does not exist.
-    col.drop()
 
     # Insert documents
     for book in books_dict:
@@ -113,79 +130,15 @@ def test_mongo_crud(books_dict):
     assert collection_name not in res
 
 
-def test_mongo_query(books_dict):
-    # Create a new MongoDataStore instance
-    mongo = MongoDataStore("pybackpack")
-    col = mongo.collection("books")
-
-    # If the collection exists, drop it to start clean.
-    col.drop()
-
-    # Insert documents
-    res = col.insert_many(books_dict)
-    assert res.acknowledged
-    assert len(res.inserted_ids) == len(books_dict)
-
-    # Get an unknown title
-    res = col.find({"title": "Unknown"})
-    res = list(res)
-    assert len(res) == 0
-
-    # Get a known title
-    res = col.find({"title": "A Brief History of Time"})
-    res = list(res)
-    assert len(res) == 1
-
-    # Get a known title with a query, using "i" option for case-insensitive
-    res = col.find({"title": {"$regex": "deep", "$options": "i"}})
-    assert res[0]["title"] == "Deep Learning"
-
-    # Search for all books between 2015 and 2024
-    res = col.find({"year": {"$gte": 2015, "$lte": 2024}})
-    assert {
-        "Deep Learning",
-        "Introduction to Linear Algebra 5th Edition",
-        "Introduction to Algorithms 4th Edition",
-    } <= {r["title"] for r in res}
-
-    # Find all books which at least one of their authors born between a range
-    res = col.find({"authors.born": {"$gte": 1980, "$lte": 1990}})
-    assert res[0]["title"] == "Deep Learning"
-
-    # Find all books which at least related to one of the topics
-    res = col.find({"topics": {"$in": ["physics"]}})
-    res = list(res)
-    assert len(res) == 2
-
-    # Use paging and sorting to get the first book sorted by year descending
-    res = col.find(
-        {"topics": {"$in": ["physics"]}},
-        limit=1,
-        sort=[("year", -1)],
-    )
-    assert res[0]["title"] == "The Nature of Space and Time"
-
-    # Find books using multiple ids
-    res = col.find({"id": {"$in": [1, 2, 3]}})
-    assert len(list(res)) == 3
-
-    # Clean up
-    col.drop()
-
-
-def test_pydantic_crud(books_dict):
+def test_pydantic_crud(mongo, books_dict):
     # Create pydantic models for books using books_dict
     books = [Book(**book) for book in books_dict]
     assert len(books) == len(books_dict)
     assert books[0].title == "Deep Learning"
     assert len(books[0].authors) == 3
 
-    # Create a new MongoDataStore instance
-    mongo = MongoDataStore("pybackpack")
+    # Create a new collection
     col = mongo.collection_for_pydantic(Book)
-
-    # If the collection exists, drop it to start clean.
-    col.drop()
 
     # Insert documents
     res = col.insert_many([b.model_dump() for b in books])
@@ -227,13 +180,123 @@ def test_pydantic_crud(books_dict):
     res = col.count_documents({"authors.born": {"$gte": 1960, "$lte": 1990}})
     assert res == 2
 
-    # Remove all the authors where born is between 1960 and 1990.
-    # Also possible to pass the filter instead of {}, something like this:
+    # Remove all the authors where born is between 1960 and 1990
+    # The filter instead of {} could be set like this:
     # {"authors.born": {"$gte": 1960, "$lte": 1990}},
     res = col.update_many(
         {},
         {"$pull": {"authors": {"born": {"$gte": 1960, "$lte": 1990}}}},
     )
 
-    # Clean up
-    col.collection.drop()
+
+def test_mongo_query(books_col):
+    # Get an unknown title
+    res = books_col.find({"title": "Unknown"})
+    res = list(res)
+    assert len(res) == 0
+
+    # Get a known title
+    res = books_col.find({"title": "A Brief History of Time"})
+    res = list(res)
+    assert len(res) == 1
+
+    # Get a known title with a query, using "i" option for case-insensitive
+    res = books_col.find({"title": {"$regex": "deep", "$options": "i"}})
+    assert res[0]["title"] == "Deep Learning"
+
+    # Search for all books between 2015 and 2024
+    res = books_col.find({"year": {"$gte": 2015, "$lte": 2024}})
+    assert {
+        "Deep Learning",
+        "Introduction to Linear Algebra 5th Edition",
+        "Introduction to Algorithms 4th Edition",
+    } <= {r["title"] for r in res}
+
+    # Find all books which at least one of their authors born between a range
+    res = books_col.find({"authors.born": {"$gte": 1980, "$lte": 1990}})
+    assert res[0]["title"] == "Deep Learning"
+    assert len(list(res)) == 1
+
+    # Find all books which at least related to one of the topics
+    res = books_col.find({"topics": {"$in": ["physics"]}})
+    res = list(res)
+    assert len(res) == 2
+
+    # Find all the books which the first name of the first author is Stephen
+    res = books_col.find({"authors.first_name": "Stephen"})
+    assert res[0]["title"] == "A Brief History of Time"
+    assert len(list(res)) == 2
+
+    # Final all the books which the last name of their authors starts with C
+    res = books_col.find({"authors.last_name": {"$regex": "^C"}})
+    res = list(res)
+    assert len(res) == 2
+    assert {"Introduction to Algorithms 4th Edition", "Deep Learning"} == {
+        r["title"] for r in res
+    }
+    assert len(res[0]["authors"]) == 3
+
+    # Use paging and sorting to get the first book sorted by year descending
+    res = books_col.find(
+        {"topics": {"$in": ["physics"]}},
+        limit=1,
+        sort=[("year", -1)],
+    )
+    assert res[0]["title"] == "The Nature of Space and Time"
+
+    # Find books using multiple ids
+    res = books_col.find({"id": {"$in": [1, 2, 3]}})
+    assert len(list(res)) == 3
+
+
+def test_mongo_query_projection(books_col):
+    # Get all the books with only title and year
+    res = books_col.find({}, {"title": 1, "year": 1})
+    res = list(res)
+    assert res[0]["title"] == "Deep Learning"
+    assert res[0]["year"] == 2016
+    assert res[0].get("authors") is None
+    assert len(res) == 5
+
+    # Get only the first_name of the authors for the books which has 1 author
+    res = books_col.find({"authors": {"$size": 1}}, {"authors.first_name": 1})
+    res = list(res)
+    assert len(res) == 2
+
+    # Get list of institutions for authors which born before 1960 and their
+    # books is published in 2022
+    res = books_col.find(
+        {"authors.born": {"$lt": 1960}, "year": 2022},
+        {"authors.institutions": 1},
+    )
+    res = list(res)
+    assert len(res) == 1
+    # Note that regardless of the filter to get only authors born before 1960,
+    # MongoDB returns all the authors for this book because MongoDB doesn't
+    # inherently filter the inner array elements based on the conditions
+    # provided. Instead, it uses those conditions to decide whether the entire
+    # `document`` (including all sub-documents in the documents field) should
+    # be returned. Hence the number of authors is 4.
+    assert len(res[0]["authors"]) == 4
+
+    # Use $filter operator and aggregation pipeline
+    pipeline = [
+        {"$match": {"year": 2022}},
+        {
+            "$project": {
+                "authors": {
+                    "$filter": {
+                        "input": "$authors",
+                        "as": "author",
+                        "cond": {"$lt": ["$$author.born", 1960]},
+                    }
+                }
+            }
+        },
+    ]
+
+    res = books_col.aggregate(pipeline)
+    res = list(res)
+    assert len(res) == 1
+    # Now, only the authors born before 1960 should be in the result.
+    assert len(res[0]["authors"]) == 3
