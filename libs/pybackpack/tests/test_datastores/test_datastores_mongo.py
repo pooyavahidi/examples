@@ -26,7 +26,7 @@ class Book(BaseModel):
 
 @pytest.fixture
 def books_dict():
-    books_json_file = Path(__file__).parent / "test_datastores_books.json"
+    books_json_file = Path(__file__).parent / "books.json"
     with open(books_json_file, "r", encoding="utf-8") as file:
         books = json.load(file)
     return books

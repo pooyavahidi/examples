@@ -1,5 +1,5 @@
 import string
-from pybackpack.cryptography import SecretGenerator
+from pybackpack.cryptography.secrets import SecretGenerator
 
 
 def test_generate_strong_pass():

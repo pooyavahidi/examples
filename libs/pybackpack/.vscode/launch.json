@@ -31,7 +31,7 @@
       "console": "integratedTerminal"
     },
     {
-      "name": "pytest: datastores",
+      "name": "pytest: Focus Test",
       "type": "python",
       "request": "launch",
       "module": "pytest",
@@ -40,7 +40,9 @@
         "-p",
         "no:warnings",
         // "--log-cli-level=INFO",
-        "tests/test_datastores_mongo.py"
+        // "-k",
+        "tests/test_osutils"
+        // "tests/test_datastores"
       ],
       "console": "integratedTerminal"
     },

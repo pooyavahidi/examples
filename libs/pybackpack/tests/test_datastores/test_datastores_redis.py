@@ -4,9 +4,9 @@ from typing import List
 
 
 from pydantic import BaseModel
-from pybackpack.datastores import RedisDataStore
+from pybackpack.datastores.redis import RedisDataStore
 
-books_json_file = Path(__file__).parent / "test_datastores_books.json"
+books_json_file = Path(__file__).parent / "books.json"
 
 
 class ChildModel(BaseModel):

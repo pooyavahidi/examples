@@ -7,7 +7,7 @@ import subprocess
 # import the pybackpack by adding it to the path.
 sys.path.append(str(pathlib.Path(__file__).parent.parent.parent))
 
-from pybackpack.cli import (
+from pybackpack.osutils.cli import (
     ParserComposite,
     CliRunner,
     cli_handler,
