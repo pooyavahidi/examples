@@ -1,1 +1,1 @@
-from pybackpack.osutils.paths import get_files
+from pybackpack.osutils.core import *

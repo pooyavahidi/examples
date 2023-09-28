@@ -5,18 +5,18 @@ from typing import List, Optional
 
 def get_files(
     dir_path: str,
-    include_patterns: Optional[List[str]] = None,
-    exclude_patterns: Optional[List[str]] = None,
+    include_names: Optional[List[str]] = None,
+    exclude_names: Optional[List[str]] = None,
     recursive: bool = True,
     ignore_errors: bool = False,
 ) -> List[Path]:
     """Returns a list of files in the dir_path directory.
 
-    args:
+    Args:
         dir_path: The directory to search for files.
-        include_patterns: A list of regular expressions to match the filenames.
+        include_names: A list of regular expressions to match the filenames.
         by default, all files are included i.e. include_patterns=[".*"].
-        exclude_patterns: A list of regular expressions to exclude the
+        exclude_names: A list of regular expressions to exclude the
             filenames.
         recursive: If True, search recursively in the dir_path directory.
         default is True.
@@ -33,8 +33,8 @@ def get_files(
         raise FileNotFoundError(f"Directory {dir_path} does not exist.")
 
     # If include_patterns is None, then include all files
-    if include_patterns is None:
-        include_patterns = [r".*"]
+    if include_names is None:
+        include_names = [r".*"]
 
     # Get files based on the value of recursive
     if recursive:
@@ -48,14 +48,14 @@ def get_files(
             continue
 
         should_include = any(
-            re.search(pattern, path.name) for pattern in include_patterns
+            re.search(pattern, path.name) for pattern in include_names
         )
         if not should_include:
             continue
 
-        if exclude_patterns:
+        if exclude_names:
             should_exclude = any(
-                re.search(pattern, path.name) for pattern in exclude_patterns
+                re.search(pattern, path.name) for pattern in exclude_names
             )
             if should_exclude:
                 continue

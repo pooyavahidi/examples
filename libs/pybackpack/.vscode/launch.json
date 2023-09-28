@@ -41,10 +41,12 @@
         "no:warnings",
         // "--log-cli-level=INFO",
         // "-k",
-        "tests/test_osutils"
+        // "tests/test_osutils"
+        "tests/test_osutils/test_shell.py"
+        // "tests/test_commands.py"
         // "tests/test_datastores"
       ],
-      "console": "integratedTerminal"
+      "console": "integratedTerminal",
     },
     {
       "name": "pytest: <test_module.py::test_method>",

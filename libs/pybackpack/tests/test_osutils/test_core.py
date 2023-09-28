@@ -1,5 +1,5 @@
 import pytest
-from pybackpack.osutils.paths import get_files
+from pybackpack.osutils.core import get_files
 
 
 # Using pytest tempdir fixture which creates a temporary directory and
@@ -48,20 +48,20 @@ def test_get_files(tmpdir):
     base_dir = setup_files_and_dirs(tmpdir).join("dir1")
 
     # Get all the yaml files
-    files = get_files(base_dir, include_patterns=[r".*\.ya?ml$"])
+    files = get_files(base_dir, include_names=[r".*\.ya?ml$"])
     assert len(files) == 4
     assert {"file3.txt", "file4.py"} not in {file.name for file in files}
 
     # Get all the files except txt and py files
-    files = get_files(base_dir, exclude_patterns=[r".*\.txt", r".*\.py"])
+    files = get_files(base_dir, exclude_names=[r".*\.txt", r".*\.py"])
     assert len(files) == 5
     assert {"file3.txt", "file4.py"} not in {file.name for file in files}
 
     # Get all the yaml files except the ones with dev in the name
     files = get_files(
         base_dir,
-        include_patterns=[r".*\.ya?ml$"],
-        exclude_patterns=[r".*dev.*"],
+        include_names=[r".*\.ya?ml$"],
+        exclude_names=[r".*dev.*"],
     )
     assert len(files) == 2
     assert {"file1.dev.yml", "file2.dev.yaml"} not in {
@@ -69,14 +69,14 @@ def test_get_files(tmpdir):
     }
 
     # Finding no files with the given patterns
-    files = get_files(base_dir, include_patterns=[r".*\.cpp"])
+    files = get_files(base_dir, include_names=[r".*\.cpp"])
     assert len(files) == 0
 
     # All *.txt files in all directories
-    files = get_files(base_dir, include_patterns=[r".*\.txt"])
+    files = get_files(base_dir, include_names=[r".*\.txt"])
     assert len(files) == 3
 
     # Find a particular file
     file_name = "file3"
-    files = get_files(base_dir, include_patterns=[rf"{file_name}\.txt"])
+    files = get_files(base_dir, include_names=[rf"{file_name}\.txt"])
     assert len(files) == 1
