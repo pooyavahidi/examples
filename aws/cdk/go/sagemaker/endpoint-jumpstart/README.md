@@ -21,9 +21,10 @@ The `EndpointJumpstartStackProps` struct captures additional properties:
 - `EndpointName`: Custom name for the SageMaker endpoint.
 
 
-The `loadJumpstartModelInfo` function fetches the model details from the public JumpStart S3 bucket, which includes details like the model's container image URI and model artifact location.
+The `loadJumpstartModelInfo` function fetches the model details from the public JumpStart S3 bucket, which includes details like the model's container image URI, model artifact location, etc. This function fall backs to the default values if Jumpstart S3 bucket is not accessible.
 
-In this example, the stack is deployed to `us-east-1` using the following parameters:
+Default values:
+- Region: `us-east-1`
 - JumpStart model ID: `huggingface-text2text-flan-t5-small`
 - JumpStart model version: `1.3.2`
 - SageMaker inference instance type: `ml.g5.2xlarge`

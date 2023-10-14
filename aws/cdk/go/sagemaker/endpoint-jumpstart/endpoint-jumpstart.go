@@ -26,8 +26,8 @@ type EndpointJumpstartStackProps struct {
 }
 
 // Uses go sdk to retrieve Jumpstart Model info form JumpStart public S3 bucket
-func loadJumpstartModelInfo(info *EndpointJumpstartStackProps, modelID, modelVersion string) error {
-	region := *info.StackProps.Env.Region
+func loadJumpstartModelInfo(props *EndpointJumpstartStackProps, modelID, modelVersion string) error {
+	region := *props.StackProps.Env.Region
 	bucketName := "jumpstart-cache-prod-" + region
 	objectKey := "community_models/" + modelID + "/specs_v" + modelVersion + ".json"
 
@@ -44,7 +44,21 @@ func loadJumpstartModelInfo(info *EndpointJumpstartStackProps, modelID, modelVer
 		Key:    &objectKey,
 	})
 	if err != nil {
-		return err
+		// If accessing to the Jumpstart S3 bucket fails, it falls back to the default values for this example.
+		props.Environment = map[string]*string{
+			"MODEL_CACHE_ROOT":               jsii.String("/opt/ml/model"),
+			"ENDPOINT_SERVER_TIMEOUT":        jsii.String("3600"),
+			"SAGEMAKER_ENV":                  jsii.String("1"),
+			"SAGEMAKER_MODEL_SERVER_TIMEOUT": jsii.String("3600"),
+			"SAGEMAKER_MODEL_SERVER_WORKERS": jsii.String("1"),
+			"SAGEMAKER_CONTAINER_LOG_LEVEL":  jsii.String("20"),
+			"SAGEMAKER_REGION":               jsii.String(region),
+			"SAGEMAKER_SUBMIT_DIRECTORY":     jsii.String("/opt/ml/model/code"),
+			"SAGEMAKER_PROGRAM":              jsii.String("inference.py"),
+		}
+		props.ImageURL = jsii.String("763104351884.dkr.ecr." + region + ".amazonaws.com/huggingface-pytorch-inference:1.13.1-transformers4.26.0-gpu-py39-cu117-ubuntu20.04")
+		props.ModelDataURL = jsii.String("s3://jumpstart-cache-prod-" + region + "/huggingface-infer/prepack/v1.1.2/infer-prepack-huggingface-text2text-flan-t5-small.tar.gz")
+		return nil
 	}
 
 	defer result.Body.Close()
@@ -57,8 +71,8 @@ func loadJumpstartModelInfo(info *EndpointJumpstartStackProps, modelID, modelVer
 	jsonData := string(data)
 
 	// Extract model info from the json data
-	info.ImageURL = jsii.String(gjson.Get(jsonData, "hosting_instance_type_variants.regional_aliases."+region+".gpu_ecr_uri_2").String())
-	info.ModelDataURL = jsii.String("s3://" + bucketName + "/" + gjson.Get(jsonData, "hosting_prepacked_artifact_key").String())
+	props.ImageURL = jsii.String(gjson.Get(jsonData, "hosting_instance_type_variants.regional_aliases."+region+".gpu_ecr_uri_2").String())
+	props.ModelDataURL = jsii.String("s3://" + bucketName + "/" + gjson.Get(jsonData, "hosting_prepacked_artifact_key").String())
 
 	environment := make(map[string]*string)
 	gjson.Get(jsonData, "inference_environment_variables").ForEach(func(key, value gjson.Result) bool {
@@ -67,7 +81,7 @@ func loadJumpstartModelInfo(info *EndpointJumpstartStackProps, modelID, modelVer
 		return true
 	})
 	environment["SAGEMAKER_REGION"] = jsii.String(region)
-	info.Environment = environment
+	props.Environment = environment
 
 	return nil
 }
