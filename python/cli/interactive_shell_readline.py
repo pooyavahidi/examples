@@ -1,6 +1,10 @@
 import readline
 from abc import ABC, abstractmethod
 
+# Note: In order to enable vi mode in MacOS (which by default uses libedit),
+# either add `bind -v` in the `.editrc` file or uncomment the following:
+#readline.parse_and_bind('bind -v')
+
 
 class bcolors:
     FAIL = "\033[91m"
@@ -25,16 +29,16 @@ class printer(command):
 
 
 def command_builder(cmd_str):
-    match cmd_str.split():
-        case ["print", *obj]:
-            return printer(obj)
+    cmd_parts = cmd_str.split(" ", 1)
+    if cmd_parts[0] == "print":
+        return printer(cmd_parts[1])
 
 
 def main():
     while True:
         cmd_str = input(">>> ")
 
-        if cmd_str == "quit":
+        if cmd_str == "exit":
             break
 
         try:
