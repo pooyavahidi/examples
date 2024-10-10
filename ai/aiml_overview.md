@@ -21,6 +21,7 @@ Supervised learning is a type of machine learning where the model is trained on 
 
 $Input(X) \rightarrow Output(Y)$
 
+
 Supervised learning is when we provide our learning algorithm with examples (labeled data), where each example includes the correct answer $Y$ to learn from.
 
 The model is trained on this labeled data to make predictions on new, unseen data. During the training process, the model optimizes itself by comparing its predictions with the correct output.
@@ -35,14 +36,14 @@ The model is trained on this labeled data to make predictions on new, unseen dat
 | Stock prices | Future price | Stock price prediction |
 
 ### Example tasks:
-- **Regression**: Predicting a continuous value (a number) such as house prices, stock prices, etc.
-- **Classification**: Predicting discrete classes or categories from a limited set of possible values, such as cat or dog, or numeric labels like 0, 1, 2, etc. (e.g., spam vs. non-spam emails, speech recognition, or cat vs. dog in an image).
+- [Regression](regression.md): Predicting a number (continuous value) such as house prices, stock prices, etc.
+- [Classification](classification.md) : Predicting discrete classes or categories from a limited set of possible values, such as cat or dog, or numeric labels like 0, 1, 2, etc. (e.g., spam vs. non-spam emails, speech recognition, or cat vs. dog in an image).
 
-> Regression is predicting a number from infinitely many possible values, while classification is predicting a label from a finite set of labels.
+> Regression models predict a number from infinitely many possible values, while classification models predict a category from a finite set of categories (or classes).
 
 ### Main supervised learning algorithms:
-- [Regression](linear_regression.md)
-- [Classification](classification.md)
+- [Regression](regression.md): Predict a number.
+- [Classification](classification.md): Predict a category.
 - [K-Nearest Neighbors (KNN)](knn.md)
 - [Decision Forests, Random Forests, and Gradient Boosted Decision Trees](decision_forests.md)
 - Neural Networks (when used with labeled data)
@@ -50,9 +51,12 @@ The model is trained on this labeled data to make predictions on new, unseen dat
 ## Unsupervised Learning
 Unsupervised learning is a type of machine learning where the model is trained on an **unlabeled** dataset. This means the model learns to make predictions based on the input data without being explicitly told what the correct output is. The model learns to identify patterns and structures in the data.
 
+Unlike the supervised learnign where the training data comes with both $input(X)$ and $output(Y)$, in unsupervised learning, the data comes with only $input(X)$. The model learns to find structures in the data without being explicitly told what to look for.
+
 ### Main unsupervised learning algorithms:
 - [Clustering](clustering.md): Grouping similar data points together, into clusters. e.g. Google News which groups similar news articles together. This happens without any supervision or labeled data. The algorithm learns to group similar data points together based on their features. Another example is customer segmentation in marketing.
-
+- **Anomaly detection:** Identifying rare items, events, or observations that raise suspicions by differing significantly from the majority of the data. e.g. fraud detection.
+- **Dimensionality reduction:** Compress data using fewer numbers.
 
 ## Semi-Supervised Learning
 This is a hybrid of supervised and unsupervised learning, where the model is trained on a small amount of labeled data and a large amount of unlabeled data. Semi-supervised learning is useful when labeling data is expensive or time-consuming, but there is a large amount of unlabeled data available.
