@@ -76,7 +76,7 @@ This is the most basic form of regression where the model tries to fit a straigh
 ### Model function
 The model function $f$ for linear regression is a linear function of the input feature $x$ (which is a function that maps from $x$ to $\hat{y}$).
 
-$$f_{w,b}(x^{(i)}) = wx^{(i)} + b \tag{1}$$
+$$f_{w,b}(x^{(i)}) = wx^{(i)} + b$$
 
 where:
 - $w$: weight (slope) of the line
