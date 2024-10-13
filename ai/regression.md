@@ -37,7 +37,8 @@ Looking at the $1^{st}$ training example:
 210 m², 3 bedrooms are the features of the first training example.
 $$x^{(1)} = [210, 3]$$
 
-The output (target) value of the first training example is $400,000
+The output (target) value of the first training example is $400K.
+
 $$y^{(1)} = 400$$
 
 Then the complete notation of $1^{st}$ training example would be:
@@ -77,7 +78,8 @@ This is the most basic form of regression where the model tries to fit a straigh
 The model function $f$ for linear regression is a linear function of the input feature $x$ (which is a function that maps from $x$ to $\hat{y}$).
 
 The model:
-$$ f_{w,b}(x) = wx + b$$
+
+$$f_{w,b}(x) = wx + b$$
 
 $w$ and $b$ are called the **parameters** of the model. Also called **weights** and **bias**.
 
@@ -92,7 +94,7 @@ where:
 
 
 
-> In simple notation, the model function $f$ can be written as $ f(x) = wx + b$
+> In simple notation, the model function $f$ can be written as $f(x) = wx + b$
 
 
 The above function is a linear function which represent a straight line with slope $w$ and y-intercept $b$. Different values of $w$ and $b$ will give different lines.
@@ -128,7 +130,8 @@ The _squared error_ is a type of loss function which is commonly used for linear
 $$Loss(\hat{y}^{(i)}, y^{(i)}) = (\hat{y}^{(i)} - y^{(i)})^2$$
 
 Knowing that $\hat{y}^{(i)} = f_{w,b}(x^{(i)})$, we can write the loss function as:
-$$ Loss(f_{w,b}(x^{(i)}),y^{(i)}) = (f_{w,b}(x^{(i)}) - y^{(i)})^2$$
+
+$$Loss(f_{w,b}(x^{(i)}),y^{(i)}) = (f_{w,b}(x^{(i)}) - y^{(i)})^2$$
 
 
 **Cost function**: A function denoted by $J(w,b)$ that measures the average loss over all training examples.
@@ -145,12 +148,15 @@ where:
 In the linear regression model, we have:
 
 **Model:**
+
 $$f_{w,b}(x) = wx + b$$
 
 **Model Parameters:**
+
 $$w, b$$
 
 **Cost Function:** (using squared error loss function)
+
 $$J(w,b) = \frac{1}{2m} \sum\limits_{i = 1}^{m} (f_{w,b}(x^{(i)}) - y^{(i)})^2$$
 
 **Goal:**
