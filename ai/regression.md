@@ -125,7 +125,9 @@ $$Error(\hat{y}^{(i)}, y^{(i)}) = \hat{y}^{(i)} - y^{(i)}$$
 
 **Loss function**: A function that measures how well the model's prediction $\hat{y}$ for a single training example is compared to the actual target value $y$.
 
-The _squared error_ is a type of loss function which is commonly used for linear regression. The squared error is the square of the difference between the predicted value and the actual value. There are other types of loss functions used in different types of models. The squared error loss function is a common choice for linear regression.
+The _squared error_  and _absolute error_ are common [loss functions](https://developers.google.com/machine-learning/crash-course/linear-regression/loss#types_of_loss) used in regression models. Here, we will use the squared error loss function.
+
+Squared Error Loss function:
 
 $$Loss(\hat{y}^{(i)}, y^{(i)}) = (\hat{y}^{(i)} - y^{(i)})^2$$
 
@@ -134,13 +136,14 @@ Knowing that $\hat{y}^{(i)} = f_{w,b}(x^{(i)})$, we can write the loss function 
 $$Loss(f_{w,b}(x^{(i)}),y^{(i)}) = (f_{w,b}(x^{(i)}) - y^{(i)})^2$$
 
 
-**Cost function**: A function denoted by $J(w,b)$ that measures the average loss over all training examples.
+**Cost function**: A function denoted by $J(w,b)$ that measures the average loss over all training examples. This function is also called **Mean Squared Error (MSE)**.
 
 $$J(w,b) = \frac{1}{2m} \sum\limits_{i = 1}^{m} (f_{w,b}(x^{(i)}) - y^{(i)})^2$$
 
 where:
 - $m$: total number of training examples
 - $f_{w,b}(x^{(i)})$: predicted value for the $i^{th}$ training example
+
 
 > Note: The terms **Loss** and **Cost** are often used interchangeably in machine learning. So, in many cases, they refer to the same thing.
 
@@ -196,7 +199,29 @@ This bowl shape of the cost function $J(w,b)$ is called a **convex function**.
 ### How to Minimize the Error Efficiently?
 Now we need an efficient way to find the best values of $w$ and $b$ that minimize the cost function $J$ in a systematic way. [Gradient Descent](gradient_descent.md) is one of the most important algorithms in machine learning for doing that. It is used not only in linear regression but also in larger and more complex models.
 
-## Gradient Descent
-Gradient Descent is an optimization algorithm used to minimize the cost function $J(w,b)$ by iteratively moving towards the minimum of the cost function.
+## Gradient Descent for Linear Regression
+Gradient Descent is an optimization algorithm used to minimize the cost function $J(w,b)$ by iteratively moving towards the minimum of the cost function.  For more details see [Gradient Descent](gradient_descent.md).
 
-> **Training** the model means to find the best values of $w$ and $b$ that minimize the cost function $J(w,b)$, which is done using the Gradient Descent algorithm.
+Gradient Descent Algorithm:
+
+$\text{repeat until convergence:\{} \\
+\quad w = w - \alpha \frac{\partial J(w,b)}{\partial w} \\
+\quad b = b - \alpha \frac{\partial J(w,b)}{\partial b} \\
+\text{\}}$
+
+Linear Regression Model:
+$$f_{w,b}(x) = wx + b$$
+
+MSE Cost Function:
+$$J(w,b) = \frac{1}{2m} \sum\limits_{i = 1}^{m} (f_{w,b}(x^{(i)}) - y^{(i)})^2$$
+
+
+Let's calculate the partial derivatives of the cost function $J(w,b)$ with respect to the parameters $w$ and $b$.
+
+$w= w - \alpha \frac{\partial J(w,b)}{\partial w}$
+
+$$\frac{\partial J(w,b)}{\partial w} = \frac{\partial}{\partial w} \left( \frac{1}{2m} \sum\limits_{i = 1}^{m} (f_{w,b}(x^{(i)}) - y^{(i)})^2 \right)$$
+
+We know $f_{w,b}(x) = wx + b$, so we can substitute $f_{w,b}(x)$ in the above equation:
+
+$$\frac{\partial J(w,b)}{\partial w} = \frac{\partial}{\partial w} \left( \frac{1}{2m} \sum\limits_{i = 1}^{m} (wx^{(i)} + b - y^{(i)})^2 \right)$$
