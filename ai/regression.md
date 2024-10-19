@@ -225,3 +225,7 @@ $$\frac{\partial J(w,b)}{\partial w} = \frac{\partial}{\partial w} \left( \frac{
 We know $f_{w,b}(x) = wx + b$, so we can substitute $f_{w,b}(x)$ in the above equation:
 
 $$\frac{\partial J(w,b)}{\partial w} = \frac{\partial}{\partial w} \left( \frac{1}{2m} \sum\limits_{i = 1}^{m} (wx^{(i)} + b - y^{(i)})^2 \right)$$
+
+Using the [chain rule](../math/derivatives.md#chain-rule) of derivatives, we can calculate the derivative of the above equation:
+
+$$\frac{\partial J(w,b)}{\partial w} = \frac{1}{m} \sum\limits_{i = 1}^{m} (wx^{(i)} + b - y^{(i)})x^{(i)}$$
