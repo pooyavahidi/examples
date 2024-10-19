@@ -337,7 +337,7 @@ $$
 **Example - Mean Squared Error (MSE) Cost Function:**
 
 MSE defined as:
-$$J(w) = \frac{1}{2m} \sum_{i=1}^{m} (f_{w}(x^{(i)}) - y^{(i)})^2$$
+$$J(w,b) = \frac{1}{2m} \sum_{i=1}^{m} (f_{w}(x^{(i)}) - y^{(i)})^2$$
 
 
 Where:
@@ -347,10 +347,11 @@ Where:
 - $m$ is the total number of training examples.
 
 So, we can write it as:
-$$J(w) = \frac{1}{2m} \sum_{i=1}^{m} (wx^{(i)} + b - y^{(i)})^2$$
+$$J(w,b) = \frac{1}{2m} \sum_{i=1}^{m} (wx^{(i)} + b - y^{(i)})^2$$
 
 Let's define the inner function:
 $$u = g(w) = wx^{(i)} + b - y^{(i)}$$
+> Note: We use $u$ instead of $u^{(i)}$ for simplicity.
 
 Then, the cost function $J(w)$ can be written as a composition of functions:
 
