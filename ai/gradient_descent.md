@@ -104,6 +104,7 @@ Thus:
 $$\text{slope exactly at any given point} = \frac{\partial j(w)}{\partial w}$$
 "slope at any given point" means the rate of change of the function $J(w) with respect to $w$ at that point.
 
+Further reading on [Slope and Tangent Line](../math/derivatives.md#slope-and-tangent-line).
 
 ### 4. Update the Parameters:
 
