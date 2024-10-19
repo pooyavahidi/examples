@@ -192,22 +192,19 @@ Previously, we assumed $b=0$ for simplicity, the plot of cost function $J(w)$ is
 
 This is very similar to the 2D plot of $J(w)$, but now we have both $w$ and $b$ as parameters which create a 3D plot of $w$, $b$, and $J$.
 
+MSE (Mean Squared Error) cost function is a [convex function](https://developers.google.com/machine-learning/glossary#convex-function) (bowl shape).
+
 As we can see, the minimum of the cost function $J(w,b)$ is at the very bottom of the bowl (where the cost $J$ is the lowest). This is called the **global minimum** of the cost function which is indicated by dark blue color.
 
-This bowl shape of the cost function $J(w,b)$ is called a **convex function**.
 
-### How to Minimize the Error Efficiently?
+**How to Minimize the Error (Cost function) Efficiently?**
+
 Now we need an efficient way to find the best values of $w$ and $b$ that minimize the cost function $J$ in a systematic way. [Gradient Descent](gradient_descent.md) is one of the most important algorithms in machine learning for doing that. It is used not only in linear regression but also in larger and more complex models.
 
 ## Gradient Descent for Linear Regression
 Gradient Descent is an optimization algorithm used to minimize the cost function $J(w,b)$ by iteratively moving towards the minimum of the cost function.  For more details see [Gradient Descent](gradient_descent.md).
 
-Gradient Descent Algorithm:
-
-$\text{repeat until convergence:\{} \\
-\quad w = w - \alpha \frac{\partial J(w,b)}{\partial w} \\
-\quad b = b - \alpha \frac{\partial J(w,b)}{\partial b} \\
-\text{\}}$
+So, we have the followings:
 
 Linear Regression Model:
 $$f_{w,b}(x) = wx + b$$
@@ -216,9 +213,20 @@ MSE Cost Function:
 $$J(w,b) = \frac{1}{2m} \sum\limits_{i = 1}^{m} (f_{w,b}(x^{(i)}) - y^{(i)})^2$$
 
 
-Let's calculate the partial derivatives of the cost function $J(w,b)$ with respect to the parameters $w$ and $b$.
+Gradient Descent Algorithm:
 
-$w= w - \alpha \frac{\partial J(w,b)}{\partial w}$
+$\text{repeat until convergence:\{} \\
+\quad w = w - \alpha \frac{\partial J(w,b)}{\partial w} \\
+\quad b = b - \alpha \frac{\partial J(w,b)}{\partial b} \\
+\text{\}}$
+
+
+**Implementing Gradient Descent for Linear Regression:**
+
+In order to implement the Gradient Descent algorithm, we need to calculate the partial derivatives of the cost function $J(w,b)$ with respect to the parameters $w$ and $b$.
+
+Let's start with the first derivative term $\frac{\partial J(w,b)}{\partial w}$.
+
 
 $$\frac{\partial J(w,b)}{\partial w} = \frac{\partial}{\partial w} \left( \frac{1}{2m} \sum\limits_{i = 1}^{m} (f_{w,b}(x^{(i)}) - y^{(i)})^2 \right)$$
 
@@ -229,3 +237,15 @@ $$\frac{\partial J(w,b)}{\partial w} = \frac{\partial}{\partial w} \left( \frac{
 Using the [chain rule](../math/derivatives.md#chain-rule) of derivatives, we can calculate the derivative of the above equation:
 
 $$\frac{\partial J(w,b)}{\partial w} = \frac{1}{m} \sum\limits_{i = 1}^{m} (wx^{(i)} + b - y^{(i)})x^{(i)}$$
+
+
+Similarly, we can calculate the partial derivative of the cost function $J(w,b)$ with respect to the parameter $b$:
+
+$$\frac{\partial J(w,b)}{\partial b} = \frac{1}{m} \sum\limits_{i = 1}^{m} (wx^{(i)} + b - y^{(i)})$$
+
+So, the Gradient Descent algorithm for linear regression can be written as:
+
+$\text{repeat until convergence:\{} \\
+\quad w = w - \alpha \frac{1}{m} \sum\limits_{i = 1}^{m} (wx^{(i)} + b - y^{(i)})x^{(i)} \\
+\quad b = b - \alpha \frac{1}{m} \sum\limits_{i = 1}^{m} (wx^{(i)} + b - y^{(i)}) \\
+\text{\}}$
