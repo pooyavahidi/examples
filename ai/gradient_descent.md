@@ -8,18 +8,36 @@ The Gradient Descent algorithm start with an initial guess for the parameters, t
 
 
 
-In linear regression with squared error loss, the cost function $J(w,b)$ is a convex function, which means it has a single global minimum. However, a cost function could have a complex surface (usually in training neural networks) with more than one global minimum. These are called **local minima**. The lowest point in the entire function is called the **global minimum**.
+## Loss Surface
+Loss Surface is a graphical representation of a model's loss function in relation to its parameters (e.g., weights and biases). It shows how the loss changes as parameters vary, helping visualize the optimization process.
 
-![complex_loss_surface](images/gd_complex_loss_surface.png)
+In more technical terms, the loss surface is the plot of the cost function $J(w,b)$ against the model's parameters $w_0, w_1, ...$ and $b$.
 
-The cost function $J$ shown above, has a complex surface with multiple local minimas, and one global minimum.
+For example, in a model such as linear regression and cost function such as Mean Squared Error, the loss surface is a parabolic curve in three dimensions. This model has a single weight $w$ and bias $b$, so the loss surface is a 3D plot which x-axis is the weight $w$, y-axis is the bias $b$, and z-axis is the loss $J(w,b)$.
+
+For example, using the Mean Squared Error loss function, which defines:
+
+$J(w,b)=\frac{1}{2m} \sum\limits_{i = 0}^{m-1} (wx^{(i)} + b - y^{(i)})^2$
+
+
+![](images/cost_function_3d_convex.png)
+
+[**Convex**](https://developers.google.com/machine-learning/glossary#convex-function) surfaces such as _square error loss_ has a single global minimum, making optimization easier. **Non-convex** surfaces have multiple local minima, making optimization more challenging.
+
+This curve represents the relationship between the weight value and the loss value. The lowest point on this curve corresponds to the weight value that minimizes the loss function, which is the goal of the training process. This point is where the gradient (derivative of the loss function with respect to the parameters) is near or at zero, indicating that the model has found the minimum of the loss function for that weight.
+
+However, in more complex models, such as neural networks, the cost function could have a complex surface with more than one global minimum. These are called **local minima**. The lowest point in the entire function is called the **global minimum**. These surfaces are called **non-convex**. These surfaces often feature local minima, saddle points, and a global minimum, which optimization algorithms aim to find.
+
+The cost function $J$ shown below, has a complex surface with multiple local minimas, and one global minimum.
+
+![complex_loss_surface](images/complex_loss_surface.png)
+
+> Note, in more complex model the loss surface may not be a simple parabolic curve, but the concept of finding the minimum of the loss function still applies.
+
 
 **Intuitive Explanation of Gradient Descent:**
 Imagine this surface as a terrain in a hilly area where you want to reach the lowest valley (the global minimum) as quickly as possible. You start at a random point (initial values of $w$ and $b$) and want to find the path to the lowest valley. The gradient descent algorithm helps you find the path to this lowest valley by finding the **steepest descent** at each point, and moving in that direction step by step (with a predefined **step size**).
 
-**loss surface** is a graphical representation of a model's loss function in relation to its parameters (e.g., weights and biases). It shows how the loss changes as parameters vary, helping visualize the optimization process. The surface often features local minima, saddle points, and a global minimum, which optimization algorithms aim to find.
-
-[**Convex**](https://developers.google.com/machine-learning/glossary#convex-function) surfaces such as _square error loss_ has a single global minimum, making optimization easier. **Non-convex** surfaces have multiple local minima, making optimization more challenging.
 
 ## Gradient Descent Algorithm
 Gradient Descent steps with more details:
@@ -153,6 +171,10 @@ So, when the slope is negative, the new value of $w$ is greater than the current
 
 In both cases, we want to find the direction which moves us towards the minimum of the cost function, which means we move in the **opposite** direction of the slope.
 
+
+For further details, see this [Refresher on Positive and Negative slops](https://www.khanacademy.org/math/algebra/x2f8bb11595b61c86:linear-equations-graphs/x2f8bb11595b61c86:slope/v/positive-and-negative-slope)
+
+
 #### Learning Rate
 [**learning rate**](https://developers.google.com/machine-learning/crash-course/linear-regression/hyperparameters#learning_rate) and **step size** are used interchangeably in machine learning. It determines how much we move in the direction of the gradient at each iteration.
 
@@ -192,8 +214,9 @@ Again here as we can see from the image, the overshooting gets larger as we go u
 
 We repeat from step 2 (compute the cost function) to step 4 (update the parameters) iteratively, until we reach a point (a local or global minimum) where the cost function doesn't decrease further. In other words, parameters $w$ and $b$ don't change much with each iteration, and the cost function doesn't decrease significantly. This is called [**convergence**](https://developers.google.com/machine-learning/glossary#convergence).
 
-> Note that it's mentioned "until we reach a local or global minimum". So, there is always a possibility that the algorithm may get stuck at a local minimum instead of the global minimum. There are ways to avoid this which we will discuss later.
-
+> Gradient descent may not always reach the global minimum, especially when the loss surface is non-convex with multiple local minima or saddle points. In such cases, the algorithm might get stuck in a local minimum. However, advanced techniques like momentum-based methods or adaptive learning rates can help improve convergence and avoid these pitfalls. We'll explore these strategies later.
+>
+> Thus, convergence does not guarantee that the algorithm found the global minimum; it only means the algorithm has reached a point where the gradient is close to zero (or sufficiently small). Advanced optimization techniques help mitigate these risks by increasing the chances of escaping such points.
 
 ### Gradient Descent In Summary:
 We can simply summarize all the steps of the Gradient Descent algorithm as follows:
@@ -206,3 +229,26 @@ $\text{repeat until convergence:\{} \\
 
 
 > This whole process of running the Gradient Descent algorithm, is also called **training** the model. The goal of training is to find the best values of the parameters (weights and biases) that minimize the cost function $J$.
+
+## Types of Gradient Descent
+As we discussed, Gradient descent minimizes a given objective function by iteratively adjusting the model's parameters based on the gradients (partial derivatives) of the cost function with respect to those parameters. The popular variations of gradient descent include:
+
+- **Batch Gradient Descent (BGD):** Uses the entire dataset for each update, ensuring smooth convergence but with high computational cost.
+- **Stochastic Gradient Descent (SGD):** Updates parameters after each individual example. This makes it faster and more capable of escaping local minima but introduces more noise in the updates.
+
+- **Mini-batch Gradient Descent:** A compromise between Batch Gradient Descent and SGD, using small batches instead of the full dataset or single examples. It balances efficiency with the noise needed to escape local minima and is often referred to as SGD in practice.
+
+> In the context of optimization and training dynamics, when people refer to SGD (especially in deep learning), they are often talking about mini-batch gradient descent. The choice of batch size can significantly affect the training process, influencing how effectively the model can escape local minima, the convergence speed, and the overall computational efficiency.
+
+### Batch Gradient Descent (BGD)
+
+BGD computes the gradient of the objective function using the *entire dataset* at each step. It updates the model's parameters based on the average gradient calculated from all data points. This method provides a more accurate estimate of the true gradient, which leads to a smoother convergence. However, it can be computationally expensive for large datasets since it requires processing all data points before updating the parameters.
+
+### Stochastic Gradient Descent (SGD)
+Traditionally, SGD refers to the process where the batch size is set to 1. That means the model parameters are updated after computing the gradient of the loss with respect to each individual training example. This approach is highly stochastic, leading to very noisy updates, but it can help in escaping local minima and generally provides a strong regularization effect.
+
+### Mini-batch Gradient Descent
+This is a more commonly used variation of SGD in practice. Here, the batch size is greater than 1 but less than the total number of training examples. The use of mini-batches allows for a balance between computational efficiency (leveraging vectorized operations over batches) and the stochastic nature of SGD (providing a regularization effect and helping escape local minima). This approach is often referred to simply as SGD in the machine learning literature and practice, even though it technically involves mini-batches.
+
+## Resources:
+- [Good read on Gradient Decent by Google](https://developers.google.com/machine-learning/crash-course/reducing-loss/gradient-descent)
