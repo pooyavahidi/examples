@@ -44,10 +44,11 @@ Gradient Descent steps with more details:
 
 1. **Initialize Parameters:** Start with an initial guess for the parameters $w$ and $b$.
 2. **Compute the Cost Function:** Calculate the cost function $J(w,b)$ with the new values of $w$ and $b$. Also called the **forward pass**.
-3. **Compute the Gradient:** Calculate the derivative of the cost function $J(w,b)$ at the current point with respect to the parameters $w$ and $b$. Also called the **backward pass** or **backpropagation**.
+3. **Compute the Gradient:** Calculate the partial derivative of the cost function $J(w,b)$ with respect to the parameters $w$ and $b$. Also called the **backward pass** or [**backpropagation**](https://developers.google.com/machine-learning/glossary#backpropagation).
 4. **Update the Parameters:** Update the parameters $w$ and $b$ in the opposite direction of the gradient (to descent down the hill) by a small step size $\alpha$.
-5. **Repeat until Convergence:** Repeat from step 2, until we reach a point where parameters $w$ and $b$ don't change much with each iteration, and the cost function doesn't decrease significantly. This is called **convergence**.
+5. **Repeat until Convergence:** Repeat from step 2, for multiple [Iterations](https://developers.google.com/machine-learning/glossary#iteration) until we reach a point where parameters $w$ and $b$ don't change much with each iteration, and the cost function doesn't decrease significantly. This is called **convergence**.
 
+> An **iteration** is a complete cycle of updating the model parameters (weights and biases) based on the gradient of the cost function.
 
 Steps 1 and 2 are self-explanatory and have been discussed previously. So, we will focus on steps 3 onwards.
 
@@ -212,24 +213,31 @@ Again here as we can see from the image, the overshooting gets larger as we go u
 
 ### 5. Repeat until Convergence:
 
-We repeat from step 2 (compute the cost function) to step 4 (update the parameters) iteratively, until we reach a point (a local or global minimum) where the cost function doesn't decrease further. In other words, parameters $w$ and $b$ don't change much with each iteration, and the cost function doesn't decrease significantly. This is called [**convergence**](https://developers.google.com/machine-learning/glossary#convergence).
+We repeat steps of backward pass, forward pass and updating the parameters (steps 2 to step 4) for number of iterations, until we reach a point (a local or global minimum) where the cost function doesn't decrease further. In other words, parameters $w$ and $b$ don't change much with each iteration, and the cost function doesn't decrease significantly. This is called [**convergence**](https://developers.google.com/machine-learning/glossary#convergence).
 
 > Gradient descent may not always reach the global minimum, especially when the loss surface is non-convex with multiple local minima or saddle points. In such cases, the algorithm might get stuck in a local minimum. However, advanced techniques like momentum-based methods or adaptive learning rates can help improve convergence and avoid these pitfalls. We'll explore these strategies later.
 >
 > Thus, convergence does not guarantee that the algorithm found the global minimum; it only means the algorithm has reached a point where the gradient is close to zero (or sufficiently small). Advanced optimization techniques help mitigate these risks by increasing the chances of escaping such points.
 
-### Gradient Descent In Summary:
+
+### Gradient Descent Summary:
 We can simply summarize all the steps of the Gradient Descent algorithm as follows:
 
-$\text{repeat until convergence:\{} \\
-\quad w = w - \alpha \frac{\partial J(w,b)}{\partial w} \\
-\quad b = b - \alpha \frac{\partial J(w,b)}{\partial b} \\
-\text{\}}$
-
+$\text{repeat until convergence:}$<br>
+$\quad w = w - \alpha \frac{\partial J(w,b)}{\partial w}$<br>
+$\quad b = b - \alpha \frac{\partial J(w,b)}{\partial b}$
 
 
 > This whole process of running the Gradient Descent algorithm, is also called **training** the model. The goal of training is to find the best values of the parameters (weights and biases) that minimize the cost function $J$.
 
+We can simply state the training (Gradient Descent) process as:
+```
+Many Iterations of {
+    1. Forward Pass: Compute the cost
+    2. Backward Pass (Backpropagation): Compute the gradient
+    3. Update the parameters to reduce the cost.
+}
+```
 ## Types of Gradient Descent
 As we discussed, Gradient descent minimizes a given objective function by iteratively adjusting the model's parameters based on the gradients (partial derivatives) of the cost function with respect to those parameters. The popular variations of gradient descent include:
 
