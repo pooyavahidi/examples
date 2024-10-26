@@ -205,20 +205,11 @@ Now we need an efficient way to find the best values of $w$ and $b$ that minimiz
 Gradient Descent is an optimization algorithm used to minimize the cost function $J(w,b)$ by iteratively moving towards the minimum of the cost function.  For more details see [Gradient Descent](gradient_descent.md).
 
 So, we have the followings:
-
-Linear Regression Model:
-$$f_{w,b}(x) = wx + b$$
-
-MSE Cost Function:
-$$J(w,b) = \frac{1}{2m} \sum\limits_{i = 1}^{m} (f_{w,b}(x^{(i)}) - y^{(i)})^2$$
-
-
-Gradient Descent Algorithm:
-
-$\text{repeat until convergence:\{} \\
-\quad w = w - \alpha \frac{\partial J(w,b)}{\partial w} \\
-\quad b = b - \alpha \frac{\partial J(w,b)}{\partial b} \\
-\text{\}}$
+| Description | Notation |
+| --- | --- |
+| Model | $f_{w,b}(x) = wx + b$ |
+| MSE Cost Function | $J(w,b) = \frac{1}{2m} \sum\limits_{i = 1}^{m} (f_{w,b}(x^{(i)}) - y^{(i)})^2$ |
+| Gradient Descent Algorithm | $\text{repeat until convergence:}$<br> $\quad w = w - \alpha \frac{\partial J(w,b)}{\partial w}$<br> $\quad b = b - \alpha \frac{\partial J(w,b)}{\partial b}$
 
 
 **Implementing Gradient Descent for Linear Regression:**
@@ -245,7 +236,6 @@ $$\frac{\partial J(w,b)}{\partial b} = \frac{1}{m} \sum\limits_{i = 1}^{m} (wx^{
 
 So, the Gradient Descent algorithm for linear regression can be written as:
 
-$\text{repeat until convergence:\{} \\
-\quad w = w - \alpha \frac{1}{m} \sum\limits_{i = 1}^{m} (wx^{(i)} + b - y^{(i)})x^{(i)} \\
-\quad b = b - \alpha \frac{1}{m} \sum\limits_{i = 1}^{m} (wx^{(i)} + b - y^{(i)}) \\
-\text{\}}$
+$\text{repeat until convergence:}$<br>
+$\quad w = w - \alpha \frac{1}{m} \sum\limits_{i = 1}^{m} (f_{w,b}(x^{(i)}) - y^{(i)})x^{(i)}$<br>
+$\quad b = b - \alpha \frac{1}{m} \sum\limits_{i = 1}^{m} (f_{w,b}(x^{(i)}) - y^{(i)})$
