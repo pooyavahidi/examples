@@ -14,7 +14,7 @@ $Y$: **output** or **target** variable
 $m$: Total number of training examples in the training set.
 
 $n$: total number of features. e.g. in house price prediction, $n$ could be the number of features like size, location, number of bedrooms, etc.
-> If $n=1$, it's called **univariate regression** or regression with one variable. If $n>1$, it's called **multivariate regression**.
+> If $n=1$, it's called **univariate regression** or regression with one variable. If $n>1$, it's called **multivariate regression** or **multiple linear regression**.
 
 $(x, y)$: Single training example
 
@@ -37,13 +37,27 @@ Looking at the $1^{st}$ training example:
 210 m², 3 bedrooms are the features of the first training example.
 $$x^{(1)} = [210, 3]$$
 
+As you can see, $x^{(1)}$ is not a number, it's list of numbers, that is a vector which we represent $\vec{\mathbf{x}}^{(1)}$, which how we represent [vectors](glossary.md#scalar-vector-matrix-tensor).
+
+We use subscript $j$ to refer to a particular feature (e.g. size or number of bedrooms) of a particular training example.
+$x^{(i)}_j$ denotes the $j^{th}$ feature of the $i^{th}$ training example.
+
+For example, the second feature of the first training example is 3.
+
+$$x^{(1)}_2 = 3$$
+
 The output (target) value of the first training example is $400K.
 
 $$y^{(1)} = 400$$
 
 Then the complete notation of $1^{st}$ training example would be:
 
-$(x^{(1)}, y^{(1)}) = ([210, 3], 400)$
+$$(\vec{\mathbf{x}}^{(1)}, y^{(1)}) = ([210, 3], 400)$$
+
+which:
+- $x_1^{(1)} = 210$
+- $x_2^{(1)} = 3$
+
 
 ## How Regression Works
 
@@ -68,47 +82,57 @@ For example, in the house price prediction example, the model $f$ would be a fun
 $$f: [size, bedrooms] \rightarrow price$$
 
 
-## Linear Regression - Univariate Regression
-Linear Regression with **one** variable (univariate regression) is a simplest form of regression model that assumes a linear relationship between the input feature and the target value.
-
-This is the most basic form of regression where the model tries to fit a straight line that best represents the relationship between the input feature and the target value.
-
-
-### Model function
+## Linear Regression
 The model function $f$ for linear regression is a linear function of the input feature $x$ (which is a function that maps from $x$ to $\hat{y}$).
 
-The model:
+**The Model:**
 
-$$f_{w,b}(x) = wx + b$$
-
-$w$ and $b$ are called the **parameters** of the model. Also called **weights** and **bias**.
-
-We can also write the model with the following notation:
-
-$$f_{w,b}(x^{(i)}) = wx^{(i)} + b$$
+$$f_{w,b}(x) = w_{1}x_{1} + w_{2}x_{2} + ... + w_{n}x_{n} + b$$
 
 where:
-- $w$: weight (slope) of the line
-- $b$: bias (y-intercept) of the line
-- $x^{(i)}$: input feature of the $i^{th}$ training example
+- $n$: total number of features
+
+$w_{j}$ and $b$ are called the **parameters** of the model. Also called **weights** and **bias**.
+
+When we have $n$ training examples, we can write the model function for the $i^{th}$ training example as:
 
 
+$$f_{w,b}(x^{(i)}) = w_{1}x_{1}^{(i)} + w_{2}x_{2}^{(i)} + ... + w_{n}x_{n}^{(i)} + b$$
 
-> In simple notation, the model function $f$ can be written as $f(x) = wx + b$
+Now let's write the model in a vectorized form, which is the _dot product_ of two vectors of input features $\vec{\mathbf{x}}$ and weights $\vec{\mathbf{w}}$:
+
+$$f_{\vec{\mathbf{w}},b}(\vec{\mathbf{x}}^{(i)}) = \vec{\mathbf{w}} \cdot \vec{\mathbf{x}}^{(i)} + b$$
+
+where:
+- $\vec{\mathbf{x}}^{(i)}$ is a _row vector_ of input features of $i^{th}$ training example, which is $\vec{\mathbf{x}}^{(i)} = [x_{1}^{(i)}, x_{2}^{(i)}, ..., x_{n}^{(i)}]$
+- $\vec{\mathbf{w}}$ is a _row vector_ of weights, which is $\vec{\mathbf{w}} = [w_{1}, w_{2}, ..., w_{n}]$
+- $b$ is a scalar value (bias)
 
 
-The above function is a linear function which represent a straight line with slope $w$ and y-intercept $b$. Different values of $w$ and $b$ will give different lines.
+As described, the model output $\hat{y}$ is the predicted value of the target variable $y$. So, for the $i^{th}$ training example of a model with $n$ features, the predicted value $\hat{y}^{(i)}$ would be:
 
-As described, the model output $\hat{y}$ is the predicted value of the target variable $y$. So, for the $i^{th}$ training example, the predicted value $\hat{y}^{(i)}$ would be:
+$$\hat{y}^{(i)} = f_{\vec{\mathbf{w}},b}(\vec{\mathbf{x}}^{(i)}) = \vec{\mathbf{w}} \cdot \vec{\mathbf{x}}^{(i)} + b$$
 
-$$f_{w,b}(x^{(i)})= \hat{y}^{(i)}$$
+
+**Multiple vs Univariate Linear Regression**:
+
+When we have multiple features in linear regression, we call it **multiple linear regression**.
+
+In special case when we have only one feature ($n=1$), it's called **univariate linear regression**, which the model for that case would be:
+$$f_{w,b}(x) = wx + b$$
+
+This is the simplest form of regression model where the model tries to fit a straight line that best represents the relationship between one input feature and the target value. The above function is a linear function which represent a straight line with slope $w$ and y-intercept $b$. Different values of $w$ and $b$ will give different lines.
+
+
 
 
 ## Cost Function
-So we have our model $f_{w,b}(x)$ defined. But, how do we know which values of $w$ and $b$ are the best? We need a way to measure how well the model is performing. In other words, how far or close the predicted value $\hat{y}$ is to the actual target value $y$(labels).
+We have defined our model as $f_{\vec{\mathbf{w}},b}(\vec{\mathbf{x}}^{(i)})$. But, how do we know which values of $\vec{\mathbf{w}}$ and $b$ are the best? We need a way to measure how well the model is performing. In other words, how far or close the predicted value $\hat{y}$ is to the actual target value $y$ (labels).
 
 
-The goal is to find $w$ and $b$ which $\hat{y}$ is as close as possible to the actual target value $y$ for all training examples.
+So, the goal here is to find the best values for $\vec{\mathbf{w}}$ and $b$ that minimize the difference between the predicted value $\hat{y}$ and the actual target value $y$ for all training examples.
+
+For simplicity, we use a univariate linear regression model $f_{w,b}(x) = wx + b$ where we have only one feature $x$. We use this model to explain the concept of cost function and how to minimize it.
 
 
 ![cost_function](images/cost_function1.png)
