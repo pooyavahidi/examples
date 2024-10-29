@@ -48,7 +48,7 @@ Gradient Descent steps with more details:
 4. **Update the Parameters:** Update the parameters $w$ and $b$ in the opposite direction of the gradient (to descent down the hill) by a small step size $\alpha$.
 5. **Repeat until Convergence:** Repeat from step 2, for multiple [Iterations](https://developers.google.com/machine-learning/glossary#iteration) until we reach a point where parameters $w$ and $b$ don't change much with each iteration, and the cost function doesn't decrease significantly. This is called **convergence**.
 
-> An **iteration** is a complete cycle of updating the model parameters (weights and biases) based on the gradient of the cost function.
+> An **iteration** is a complete cycle of updating the model parameters (weights and biases) based on the gradient of the cost function (step 2 to step 4).
 
 Steps 1 and 2 are self-explanatory and have been discussed previously. So, we will focus on steps 3 onwards.
 
@@ -238,6 +238,16 @@ Many Iterations of {
     3. Update the parameters to reduce the cost.
 }
 ```
+
+**Plot of Cost vs Iterations**
+Plotting the cost function against the number of iterations can help visualize the training process. The cost should decrease with each iteration, indicating that the model is learning and moving towards the minimum of the cost function (convergence).
+
+In a convex surface, the cost function should decrease smoothly until it reaches the global minimum. In a non-convex surface, the cost function may have fluctuations due to local minima, but it should generally decrease over time.
+
+The following plot is an example of the cost function decreasing with each iteration until it converges. Also different colors show the path of cost function with different learning rates.
+
+![](images/cost_vs_iterations.png)
+
 ## Types of Gradient Descent
 As we discussed, Gradient descent minimizes a given objective function by iteratively adjusting the model's parameters based on the gradients (partial derivatives) of the cost function with respect to those parameters. The popular variations of gradient descent include:
 
