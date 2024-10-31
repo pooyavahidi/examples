@@ -35,6 +35,12 @@ The model is trained on this labeled data to make predictions on new, unseen dat
 | Audio | Transcription | Speech recognition |
 | Stock prices | Future price | Stock price prediction |
 
+
+A supervised learning algorithm typically consists of three key components:
+- **Model (hypothesis function)**: A function that maps the input features to the predicted target value.
+- **Cost Function**: A function that measures how well the model is performing by comparing the predicted versus actual target values.
+- **Optimization Algorithm**: A method to minimize the cost function (the error between the predicted and actual target values) by adjusting the model parameters.
+
 ### Example tasks:
 - [Regression](regression.md): Predicting a number (continuous value) such as house prices, stock prices, etc.
 - [Classification](classification.md) : Predicting discrete classes or categories from a limited set of possible values, such as cat or dog, or numeric labels like 0, 1, 2, etc. (e.g., spam vs. non-spam emails, speech recognition, or cat vs. dog in an image).
