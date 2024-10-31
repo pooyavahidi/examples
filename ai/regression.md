@@ -37,7 +37,9 @@ Looking at the $1^{st}$ training example:
 210 m², 3 bedrooms are the features of the first training example.
 $$x^{(1)} = [210, 3]$$
 
-As you can see, $x^{(1)}$ is not a number, it's list of numbers, that is a vector which we represent $\vec{\mathbf{x}}^{(1)}$, which how we represent [vectors](glossary.md#scalar-vector-matrix-tensor).
+As you can see, $x^{(1)}$ is not a number, it's list of numbers, that is a [vector](glossary.md#scalar-vector-matrix-tensor) which we represent as:
+
+$$\vec{\mathbf{x}}^{(1)}$$
 
 We use subscript $j$ to refer to a particular feature (e.g. size or number of bedrooms) of a particular training example.
 $x^{(i)}_j$ denotes the $j^{th}$ feature of the $i^{th}$ training example.
@@ -50,6 +52,8 @@ The output (target) value of the first training example is $400K.
 
 $$y^{(1)} = 400$$
 
+> The target value $y$ is a scalar value, so we don't need to use vector notation for it.
+
 Then the complete notation of $1^{st}$ training example would be:
 
 $$(\vec{\mathbf{x}}^{(1)}, y^{(1)}) = ([210, 3], 400)$$
@@ -61,26 +65,37 @@ which:
 
 ## How Regression Works
 
-The traning set (including both features and target values) will be given to the supervised learning algorithm. Then algorithm produce a model (function $f$) that maps the input features to the target value.
+The traning set is a dataset that contains pairs of input features and target values. This dataset is given to the regression model to learn the relationship between the input features and the target value (by adjusting the model parameters to minimize the difference between the predicted value and the actual target value).
 
 ![Regression](images/regression1.png)
 
-> The model is just a function (also called hypothesis) that maps the input features to the (estimated) target value $\hat{y}$. The model is trained to minimize the difference between the predicted (or estimated) value $\hat{y}$ and the actual target value $y$.
+The supervised learning algorithm learns the relationship between the input features and the target value by optimizing the model parameters (using an optimization algorithm like [Gradient Descent](gradient_descent.md)) to minimize the difference between the predicted value and the actual target value.
 
+A supervised learning algorithm typically consists of three key components:
+- **Model (hypothesis function)**: A function that maps the input features to the predicted target value.
+- **Cost Function**: A function that measures how well the model is performing by comparing the predicted versus actual target values.
+- **Optimization Algorithm**: A method to minimize the cost function (the error between the predicted and actual target values) by adjusting the model parameters.
 
-$y$: Actual target value
+**Notations**:
+
+$\vec{\mathbf{x}}$: Input features (provided in the training set).
+
+$y$: Actual target value (provided in the training set).
 
 $\hat{y}$: Predicted target value (output of the model).
 
-$f$: The model
+$f$: The model (also called hypothesis) which is a function that maps the input features $\vec{\mathbf{x}}$ to the predicted target value $\hat{y}$.
 
-$$f: x \rightarrow \hat{y}$$
+$$f: \vec{\mathbf{x}} \rightarrow \hat{y}$$
 
 
 For example, in the house price prediction example, the model $f$ would be a function that maps the size and number of bedrooms to the price of the house.
 
 $$f: [size, bedrooms] \rightarrow price$$
 
+where:
+- $size$ and $bedrooms$ are the input features
+- $price$ is the target value
 
 ## Linear Regression
 The model function $f$ for linear regression is a linear function of the input feature $x$ (which is a function that maps from $x$ to $\hat{y}$).
@@ -104,8 +119,8 @@ Now let's write the model in a vectorized form, which is the _dot product_ of tw
 $$f_{\vec{\mathbf{w}},b}(\vec{\mathbf{x}}^{(i)}) = \vec{\mathbf{w}} \cdot \vec{\mathbf{x}}^{(i)} + b$$
 
 where:
-- $\vec{\mathbf{x}}^{(i)}$ is a _row vector_ of input features of $i^{th}$ training example, which is $\vec{\mathbf{x}}^{(i)} = [x_{1}^{(i)}, x_{2}^{(i)}, ..., x_{n}^{(i)}]$
-- $\vec{\mathbf{w}}$ is a _row vector_ of weights, which is $\vec{\mathbf{w}} = [w_{1}, w_{2}, ..., w_{n}]$
+- $\vec{\mathbf{x}}^{(i)}$ is a _vector_ of input features of $i^{th}$ training example, which is $\vec{\mathbf{x}}^{(i)} = [x_{1}^{(i)}, x_{2}^{(i)}, ..., x_{n}^{(i)}]$
+- $\vec{\mathbf{w}}$ is a _vector_ of weights, which is $\vec{\mathbf{w}} = [w_{1}, w_{2}, ..., w_{n}]$
 - $b$ is a scalar value (bias)
 
 
@@ -114,7 +129,15 @@ As described, the model output $\hat{y}$ is the predicted value of the target va
 $$\hat{y}^{(i)} = f_{\vec{\mathbf{w}},b}(\vec{\mathbf{x}}^{(i)}) = \vec{\mathbf{w}} \cdot \vec{\mathbf{x}}^{(i)} + b$$
 
 
-**Multiple vs Univariate Linear Regression**:
+> The more accurate way to write the model function $f$ is to use the transpose of the weight vector $\vec{\mathbf{w}}$:
+>
+> $$f_{\vec{\mathbf{w}},b}(\vec{\mathbf{x}}^{(i)}) = \vec{\mathbf{w}}^T \vec{\mathbf{x}}^{(i)} + b$$
+>
+> where $\vec{\mathbf{w}}^T$ is the transpose of the weight vector $\vec{\mathbf{w}}$.
+>
+> More on this here at [vector and matrix operations](glossary.md#vector-and-matrix-operations).
+
+### Multiple vs Univariate Linear Regression
 
 When we have multiple features in linear regression, we call it **multiple linear regression**.
 
