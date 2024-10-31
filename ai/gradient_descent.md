@@ -45,7 +45,9 @@ Gradient Descent steps with more details:
 1. **Initialize Parameters:** Start with an initial guess for the parameters $w$ and $b$.
 2. **Compute the Cost Function:** Calculate the cost function $J(w,b)$ with the new values of $w$ and $b$. Also called the **forward pass**.
 3. **Compute the Gradient:** Calculate the partial derivative of the cost function $J(w,b)$ with respect to the parameters $w$ and $b$. Also called the **backward pass** or [**backpropagation**](https://developers.google.com/machine-learning/glossary#backpropagation).
-4. **Update the Parameters:** Update the parameters $w$ and $b$ in the opposite direction of the gradient (to descent down the hill) by a small step size $\alpha$.
+4. **Update the Parameters Simultaneously:** Update the weights and biases (parameters) in the opposite direction of the gradient (to descent down the hill) by a small step size $\alpha$.
+
+
 5. **Repeat until Convergence:** Repeat from step 2, for multiple [Iterations](https://developers.google.com/machine-learning/glossary#iteration) until we reach a point where parameters $w$ and $b$ don't change much with each iteration, and the cost function doesn't decrease significantly. This is called **convergence**.
 
 > An **iteration** is a complete cycle of updating the model parameters (weights and biases) based on the gradient of the cost function (step 2 to step 4).
@@ -126,8 +128,9 @@ $$\text{slope exactly at any given point} = \frac{\partial j(w)}{\partial w}$$
 Further reading on [Slope and Tangent Line](../math/derivatives.md#slope-and-tangent-line).
 
 ### 4. Update the Parameters:
+Once we have calculated all gradients for every parameter ($w$ and $b$), we then apply them to update the parameters **simultaneously.** This means that all weights and biases are **updated together in a single step**. This update happens only after gradients for every parameter have been computed.
 
-Then we simultaneously (at the same time) update the parameters $w$ and $b$ in the opposite direction of the gradient (to descent down the hill) by a small step size $r$.
+We update the parameters $w$ and $b$ in the opposite direction of the gradient (to descent down the hill) by a small step size $r$ (learning rate).
 
 $$w_{\text{new}} = w_{\text{current}} - \alpha \frac{\partial J(w,b)}{\partial w}$$
 $$b_{\text{new}} = b_{\text{current}} - \alpha \frac{\partial J(w,b)}{\partial b}$$
@@ -142,7 +145,8 @@ where:
 >$$\theta_{t+1} = \theta_t - \eta \nabla_{\theta} J(\theta_t)$$
 >
 >Where:
->- $\theta_t$ represents the parameters (weights and biases) at step $t$.
+>- $\theta_t$ represents the parameters (weights and biases) at step $t$ (current parameters).
+>- $\theta_{t+1}$ represents the updated parameters at step $t+1$.
 >- $\eta$ is the learning rate.
 >- $\nabla_{\theta} J(\theta)$ is the gradient of the cost function $J$ with respect to the parameters $\theta$.
 
@@ -235,7 +239,7 @@ We can simply state the training (Gradient Descent) process as:
 Many Iterations of {
     1. Forward Pass: Compute the cost
     2. Backward Pass (Backpropagation): Compute the gradient
-    3. Update the parameters to reduce the cost.
+    3. Update all parameters simultaneously to reduce the cost.
 }
 ```
 
