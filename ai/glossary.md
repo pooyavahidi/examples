@@ -50,15 +50,15 @@ This sums the contributions of the input features $x_1, x_2, \dots, x_n$ with co
 
 $$f_{\vec{\mathbf{w}},b}(\vec{\mathbf{x}}^{(i)}) = \vec{\mathbf{w}}^T \vec{\mathbf{x}}^{(i)} + b$$
 
-- **$\vec{\mathbf{w}}$**: Weight vector.
+- **$\vec{\mathbf{w}}$**: Column vector of weights.
 
 $$\vec{\mathbf{w}} = \begin{bmatrix} w_1 \\ w_2 \\ \vdots \\ w_n \end{bmatrix} \quad \in \mathbb{R}^n$$
 
-- **$\vec{\mathbf{x}}^{(i)}$**: Input feature vector for the $i^{th}$ data point.
+- **$\vec{\mathbf{x}}^{(i)}$**: Column vector of input features for the $i^{th}$ data point.
 
 $$\vec{\mathbf{x}}^{(i)} = \begin{bmatrix} x_1^{(i)} \\ x_2^{(i)} \\ \vdots \\ x_n^{(i)} \end{bmatrix} \quad \in \mathbb{R}^n$$
 
-**Row vs. Column Vectors**
+**Row vs Column Vectors**
 
 **Column Vector**: is a vector with $n$ rows and 1 column (i.e., $n \times 1$).
 
@@ -83,6 +83,8 @@ $$= w_1 x_1^{(i)} + w_2 x_2^{(i)} + \dots + w_n x_n^{(i)} = \text{scalar value}$
 
 In Matrix multiplication, when multiplying a $1 \times n$ row vector by an $n \times 1$ column vector, the result is a **scalar**. So, the model, $\vec{\mathbf{w}}^T \vec{\mathbf{x}}^{(i)} + b$ returns a **scalar value**, which represents the linear combination of inputs with weights plus the bias term.
 
+> Note: For similicity this formula sometimes written without the transpose and ${i}^{th}$ index notations as follows:
+> $$f_{\vec{\mathbf{w}},b}(\vec{\mathbf{x}}) = \vec{\mathbf{w}} \cdot \vec{\mathbf{x}} + b$$
 
 ### **Multiple Data Points**
 Similarly, we can represent all of the above for the entire dataset (or batch) of $m$ data points using _matrix representation_.
