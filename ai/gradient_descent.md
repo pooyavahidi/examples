@@ -225,12 +225,29 @@ We repeat steps of backward pass, forward pass and updating the parameters (step
 
 
 ### Gradient Descent Summary:
-We can simply summarize all the steps of the Gradient Descent algorithm as follows:
+We can simply summarize all the steps of the Gradient Descent algorithm for $n$ parameters as follows:
 
-$\text{repeat until convergence:}$<br>
-$\quad w = w - \alpha \frac{\partial J(w,b)}{\partial w}$<br>
-$\quad b = b - \alpha \frac{\partial J(w,b)}{\partial b}$
+$$\begin{align*} \text{repeat}&\text{ until convergence: } \lbrace \newline
+& w_j = w_j -  \alpha \frac{\partial J(\vec{\mathbf{w}},b)}{\partial w_j} \; & \text{for j = 0..n-1}\newline
+&b\ \ = b -  \alpha \frac{\partial J(\vec{\mathbf{w}},b)}{\partial b}  \newline \rbrace
+\end{align*}$$
 
+where:
+- $n$ is the number of parameters (weights).
+- $w_j$ represents the $j^{th}$ parameter (weight) of the model.
+- $\vec{\mathbf{w}}$ represents all weights.
+- $b$ represents the bias term.
+- $\alpha$ is the learning rate.
+
+
+We can also write this in a more general form for multiple parameters:
+$$\begin{align*} \text{repeat}&\text{ until convergence: } \lbrace \newline
+& \theta = \theta - \alpha \nabla_{\theta} J(\theta) \newline \rbrace
+\end{align*}$$
+
+where:
+- $\theta$ represents all parameters (weights and biases).
+- $\nabla_{\theta} J(\theta)$ is the gradient of the cost function $J$ with respect to all parameters $\theta$ (weights and biases).
 
 > This whole process of running the Gradient Descent algorithm, is also called **training** the model. The goal of training is to find the best values of the parameters (weights and biases) that minimize the cost function $J$.
 
