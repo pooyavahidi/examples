@@ -14,7 +14,7 @@ $Y$: **output** or **target** variable
 $m$: Total number of training examples in the training set.
 
 $n$: total number of features. e.g. in house price prediction, $n$ could be the number of features like size, location, number of bedrooms, etc.
-> If $n=1$, it's called **univariate regression** or regression with one variable. If $n>1$, it's called **multivariate regression** or **multiple linear regression**.
+> If $n=1$, it's called **univariate regression** or regression with one variable. If $n>1$, it's called **multivariate regression** or **multiple variable linear regression**.
 
 $(x, y)$: Single training example
 
@@ -106,43 +106,72 @@ $$f_{w,b}(x) = w_{1}x_{1} + w_{2}x_{2} + ... + w_{n}x_{n} + b$$
 
 where:
 - $n$: total number of features
+- $b$: bias term
 
-$w_{j}$ and $b$ are called the **parameters** of the model. Also called **weights** and **bias**.
+> $w_{j}$ and $b$ are called the **parameters** of the model. Also called **weights** and **bias**.
 
 When we have $n$ training examples, we can write the model function for the $i^{th}$ training example as:
 
 
 $$f_{w,b}(x^{(i)}) = w_{1}x_{1}^{(i)} + w_{2}x_{2}^{(i)} + ... + w_{n}x_{n}^{(i)} + b$$
 
-Now let's write the model in a vectorized form, which is the _dot product_ of two vectors of input features $\vec{\mathbf{x}}$ and weights $\vec{\mathbf{w}}$:
+We can show the entire training set with $m$ training examples as a matrix $X$:
 
-$$f_{\vec{\mathbf{w}},b}(\vec{\mathbf{x}}^{(i)}) = \vec{\mathbf{w}} \cdot \vec{\mathbf{x}}^{(i)} + b$$
+$$X = \begin{bmatrix} x_{1}^{(1)} & x_{2}^{(1)} & \dots & x_{n}^{(1)} \\ x_{1}^{(2)} & x_{2}^{(2)} & \dots & x_{n}^{(2)} \\ \vdots & \vdots & \ddots & \vdots \\ x_{1}^{(m)} & x_{2}^{(m)} & \dots & x_{n}^{(m)} \end{bmatrix}$$
+
+where:
+- $m$: total number of training examples
+- $n$: total number of features
+- $x_{j}^{(i)}$: The superscipt $i$ denotes the $i^{th}$ training example and the subscript $j$ denotes the $j^{th}$ feature of that training example.
+
+
+Each row of the matrix $X$ represents a training example. For example, $x_2^{(3)}$ is the second feature of the third training example.
+
+We can write each training example (row) as a vector $\vec{\mathbf{x}}^{(i)}$ which is a vectore of all features of the $i^{th}$ training example:
+
+$$\vec{\mathbf{x}}^{(i)} = \begin{bmatrix} x_{1}^{(i)} \\ x_{2}^{(i)} \\ \vdots \\ x_{n}^{(i)} \end{bmatrix}$$
+
+We can also write the weights $w$ as a vector $\vec{\mathbf{w}}$:
+
+$$\vec{\mathbf{w}} = \begin{bmatrix} w_{1} \\ w_{2} \\ \vdots \\ w_{n} \end{bmatrix}$$
+
+
+Now let's write the model in a vectorized form, which is the _dot product_ of two vectors of input features $\vec{\mathbf{x}}$ and weights $\vec{\mathbf{w}}$.
+
+To compute the dot product of two vectors, one of them should be converted to a row vector. So, we take the _transpose_ of the weight vector $\vec{\mathbf{w}}$ to get a row vector $\vec{\mathbf{w}}^T$. Then the dot product of $\vec{\mathbf{w}}^T$ and $\vec{\mathbf{x}}^{(i)}$ gives a scalar value which is our goal in linear regression. More on this here at [vector and matrix operations](glossary.md#vector-and-matrix-operations)
+
+So, the transpose of $\vec{\mathbf{w}}$ is:
+$$\vec{\mathbf{w}}^T = \begin{bmatrix} w_{1} & w_{2} & \dots & w_{n} \end{bmatrix}$$
+
+
+So, the model function can be written as:
+
+$$f_{\vec{\mathbf{w}},b}(\vec{\mathbf{x}}^{(i)}) = \vec{\mathbf{w}}^T \cdot \vec{\mathbf{x}}^{(i)} + b$$
+
 
 where:
 - $\vec{\mathbf{x}}^{(i)}$ is a _vector_ of input features of $i^{th}$ training example, which is $\vec{\mathbf{x}}^{(i)} = [x_{1}^{(i)}, x_{2}^{(i)}, ..., x_{n}^{(i)}]$
-- $\vec{\mathbf{w}}$ is a _vector_ of weights, which is $\vec{\mathbf{w}} = [w_{1}, w_{2}, ..., w_{n}]$
+- $\vec{\mathbf{w}}^T$ is the transpose of the weight vector $\vec{\mathbf{w}}$, which is $\vec{\mathbf{w}}^T = [w_{1}, w_{2}, ..., w_{n}]$
 - $b$ is a scalar value (bias)
 
 
 As described, the model output $\hat{y}$ is the predicted value of the target variable $y$. So, for the $i^{th}$ training example of a model with $n$ features, the predicted value $\hat{y}^{(i)}$ would be:
 
-$$\hat{y}^{(i)} = f_{\vec{\mathbf{w}},b}(\vec{\mathbf{x}}^{(i)}) = \vec{\mathbf{w}} \cdot \vec{\mathbf{x}}^{(i)} + b$$
+$$\hat{y}^{(i)} = f_{\vec{\mathbf{w}},b}(\vec{\mathbf{x}}^{(i)}) = \vec{\mathbf{w}}^T \cdot \vec{\mathbf{x}}^{(i)} + b$$
 
 
-> The more accurate way to write the model function $f$ is to use the transpose of the weight vector $\vec{\mathbf{w}}$:
->
-> $$f_{\vec{\mathbf{w}},b}(\vec{\mathbf{x}}^{(i)}) = \vec{\mathbf{w}}^T \vec{\mathbf{x}}^{(i)} + b$$
->
-> where $\vec{\mathbf{w}}^T$ is the transpose of the weight vector $\vec{\mathbf{w}}$.
->
-> More on this here at [vector and matrix operations](glossary.md#vector-and-matrix-operations).
+> For simplicity, this formula sometimes written without the transpose and ${i}^{th}$ index notations as follows:
+> $$f_{\vec{\mathbf{w}},b}(\vec{\mathbf{x}}) = \vec{\mathbf{w}} \cdot \vec{\mathbf{x}} + b$$
 
-### Multiple vs Univariate Linear Regression
+### Single vs Multiple Features
+As we saw earlier, the linear regression model with multiple features is defined as:
 
-When we have multiple features in linear regression, we call it **multiple linear regression**.
+$$f_{\vec{\mathbf{w}},b}(\vec{\mathbf{x}}^{(i)}) = \vec{\mathbf{w}}^T \cdot \vec{\mathbf{x}}^{(i)} + b$$
 
-In special case when we have only one feature ($n=1$), it's called **univariate linear regression**, which the model for that case would be:
-$$f_{w,b}(x) = wx + b$$
+
+In special case, when we have only one feature, the model called **univariate linear regression**. In this case, the model function $f_{w,b}(x)$ is defined as:
+
+$$f_{w,b}(x^{(i)})= w x^{(i)} + b$$
 
 This is the simplest form of regression model where the model tries to fit a straight line that best represents the relationship between one input feature and the target value. The above function is a linear function which represent a straight line with slope $w$ and y-intercept $b$. Different values of $w$ and $b$ will give different lines.
 
@@ -194,27 +223,24 @@ where:
 
 > Note: The terms **Loss** and **Cost** are often used interchangeably in machine learning. So, in many cases, they refer to the same thing.
 
-### Recap
-In the linear regression model, we have:
+### Summary of MSE Cost Function for Linear Regression
 
-**Model:**
+In linear regression with one feature:
+| Description | Notation |
+| --- | --- |
+| Model | $f_{w,b}(x) = wx + b$ |
+| Model Parameters | $w, b$ |
+| Cost Function | $J(w,b) = \frac{1}{2m} \sum\limits_{i = 1}^{m} (f_{w,b}(x^{(i)}) - y^{(i)})^2$ |
+| Goal | Find the values of $w$ and $b$ that minimize the cost function $J(w,b)$ |
 
-$$f_{w,b}(x) = wx + b$$
+In more general form, for multiple features:
+| Description | Notation |
+| --- | --- |
+| Model | $f_{\vec{\mathbf{w}},b}(\vec{\mathbf{x}}^{(i)}) = \vec{\mathbf{w}}^T \cdot \vec{\mathbf{x}}^{(i)} + b$ |
+| Model Parameters | $\vec{\mathbf{w}}, b$ |
+| Cost Function | $J(\vec{\mathbf{w}},b) = \frac{1}{2m} \sum\limits_{i = 1}^{m} (f_{\vec{\mathbf{w}},b}(\vec{\mathbf{x}}^{(i)}) - y^{(i)})^2$ |
+| Goal |  $\vec{\mathbf{w}}, b = \arg\min J(\vec{\mathbf{w}},b)$ |
 
-**Model Parameters:**
-
-$$w, b$$
-
-**Cost Function:** (using squared error loss function)
-
-$$J(w,b) = \frac{1}{2m} \sum\limits_{i = 1}^{m} (f_{w,b}(x^{(i)}) - y^{(i)})^2$$
-
-**Goal:**
-
-Find the values of $w$ and $b$ that minimize the cost function $J(w,b)$, we can write this as:
-$$w, b = \arg\min J(w,b)$$
-
-> The process of achieving this goal is called **Training** the model.
 
 ### Minimizing the Cost Function
 
@@ -242,6 +268,13 @@ This is very similar to the 2D plot of $J(w)$, but now we have both $w$ and $b$ 
 MSE (Mean Squared Error) cost function is a [convex function](https://developers.google.com/machine-learning/glossary#convex-function) (bowl shape).
 
 As we can see, the minimum of the cost function $J(w,b)$ is at the very bottom of the bowl (where the cost $J$ is the lowest). This is called the **global minimum** of the cost function which is indicated by dark blue color.
+
+
+In the example above, our **parameter space** consists of two parameters, $w$ and $b$, making it a 3-dimensional space (including the cost function axis). However, when we have multiple features, the cost function $J(\vec{\mathbf{w}}, b)$  exists in an **$(n+1)$-dimensional** parameter space, where $n$ is the number of features (with $\vec{\mathbf{w}}$ representing the weight vector for each feature and $b$ the bias term). When we have high number of parameters in our parameter space, it commonly referred to as a **high-dimensional space**.
+
+
+
+Obviously, we can't visualize the high-dimensional space (anything more than 3D), however the goal is still the same, to find the values of $\vec{\mathbf{w}}$ and $b$ that minimize the cost function $J(\vec{\mathbf{w}},b)$. So, we can mathematically find the minimum of the cost function using optimization algorithms like [Gradient Descent](gradient_descent.md) even in high-dimensional space. The process of achieving this goal is called **Training** the model.
 
 
 **How to Minimize the Error (Cost function) Efficiently?**
@@ -283,6 +316,47 @@ $$\frac{\partial J(w,b)}{\partial b} = \frac{1}{m} \sum\limits_{i = 1}^{m} (wx^{
 
 So, the Gradient Descent algorithm for linear regression can be written as:
 
-$\text{repeat until convergence:}$<br>
-$\quad w = w - \alpha \frac{1}{m} \sum\limits_{i = 1}^{m} (f_{w,b}(x^{(i)}) - y^{(i)})x^{(i)}$<br>
-$\quad b = b - \alpha \frac{1}{m} \sum\limits_{i = 1}^{m} (f_{w,b}(x^{(i)}) - y^{(i)})$
+$$\begin{align*} \text{repeat}&\text{ until convergence: } \lbrace \newline
+& w = w - \alpha \frac{1}{m} \sum\limits_{i = 1}^{m} (f_{w,b}(x^{(i)}) - y^{(i)})x^{(i)} \newline
+& b = b - \alpha \frac{1}{m} \sum\limits_{i = 1}^{m} (f_{w,b}(x^{(i)}) - y^{(i)}) \newline \rbrace
+\end{align*}$$
+
+
+
+### Gradient Descent with Multiple Features
+In case of having multiple features, the model function $f_{\vec{\mathbf{w}},b}(\vec{\mathbf{x}}^{(i)})$ is a dot product of the weight vector $\vec{\mathbf{w}}$ and the input features vector $\vec{\mathbf{x}}^{(i)}$
+
+When model has $n$ parameters (weights) $w_1, w_2, ..., w_n$ and a bias term $b$, the Gradient Descent algorithm for multiple linear regression can be written as:
+
+$$f_{\vec{\mathbf{w}},b}(\vec{\mathbf{x}}^{(i)}) = w_{1}x_{1}^{(i)} + w_{2}x_{2}^{(i)} + ... + w_{n}x_{n}^{(i)} + b$$
+
+> Recall: For each feature we have a weight $w_j$. So, for $n$ features, we have $n$ weights $w_1, w_2, ..., w_n$. In linear regression, the number of weights is always equal to the number of features.
+
+And using the vector notation, we can write the parameters as a vector with length $n$:
+$$\vec{\mathbf{w}} = \begin{bmatrix} w_{1} \\ w_{2} \\ \vdots \\ w_{n} \end{bmatrix}$$
+
+So, the model function can be written as:
+
+$$f_{\vec{\mathbf{w}},b}(\vec{\mathbf{x}}^{(i)}) = \vec{\mathbf{w}} \cdot \vec{\mathbf{x}}^{(i)} + b$$
+
+The cost function $J(w_1, w_2, ..., w_n, b)$ for multiple linear regression is:
+
+$$J(\vec{\mathbf{w}},b) = \frac{1}{2m} \sum\limits_{i = 1}^{m} (f_{\vec{\mathbf{w}},b}(\vec{\mathbf{x}}^{(i)}) - y^{(i)})^2$$
+
+Gradient Descent:
+
+$$\begin{align*} \text{repeat}&\text{ until convergence: } \lbrace \newline
+& w_j = w_j -  \alpha \frac{\partial J(\vec{\mathbf{w}},b)}{\partial w_j} \; & \text{for j = 0..n-1}\newline
+&b\ \ = b -  \alpha \frac{\partial J(\vec{\mathbf{w}},b)}{\partial b}  \newline \rbrace
+\end{align*}$$
+
+Now the partial derivative of the cost function $J(\vec{\mathbf{w}},b)$ with respect to the parameters $w_j$ and $b$ is:
+
+$$\frac{\partial J(\vec{\mathbf{w}},b)}{\partial w_j} = \frac{1}{m} \sum\limits_{i = 1}^{m} (f_{\vec{\mathbf{w}},b}(\vec{\mathbf{x}}^{(i)}) - y^{(i)})x^{(i)}_j$$
+
+So we can rewrite the Gradient Descent algorithm for multiple linear regression as:
+
+$$\begin{align*} \text{repeat}&\text{ until convergence: } \lbrace \newline
+& w_j = w_j - \alpha \frac{1}{m} \sum\limits_{i = 1}^{m} (f_{\vec{\mathbf{w}},b}(\vec{\mathbf{x}}^{(i)}) - y^{(i)})x^{(i)}_j \; & \text{for j = 0..n-1}\newline
+& b = b - \alpha \frac{1}{m} \sum\limits_{i = 1}^{m} (f_{\vec{\mathbf{w}},b}(\vec{\mathbf{x}}^{(i)}) - y^{(i)}) \newline \rbrace
+\end{align*}$$
