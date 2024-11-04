@@ -6,6 +6,8 @@ Machine learning is a subfield of artificial intelligence (AI).
 ![Alt text](images/ai1.jpg)
 Source: [Augmenting organizational decision-making with deep learning algorithms: Principles, promises, and challenges](https://www.sciencedirect.com/science/article/pii/S0148296320306512)
 
+To learn more about the machine learning development workflow and process, see [Machine Learning Workflow](aiml_overview_workflow.md).
+
 **Types of Machine Learning:**
 - Supervised Learning
 - Unsupervised Learning
