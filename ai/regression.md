@@ -97,6 +97,8 @@ where:
 - $size$ and $bedrooms$ are the input features
 - $price$ is the target value
 
+> Note: In machine learning workflow, [feature engineering](feature_engineering.md) is an important step to select and transform the input features to best capture the information relevant for model training and performance. So, in this example, althgouh we have size and number of bedrooms as input features, we still need to make sure that these features are scaled, normalized, or transformed in a way that best represents the relationship between the input features and the target value.
+
 ## Linear Regression
 The model function $f$ for linear regression is a linear function of the input feature $x$ (which is a function that maps from $x$ to $\hat{y}$).
 
