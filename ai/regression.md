@@ -119,7 +119,14 @@ $$f_{w,b}(x^{(i)}) = w_{1}x_{1}^{(i)} + w_{2}x_{2}^{(i)} + ... + w_{n}x_{n}^{(i)
 
 We can show the entire training set with $m$ training examples as a matrix $X$:
 
-$$X = \begin{bmatrix} x_{1}^{(1)} & x_{2}^{(1)} & \dots & x_{n}^{(1)} \\ x_{1}^{(2)} & x_{2}^{(2)} & \dots & x_{n}^{(2)} \\ \vdots & \vdots & \ddots & \vdots \\ x_{1}^{(m)} & x_{2}^{(m)} & \dots & x_{n}^{(m)} \end{bmatrix}$$
+$$
+X = \begin{bmatrix}
+x_{1}^{(1)} & x_{2}^{(1)} & \dots & x_{n}^{(1)} \\
+x_{1}^{(2)} & x_{2}^{(2)} & \dots & x_{n}^{(2)} \\
+\vdots & \vdots & \ddots & \vdots \\
+x_{1}^{(m)} & x_{2}^{(m)} & \dots & x_{n}^{(m)}
+\end{bmatrix}
+$$
 
 where:
 - $m$: total number of training examples
@@ -131,53 +138,84 @@ Each row of the matrix $X$ represents a training example. For example, $x_2^{(3)
 
 We can write each training example (row) as a vector $\vec{\mathbf{x}}^{(i)}$ which is a vectore of all features of the $i^{th}$ training example:
 
-$$\vec{\mathbf{x}}^{(i)} = \begin{bmatrix} x_{1}^{(i)} \\ x_{2}^{(i)} \\ \vdots \\ x_{n}^{(i)} \end{bmatrix}$$
+$$
+\vec{\mathbf{x}}^{(i)} = \begin{bmatrix} x_{1}^{(i)} \\
+x_{2}^{(i)} \\
+\vdots \\
+x_{n}^{(i)}
+\end{bmatrix}
+$$
 
 We can also write the weights $w$ as a vector $\vec{\mathbf{w}}$:
 
-$$\vec{\mathbf{w}} = \begin{bmatrix} w_{1} \\ w_{2} \\ \vdots \\ w_{n} \end{bmatrix}$$
+$$
+\vec{\mathbf{w}} = \begin{bmatrix} w_{1} \\
+w_{2} \\
+\vdots \\
+w_{n}
+\end{bmatrix}
+$$
 
 
 Now let's write the model in a vectorized form, which is the _dot product_ of two vectors of input features $\vec{\mathbf{x}}$ and weights $\vec{\mathbf{w}}$.
 
-To compute the dot product of two vectors, one of them should be converted to a row vector. So, we take the _transpose_ of the weight vector $\vec{\mathbf{w}}$ to get a row vector $\vec{\mathbf{w}}^T$. Then the dot product of $\vec{\mathbf{w}}^T$ and $\vec{\mathbf{x}}^{(i)}$ gives a scalar value which is our goal in linear regression. More on this here at [vector and matrix operations](glossary.md#vector-and-matrix-operations)
+To compute the dot product of two vectors, one of them should be converted to a row vector. So, we take the _transpose_ of the weight vector $\vec{\mathbf{w}}$ to get a row vector $\vec{\mathbf{w}}^\top$. Then the dot product of $\vec{\mathbf{w}}^\top$ and $\vec{\mathbf{x}}^{(i)}$ gives a scalar value which is our goal in linear regression. More on this here at [vector and matrix operations](glossary.md#vector-and-matrix-operations)
 
 So, the transpose of $\vec{\mathbf{w}}$ is:
-$$\vec{\mathbf{w}}^T = \begin{bmatrix} w_{1} & w_{2} & \dots & w_{n} \end{bmatrix}$$
+
+$$\vec{\mathbf{w}}^\top = \begin{bmatrix} w_{1} & w_{2} & \dots & w_{n} \end{bmatrix}$$
 
 
 So, the model function can be written as:
 
-$$f_{\vec{\mathbf{w}},b}(\vec{\mathbf{x}}^{(i)}) = \vec{\mathbf{w}}^T \cdot \vec{\mathbf{x}}^{(i)} + b$$
+$$f_{\vec{\mathbf{w}},b}(\vec{\mathbf{x}}^{(i)}) = \vec{\mathbf{w}}^\top \cdot \vec{\mathbf{x}}^{(i)} + b$$
 
 
 where:
-- $\vec{\mathbf{x}}^{(i)}$ is a _vector_ of input features of $i^{th}$ training example, which is $\vec{\mathbf{x}}^{(i)} = [x_{1}^{(i)}, x_{2}^{(i)}, ..., x_{n}^{(i)}]$
-- $\vec{\mathbf{w}}^T$ is the transpose of the weight vector $\vec{\mathbf{w}}$, which is $\vec{\mathbf{w}}^T = [w_{1}, w_{2}, ..., w_{n}]$
+- $\vec{\mathbf{x}}^{(i)}$ is a _column vector_ of input features of $i^{th}$ training example, which is $\vec{\mathbf{x}}^{(i)} = [x_{1}^{(i)}, x_{2}^{(i)}, ..., x_{n}^{(i)}]$
+- $\vec{\mathbf{w}}^\top$ is a _row vector_, which is the transpose of the weight vector $\vec{\mathbf{w}} = [w_{1}, w_{2}, ..., w_{n}]$
 - $b$ is a scalar value (bias)
 
 
 As described, the model output $\hat{y}$ is the predicted value of the target variable $y$. So, for the $i^{th}$ training example of a model with $n$ features, the predicted value $\hat{y}^{(i)}$ would be:
 
-$$\hat{y}^{(i)} = f_{\vec{\mathbf{w}},b}(\vec{\mathbf{x}}^{(i)}) = \vec{\mathbf{w}}^T \cdot \vec{\mathbf{x}}^{(i)} + b$$
+$$\hat{y}^{(i)} = f_{\vec{\mathbf{w}},b}(\vec{\mathbf{x}}^{(i)}) = \vec{\mathbf{w}}^\top \cdot \vec{\mathbf{x}}^{(i)} + b$$
 
 
 > For simplicity, this formula sometimes written without the transpose and ${i}^{th}$ index notations as follows:
 > $$f_{\vec{\mathbf{w}},b}(\vec{\mathbf{x}}) = \vec{\mathbf{w}} \cdot \vec{\mathbf{x}} + b$$
 
-### Single vs Multiple Features
-As we saw earlier, the linear regression model with multiple features is defined as:
+### Regression with One Feature
+In special case, when we have only one feature, the model called **univariate linear regression**. In this case, the model function $f_{w,b}(x)$ has only two parameters $w$ and $b$ and defined as:
 
-$$f_{\vec{\mathbf{w}},b}(\vec{\mathbf{x}}^{(i)}) = \vec{\mathbf{w}}^T \cdot \vec{\mathbf{x}}^{(i)} + b$$
-
-
-In special case, when we have only one feature, the model called **univariate linear regression**. In this case, the model function $f_{w,b}(x)$ is defined as:
 
 $$f_{w,b}(x^{(i)})= w x^{(i)} + b$$
 
 This is the simplest form of regression model where the model tries to fit a straight line that best represents the relationship between one input feature and the target value. The above function is a linear function which represent a straight line with slope $w$ and y-intercept $b$. Different values of $w$ and $b$ will give different lines.
 
-
+> Another common way to represent model parameters (weights and bias) is using a single notation $\theta$ (theta) which is a more general and widely used notation for model parameters across various machine learning algorithms, especially in contexts like optimization and gradient descent. $\theta$ is a compact and simplified notation for all parameters of the model, combining weights and bias. So, for example in linear regression:
+>
+>
+>$$\theta = [w_1, w_2, ..., w_n, b]$$
+>
+>
+> The model function $f_{\theta}(\vec{\mathbf{x}}^{(i)})$ can be written as:
+>
+> $$y = f_{\theta}(\vec{\mathbf{x}}^{(i)}) = \theta^\top \cdot \vec{\mathbf{x}}^{(i)}$$
+>
+> where:
+> - $\theta$ is a vector of parameters (including weights and bias).
+> - $\theta^\top$ is the transpose of $\theta$
+> - $\vec{\mathbf{x}}^{(i)}$ is a vector of input features for the $i^{th}$ training example. To make it compatible with $\theta$, we need to add a constant $1$ as the last element of the feature vector. This is called the **bias trick**. More on this below.
+>
+> So, the **Augmented Feature Vector** is defined as:
+> $$\vec{\mathbf{x}}^{(i)} = [x_1^{(i)}, x_2^{(i)}, \dots, x_n^{(i)}, 1]$$
+>
+> The dot product of $\theta^\top$ and $\vec{\mathbf{x}}^{(i)}$ gives the model function $f_{\theta}(\vec{\mathbf{x}}^{(i)})$:
+>
+> $$ f_\theta(\vec{\mathbf{x}}^{(i)}) = w_1 x_1^{(i)} + w_2 x_2^{(i)} + \dots + w_n x_n^{(i)} + b $$
+>
+> Placing the scalar value $1$ at the end of $\vec{\mathbf{x}}^{(i)}$ ensures consistency with the order of elements in $\theta$. This way the last element of $\vec{\mathbf{x}}^{(i)}$ (the constant $1$) multiplies the last element of $\theta$ (the bias term $b$), and the resulting dot product correctly computes the model function.
 
 
 ## Cost Function
@@ -238,7 +276,7 @@ In linear regression with one feature:
 In more general form, for multiple features:
 | Description | Notation |
 | --- | --- |
-| Model | $f_{\vec{\mathbf{w}},b}(\vec{\mathbf{x}}^{(i)}) = \vec{\mathbf{w}}^T \cdot \vec{\mathbf{x}}^{(i)} + b$ |
+| Model | $f_{\vec{\mathbf{w}},b}(\vec{\mathbf{x}}^{(i)}) = \vec{\mathbf{w}}^\top \cdot \vec{\mathbf{x}}^{(i)} + b$ |
 | Model Parameters | $\vec{\mathbf{w}}, b$ |
 | Cost Function | $J(\vec{\mathbf{w}},b) = \frac{1}{2m} \sum\limits_{i = 1}^{m} (f_{\vec{\mathbf{w}},b}(\vec{\mathbf{x}}^{(i)}) - y^{(i)})^2$ |
 | Goal |  $\vec{\mathbf{w}}, b = \arg\min J(\vec{\mathbf{w}},b)$ |
@@ -335,11 +373,18 @@ $$f_{\vec{\mathbf{w}},b}(\vec{\mathbf{x}}^{(i)}) = w_{1}x_{1}^{(i)} + w_{2}x_{2}
 > Recall: For each feature we have a weight $w_j$. So, for $n$ features, we have $n$ weights $w_1, w_2, ..., w_n$. In linear regression, the number of weights is always equal to the number of features.
 
 And using the vector notation, we can write the parameters as a vector with length $n$:
-$$\vec{\mathbf{w}} = \begin{bmatrix} w_{1} \\ w_{2} \\ \vdots \\ w_{n} \end{bmatrix}$$
+
+$$
+\vec{\mathbf{w}} = \begin{bmatrix} w_{1} \\
+w_{2} \\
+\vdots \\
+w_{n}
+\end{bmatrix}
+$$
 
 So, the model function can be written as:
 
-$$f_{\vec{\mathbf{w}},b}(\vec{\mathbf{x}}^{(i)}) = \vec{\mathbf{w}} \cdot \vec{\mathbf{x}}^{(i)} + b$$
+$$f_{\vec{\mathbf{w}},b}(\vec{\mathbf{x}}^{(i)}) = \vec{\mathbf{w}}^\top \cdot \vec{\mathbf{x}}^{(i)} + b$$
 
 The cost function $J(w_1, w_2, ..., w_n, b)$ for multiple linear regression is:
 
@@ -347,7 +392,7 @@ $$J(\vec{\mathbf{w}},b) = \frac{1}{2m} \sum\limits_{i = 1}^{m} (f_{\vec{\mathbf{
 
 Gradient Descent:
 
-$$\begin{align*} \text{repeat}&\text{ until convergence: } \lbrace \newline
+$$\begin{align*} \text{repeat }&\text{until convergence: } \lbrace \newline
 & w_j = w_j -  \alpha \frac{\partial J(\vec{\mathbf{w}},b)}{\partial w_j} \; & \text{for j = 0..n-1}\newline
 &b\ \ = b -  \alpha \frac{\partial J(\vec{\mathbf{w}},b)}{\partial b}  \newline \rbrace
 \end{align*}$$
@@ -358,7 +403,9 @@ $$\frac{\partial J(\vec{\mathbf{w}},b)}{\partial w_j} = \frac{1}{m} \sum\limits_
 
 So we can rewrite the Gradient Descent algorithm for multiple linear regression as:
 
-$$\begin{align*} \text{repeat}&\text{ until convergence: } \lbrace \newline
+```math
+\begin{align*} \text{repeat }&\text{until convergence: } \lbrace \newline
 & w_j = w_j - \alpha \frac{1}{m} \sum\limits_{i = 1}^{m} (f_{\vec{\mathbf{w}},b}(\vec{\mathbf{x}}^{(i)}) - y^{(i)})x^{(i)}_j \; & \text{for j = 0..n-1}\newline
 & b = b - \alpha \frac{1}{m} \sum\limits_{i = 1}^{m} (f_{\vec{\mathbf{w}},b}(\vec{\mathbf{x}}^{(i)}) - y^{(i)}) \newline \rbrace
-\end{align*}$$
+\end{align*}
+```

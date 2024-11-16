@@ -84,7 +84,8 @@ $$\frac{\partial J(w)}{\partial w}$$
 > Derivative of a function at a point gives the _slope_ of the _tangent line_ to the function at that point. In the context of gradient descent, the derivative of the cost function tells us the slope of the cost function at a particular point in the parameter space. This slope guides us in the direction of the steepest descent (down the hill) to minimize the cost function.
 
 #### Slope and Tangent Line
-**Slope** is the ratio of the vertical change to the horizontal change between two distinct points. In other words the _rise_ over the _run_:
+**Slope** is the ratio of the vertical change to the horizontal change between two distinct points. In other words the "_rise_ over the _run_":
+
 $$\text{slope} = \frac{\text{rise}}{\text{run}}$$
 
 
