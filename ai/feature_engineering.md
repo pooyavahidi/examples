@@ -64,8 +64,8 @@ Common techniques for feature engineering include:
 - Date formatting
 
 
-## Scaling
-Scaling includes various techniques to adjust the range, distribution, or units of data, often to make it comparable across features or to meet model requirements.
+## Scaling and Normalization
+In feature engineering, we often need to transform features to ensure they are on comparable scales, centered appropriately (e.g., around 0), and comparable across features to support the requirements of machine learning algorithms. This preprocessing is crucial because many algorithms are sensitive to the magnitude or distribution of input features.
 
 
 For example, in the house-price prediction example:
@@ -106,12 +106,7 @@ In this example, it shows us the the _scale discrapency_ between the features. T
 
 Another issue is that without scaling which normalizes the range of values to a similar scale, the model may think that the number of bedrooms is less important than the size, which is not necessarily true. For example, the bedroom is in the range of single digits e.g. 1, 2, 3, ... while the size is in the range of hundreds e.g. 100, 200, 300, etc. Also, the relation between the bedrooms could be more significant than the sizes. For example, between 2 to 4 bedroom is a significant difference in price while between 400 to 500 sqm may not be as significant. So, we need to scale the features to have a similar range of values to avoid all these issues.
 
-### Normalization
-**Normalization** techniques are subset of scaling, in which the features are rescaled to a range of typically [0, 1] or [-1, 1]. The most common normalization techniques are:
-- Min-Max Scaling
-- Z-Score Normalization
-
-In our house price prediction example, we can see the range of values for features is different. Size is in hundreds, bedrooms are single digits. As we discussed, we want to avoid the scale discrepancy between features and **transform** them into a **similar range** of usually around **[-1, 1]**.
+In our house price prediction example, we can see the range of values for features is different. Size is in hundreds, bedrooms are single digits. As we discussed, we want to avoid the scale discrepancy between features and **transform** them into a **similar range** of usually around **[-1, 1]** or **[0, 1]**.
 
 Let's first rewrite our training set in a matrix form.
 
@@ -127,7 +122,7 @@ $$\vec{\mathbf{x}}^{(1)} = [210, 4]$$
 $$x_1^{(1)} = 210 \quad \text{ and } \quad x_2^{(1)} = 4  \quad \text{ and } \quad y_1 = 800$$
 
 
-**Min-Max Scaling**
+### Min-Max Scaling
 
 Min-Max scaling is a normalization technique that scales the data to a fixed range.
 
@@ -190,9 +185,90 @@ The following illustration shows how scaling the features normalize the range of
 > Scaling (Normalization) changes the geometry of the feature space, empasizing on the direction and orientation of the data points rather than their absolute values. So, two model trained with and without normalization may have different results, since the scale of the input data has changed **fundamentally**, not just proportionally.
 >
 
+**Special Case: Target Range [0, 1]**
 
-**Z-Score Normalization**
+When the desired range is $[0, 1]$, the formula simplifies to:
+$$
+x_{\text{norm}} = \frac{x - x_{\text{min}}}{x_{\text{max}} - x_{\text{min}}}
+$$
+This is the version often presented as "min-max scaling" in, but it is just a specific instance of the generalized formula.
+
+
+### Mean Normalization
+Mean normalization is a feature scaling technique where each feature is transformed so that its values are centered around zero. It is calculated as:
+
+$$
+x_{\text{norm}} = \frac{x - \mu}{x_{\text{max}} - x_{\text{min}}}
+$$
+
+where:
+- $x$ is the original value of the feature
+- $\mu$ is the mean of the feature
+
+In our example, the mean of the size feature $x_1$ is:
+
+$$
+\mu_{x_1} = \frac{210 + 190 + 300 + 100 + 200 + 500}{6} = 250
+$$
+
+So, the mean normalized values of the size feature for the first data point $x_1^{(1)} = 210$ would be:
+
+$$
+x_{1, \text{norm}}^{(1)} = \frac{210 - 250}{500 - 100} = -0.40
+$$
+
+Similarly, the mean normalized values of the number of bedrooms feature $x_2$ would be:
+
+$$\mu_{x_2} = \frac{4 + 3 + 4 + 2 + 3 + 5}{6} = 3.5$$
+
+So, the mean normalized value for the first data point $x_2^{(1)} = 4$ would be:
+$$
+x_{2, \text{norm}}^{(1)} = \frac{4 - 3.5}{5 - 2} = 0.17
+$$
+
+This way we can calculate the mean normalized values for all data points in the training set $X$.
+
+
+### Z-Score Normalization
 
 Z-score normalization (or standardization) is another common normalization technique that scales the data to have a mean of 0 and a standard deviation of 1. In other words, it transforms the data to have a standard normal distribution around 0 with a range of [-1, 1].
 
 The formula for Z-score normalization is:
+
+$$
+x_{\text{norm}} = \frac{x - \mu}{\sigma}
+$$
+where:
+- $x$ is the original value of the feature
+- $\mu$ is the mean of the feature
+- $\sigma$ is the standard deviation of the feature
+
+For example, the Z-score normalized values of the size feature $x_1$ for the first data point $x_1^{(1)} = 210$ would be:
+
+$$
+\mu_{x_1} = 250
+$$
+$$
+\sigma_{x_1} = \sqrt{\frac{(210 - 250)^2 + (190 - 250)^2 + (300 - 250)^2 + (100 - 250)^2 + (200 - 250)^2 + (500 - 250)^2}{6}} = 129.90
+$$
+
+$$
+x_{1, \text{norm}}^{(1)} = \frac{210 - 250}{129.90} = -0.31
+$$
+
+Similarly, the Z-score normalized values of the number of bedrooms feature $x_2$ for the first data point $x_2^{(1)} = 4$ would be:
+$$
+x_{2, \text{norm}}^{(1)} = \frac{4 - 3.5}{0.87} = 0.58
+$$
+
+### Tips for Scaling
+**Aim for [-1, 1] Range**:
+
+The rule of thumb is to aim the range of the scaled features to be around $[-1, 1]$.
+
+$$ -1 \leq x_{\text{norm}} \leq 1$$
+
+
+**The model's output will be scaled too**:
+
+When scaling features in the training set, the same scaling parameters (e.g., mean, standard deviation) must be applied to the test set to ensure consistency. The scaler is fit on the training data and then used to transform both the training and test sets. If the target variable is scaled (e.g., in regression), the model's predictions will be in the **scaled space**, and you must inverse-transform them to the original scale for interpretability. This ensures reliable evaluations, avoids data leakage, and maintains the interpretability of results.
