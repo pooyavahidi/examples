@@ -257,18 +257,28 @@ We can simply state the training (Gradient Descent) process as:
 Many Iterations of {
     1. Forward Pass: Compute the cost
     2. Backward Pass (Backpropagation): Compute the gradient
-    3. Update all parameters simultaneously to reduce the cost.
+    3. Update all parameters simultaneously, to reduce the cost.
 }
 ```
 
-**Plot of Cost vs Iterations**
-Plotting the cost function against the number of iterations can help visualize the training process. The cost should decrease with each iteration, indicating that the model is learning and moving towards the minimum of the cost function (convergence).
+**Learning Curve (Plot of Cost vs Iterations)**
+
+Plotting the cost function against the number of iterations can help visualize the training process. The cost should decrease with each iteration, indicating that the model is learning and moving towards the minimum of the cost function (convergence). This curve is called the **learning curve**.
 
 In a convex surface, the cost function should decrease smoothly until it reaches the global minimum. In a non-convex surface, the cost function may have fluctuations due to local minima, but it should generally decrease over time.
 
-The following plot is an example of the cost function decreasing with each iteration until it converges. Also different colors show the path of cost function with different learning rates.
+The following plot is an example of the cost function decreasing with each iteration until it converges (when it's no longer decreasing). Also different colors show the path of cost function with different learning rates.
 
-![](images/cost_vs_iterations.png)
+![](images/learning_curve_cost_vs_iterations.png)
+
+It's not always easy to guess how many iterations are needed to reach convergence. This plot helps visualize the training process and determine when to stop training.
+
+**Automatic Convergence Test**
+
+There is another way to stop the training process, which is to set a threshold for the change in the cost function. For example, by using a threshold of $10^{-4}$ which we call it $\epsilon$, we can stop the training process when the change in the cost function is less than this threshold.
+
+However, this method is not always reliable, as the cost function may fluctuate due to the non-convex nature of the loss surface. So, it's better to rely on the learning curve to determine when to stop training.
+
 
 ## Types of Gradient Descent
 As we discussed, Gradient descent minimizes a given objective function by iteratively adjusting the model's parameters based on the gradients (partial derivatives) of the cost function with respect to those parameters. The popular variations of gradient descent include:
