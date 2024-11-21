@@ -261,6 +261,8 @@ $$
 x_{2, \text{norm}}^{(1)} = \frac{4 - 3.5}{0.87} = 0.58
 $$
 
+Further reading on [Mean, Variance and Standard Deviation](../math/statistics.md#mean-variance-and-standard-deviation).
+
 ### Tips for Scaling
 **Aim for [-1, 1] Range**:
 
@@ -269,6 +271,52 @@ The rule of thumb is to aim the range of the scaled features to be around $[-1, 
 $$ -1 \leq x_{\text{norm}} \leq 1$$
 
 
-**The model's output will be scaled too**:
+**The model's output will be scaled too**
 
 When scaling features in the training set, the same scaling parameters (e.g., mean, standard deviation) must be applied to the test set to ensure consistency. The scaler is fit on the training data and then used to transform both the training and test sets. If the target variable is scaled (e.g., in regression), the model's predictions will be in the **scaled space**, and you must inverse-transform them to the original scale for interpretability. This ensures reliable evaluations, avoids data leakage, and maintains the interpretability of results.
+
+## Creating New Features
+In some cases, we can create new features by combining or transforming existing features to capture more information or patterns in the data. This process can help improve the model's performance by providing additional information that may not be present in the original features.
+
+In our house price prediction example, let's say we have two other features: population of the neighborhood/suburb and the number of schools in the area.
+
+
+
+| House | Size (sqm) | Bedrooms | Population | Schools | Price ($1000s) |
+|-------|------------|----------|------------|---------|----------------|
+| 1     | 210        | 4        | 1000       | 2       | 800            |
+| 2     | 190        | 3        | 800        | 1       | 700            |
+| 3     | 300        | 4        | 1200       | 3       | 850            |
+| ...   | ...        | ...      | ...        | ...     | ...            |
+
+Now we can create a feature that represent the ratio of the population to the number of schools in the area which could be an important factor in determining the price of the house.
+
+$$\text{Population to Schools Ratio} = \frac{\text{Population}}{\text{Schools}}$$
+
+| House | Size (sqm) | Bedrooms | Population | Schools | Population to Schools Ratio | Price ($1000s) |
+|-------|------------|----------|------------|---------|-----------------------------|----------------|
+| 1     | 210        | 4        | 1000       | 2       | 500                         | 800            |
+| 2     | 190        | 3        | 800        | 1       | 800                         | 700            |
+| 3     | 300        | 4        | 1200       | 3       | 400                         | 850            |
+| ...   | ...        | ...      | ...        | ...     | ...                         | ...            |
+
+So, now our data set has 5 features: size, bedrooms, population, schools, and population to schools ratio.
+
+$$
+\hat{y} = f_{\vec{\mathbf{w}}, b}(\vec{\mathbf{x}}) = w_1 x_1 + w_2 x_2 + w_3 x_3 + w_4 x_4 + w_5 x_5 + b
+$$
+
+Where:
+- $x_5$ is the new feature (population to schools ratio)
+
+> Creating new features relies on domain knowledge, intuition, and experimentation to identify **meaningful** relationships or interactions between features that can enhance the model's predictive power.
+
+
+## Feature Dimensionality
+The number of features in a dataset is known as the feature dimensionality. For example the above house price prediction dataset has 5 features (size, bedrooms, population, schools, and population to schools ratio). So it has a feature dimensionality of 5.
+
+**Curse of Dimensionality**:
+
+As the number of features increases, the feature space becomes more sparse, and the volume of the space increases exponentially. This can lead to overfitting, increased computational complexity, increased training time and cost, and reduced model performance. Feature selection and dimensionality reduction techniques can help mitigate these issues by selecting the most relevant features or reducing the number of features while preserving the most important information.
+
+So, sometimes after creating a meaningful new features, we drop the less important features to reduce the dimensionality of the feature space. For example, after creating the population to schools ratio feature, we may decide to drop the number of schools feature if it's less important or redundant.
