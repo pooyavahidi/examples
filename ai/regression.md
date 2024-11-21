@@ -409,3 +409,16 @@ So we can rewrite the Gradient Descent algorithm for multiple linear regression 
 & b = b - \alpha \frac{1}{m} \sum\limits_{i = 1}^{m} (f_{\vec{\mathbf{w}},b}(\vec{\mathbf{x}}^{(i)}) - y^{(i)}) \newline \rbrace
 \end{align*}
 ```
+## Polynomial Regression
+Polynomial regression is a type of regression model that fits a polynomial function to the data. It is a special case of linear regression where the relationship between the input features and the target value is not a straight line but a polynomial curve.
+
+The model function for polynomial regression is a polynomial function of the input features $x$:
+
+$$f_{w,b}(x) = w_{0} + w_{1}x + w_{2}x^2 + ... + w_{n}x^n$$
+
+where:
+- $n$: the degree of the polynomial
+- $w_{0}, w_{1}, ..., w_{n}$: the parameters (weights) of the model
+
+We can also have square root or other non-linear functions of the input features in the polynomial regression model. For example, a polynomial regression model with a square root function:
+$$f_{w,b}(x) = w_{1}x + w_{2}\sqrt{x}+ b$$
