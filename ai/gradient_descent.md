@@ -295,10 +295,38 @@ As we discussed, Gradient descent minimizes a given objective function by iterat
 BGD computes the gradient of the objective function using the *entire dataset* at each step. It updates the model's parameters based on the average gradient calculated from all data points. This method provides a more accurate estimate of the true gradient, which leads to a smoother convergence. However, it can be computationally expensive for large datasets since it requires processing all data points before updating the parameters.
 
 ### Stochastic Gradient Descent (SGD)
-Traditionally, SGD refers to the process where the batch size is set to 1. That means the model parameters are updated after computing the gradient of the loss with respect to each individual training example. This approach is highly stochastic, leading to very noisy updates, but it can help in escaping local minima and generally provides a strong regularization effect.
+Traditionally, SGD is indeed associated with a batch size of 1. In this case, the model updates its parameters after computing the gradient of the loss with respect to each individual training example. This is why it's called "stochastic" — the updates are based on a single sample, introducing randomness.
 
-### Mini-batch Gradient Descent
-This is a more commonly used variation of SGD in practice. Here, the batch size is greater than 1 but less than the total number of training examples. The use of mini-batches allows for a balance between computational efficiency (leveraging vectorized operations over batches) and the stochastic nature of SGD (providing a regularization effect and helping escape local minima). This approach is often referred to simply as SGD in the machine learning literature and practice, even though it technically involves mini-batches.
+
+**Highly Stochastic and Noisy Updates**:
+Updates in SGD are noisy because the gradient computed from a single sample is typically not a good estimate of the true gradient of the loss function (which is defined over the entire dataset). However, this noise can sometimes be beneficial:
+- It helps in **escaping local minima** and **saddle points** by introducing randomness.
+- It provides a form of **implicit regularization**, often leading to better generalization because it avoids overfitting to the training set.
+
+**mini-batch SGD (Modern Usage)**:
+While SGD with batch size 1 was traditional, in modern machine learning, **mini-batch SGD** (with batch sizes greater than 1 but smaller than the entire dataset) is more commonly used. Mini-batch SGD strikes a balance:
+- It reduces noise compared to true SGD while still being computationally efficient.
+- It leverages vectorized operations, which are more efficient on modern hardware like GPUs.
+
+**Parameter Update Rule**:
+For a parameter $\theta$, the update at iteration $t$ is given by:
+$$
+\theta_{t+1} = \theta_t - \eta \nabla_\theta J(\theta_t; x_i, y_i)
+$$
+where:
+- $\eta$ is the learning rate, controlling the step size.
+- $\nabla_\theta J$ is the gradient of the cost $J$ with respect to $\theta$.
+- $(x_i, y_i)$ is a randomly chosen data point (or mini-batch) at iteration $t$.
+
+**Escaping Local Minima**:
+The idea that SGD can escape local minima is well-supported, but it’s worth noting that in high-dimensional spaces, local minima are less of a concern than saddle points. SGD’s noisy updates make it particularly good at avoiding or escaping saddle points, which are more common in the optimization landscape of deep neural networks.
+
+**Strong Regularization Effect**:
+The regularization effect of SGD is an indirect benefit of the noise in the gradient estimation. This noise prevents the optimizer from converging too precisely to a solution that may overfit the training data. However, this "regularization" is not equivalent to explicit regularization methods like weight decay or dropout.
+
+
+> **mini-batch SGD** is often referred to simply as SGD in the machine learning literature and practice, even though it technically involves mini-batches.
+
 
 ## Resources:
 - [Good read on Gradient Decent by Google](https://developers.google.com/machine-learning/crash-course/reducing-loss/gradient-descent)
