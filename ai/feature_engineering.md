@@ -56,16 +56,18 @@ Features can be categorized into different types based on their characteristics:
 
 ## Feature Engineering Techniques
 Common techniques for feature engineering include:
-- Scaling
+- Date formatting
 - Standardization
 - Dimensionality Reduction
 - Creating Polynomial Features
-- One-Hot Encoding
-- Date formatting
+- One-Hot Encoding and other encoding techniques
+- Scaling and Normalization
 
 
 ## Scaling and Normalization
 In feature engineering, we often need to transform features to ensure they are on comparable scales, centered appropriately (e.g., around 0), and comparable across features to support the requirements of machine learning algorithms. This preprocessing is crucial because many algorithms are sensitive to the magnitude or distribution of input features.
+
+> Feature Scaling usually comes as one of the last steps in preprocessing. After we are done with selecting the features, clean up the outliers, handling the missing values, encoding, and creating new features, then we scale the features to maintain a uniform consistency across the dataset. However, this is not an absolute rule and depends on the overall data processing pipeline and specific requirements of the features or model.
 
 
 For example, in the house-price prediction example:
@@ -310,6 +312,9 @@ Where:
 - $x_5$ is the new feature (population to schools ratio)
 
 > Creating new features relies on domain knowledge, intuition, and experimentation to identify **meaningful** relationships or interactions between features that can enhance the model's predictive power.
+
+Other Examples:
+- **Geographical Features**: You may have coordinates (latitude, longitude) in your dataset, which can be used to create new features like distance to key locations (e.g., city center, landmark, etc) and replace this new feature with the original coordinates in the dataset.
 
 
 ## Feature Dimensionality
