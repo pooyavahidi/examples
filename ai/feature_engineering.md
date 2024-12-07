@@ -325,3 +325,17 @@ The number of features in a dataset is known as the feature dimensionality. For 
 As the number of features increases, the feature space becomes more sparse, and the volume of the space increases exponentially. This can lead to overfitting, increased computational complexity, increased training time and cost, and reduced model performance. Feature selection and dimensionality reduction techniques can help mitigate these issues by selecting the most relevant features or reducing the number of features while preserving the most important information.
 
 So, sometimes after creating a meaningful new features, we drop the less important features to reduce the dimensionality of the feature space. For example, after creating the population to schools ratio feature, we may decide to drop the number of schools feature if it's less important or redundant.
+
+### PCA (Principal Component Analysis)
+
+Principal Component Analysis (PCA) is a **dimensionality reduction technique** that transforms a dataset with correlated features into a smaller set of **uncorrelated features**, called **principal components**.
+
+These principal components are linear combinations of the original features, ordered by the amount of variance they capture in the data. The first principal component explains the most variance, the second explains the next highest variance (orthogonal to the first), and so on.
+
+**Output** of this transformation is new uncorrelated features ranked by importance (variance) in the data.
+
+PCA is widely used in preprocessing for machine learning when there is a need to handle correlated features efficiently. It simplify data by reducing the number of features while retaining most of the important information by creating smaller set of new features that are linear combinations of the original features.
+
+> PCA is a good technique especially when the original features are **highly correlated** or when the feature space is **high-dimensional**.
+
+To calculate PCA in practical implementation, you can use built-in features of ML libraries such as `scikit-learn`, `tensorflow`, `pytorch`, etc.
