@@ -1,0 +1,59 @@
+AWSTemplateFormatVersion: '2010-09-09'
+
+Parameters:
+  VpcId:
+    Description: The ID of the VPC where the services will be created.
+    Type: String
+  SubnetId:
+    Description: The ID of the subnet where the instance will be created.
+    Type: String
+  MgmtSourceIp:
+    Description: The IP address (in CIDR notation) that will be allowed to manage the instance.
+    Type: String
+  UserSourceIp:
+    Description: The IP address (in CIDR notation) that will be allowed to use the instance.
+    Type: String
+  ImageId:
+    Description: The ID of the AMI to use for the instance.
+    Type: String
+    Default: ami-0ed83e7a78a23014e
+  KeyPairName:
+    Description: The name of the key pair to use for the instance.
+    Type: String
+    Default: ec2_keypair
+
+Resources:
+  SecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Allow SSH and ping access from specific IP addresses
+      VpcId: !Ref VpcId
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 22
+          ToPort: 22
+          CidrIp: !Ref MgmtSourceIp
+        - IpProtocol: icmp
+          FromPort: -1
+          ToPort: -1
+          CidrIp: !Ref UserSourceIp
+      GroupName: !Sub "${AWS::StackName}-SecurityGroup"
+      Tags:
+        - Key: Name
+          Value: !Sub "${AWS::StackName}-SecurityGroup"
+  EC2Instance:
+    Type: AWS::EC2::Instance
+    Properties:
+      InstanceType: t4g.small
+      ImageId: !Ref ImageId
+      KeyName: !Ref KeyPairName
+      SecurityGroupIds:
+        - !Ref SecurityGroup
+      SubnetId: !Ref SubnetId
+      Tags:
+        - Key: Name
+          Value: !Sub "${AWS::StackName}-Instance"
+Outputs:
+  SecurityGroupId:
+    Description: The ID of the created security group
+    Value: !Ref SecurityGroup
