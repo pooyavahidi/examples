@@ -16,7 +16,7 @@ Parameters:
   ImageId:
     Description: The ID of the AMI to use for the instance.
     Type: String
-    Default: ami-0ed83e7a78a23014e
+    Default: ami-041c914bb6988afbd
   KeyPairName:
     Description: The name of the key pair to use for the instance.
     Type: String
@@ -41,6 +41,42 @@ Resources:
       Tags:
         - Key: Name
           Value: !Sub "${AWS::StackName}-SecurityGroup"
+  S3Bucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !Sub "${AWS::AccountId}-${AWS::StackName}-backup"
+      Tags:
+        - Key: Name
+          Value: !Sub "${AWS::StackName}-Backup"
+
+  InstanceProfile:
+    Type: AWS::IAM::InstanceProfile
+    Properties:
+      Roles:
+        - !Ref EC2Role
+
+  EC2Role:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: !Sub "${AWS::StackName}-EC2Role"
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: ec2.amazonaws.com
+            Action: sts:AssumeRole
+      Policies:
+        - PolicyName: !Sub "${AWS::StackName}-S3AccessPolicy"
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action:
+                  - "s3:GetObject"
+                  - "s3:PutObject"
+                Resource: !Sub "arn:aws:s3:::${S3Bucket}/*"
+
   EC2Instance:
     Type: AWS::EC2::Instance
     Properties:
@@ -53,6 +89,8 @@ Resources:
       Tags:
         - Key: Name
           Value: !Sub "${AWS::StackName}-Instance"
+      IamInstanceProfile: !Ref InstanceProfile
+
 Outputs:
   SecurityGroupId:
     Description: The ID of the created security group
