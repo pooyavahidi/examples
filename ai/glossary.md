@@ -129,3 +129,10 @@ $$\begin{bmatrix} \hat{y}^{(1)} \\ \hat{y}^{(2)} \\ \vdots \\ \hat{y}^{(m)} \end
 > When working with matrix $X$ (size $m \times n$) and weight vector $\vec{\mathbf{w}}$ (size $n \times 1$), we no longer need to transpose the weights vector $\vec{\mathbf{w}}$ because $X$ is already structured so that each **row** corresponds to a data point and each **column** corresponds to a feature.
 >
 > Multiplying $X$ by $\vec{\mathbf{w}}$ directly produces an $m \times 1$ vector, where each element $\hat{y}^{(i)}$ is the dot product between the $i$-th row of $X$ (representing the features for the $i$-th data point) and the weights vector $\vec{\mathbf{w}}$. So, no transposition is required here!
+
+## Ground Truth
+"Ground truth" is a term used in machine learning to refer to the actual or true values or labels for your data. In a supervised learning context, the ground truth labels are what you want your model to predict or approximate. They are used during training to adjust the model's weights and biases, and to measure the model's performance.
+
+For example, you may hear "for a given training set of examples $X$ and their corresponding ground truth labels $y$...". It simply means that for each example in $X$, there is a corresponding label in $y$ that represents the true target value of that example.
+
+> There are services and tools which uses this term in their names to indicate their purpose. e.g. "Amazon SageMaker Ground Truth" is a service that helps you build accurate training datasets for machine learning by providing access to human labelers and workflows for common labeling tasks.
