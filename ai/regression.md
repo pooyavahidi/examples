@@ -422,3 +422,7 @@ where:
 
 We can also have square root or other non-linear functions of the input features in the polynomial regression model. For example, a polynomial regression model with a square root function:
 $$f_{w,b}(x) = w_{1}x + w_{2}\sqrt{x}+ b$$
+
+
+## Resources
+- [Linear Regression using Scikit Learn](labs/linear_regression_scikit_learn.ipynb)
