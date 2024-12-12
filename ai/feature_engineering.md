@@ -55,13 +55,35 @@ Features can be categorized into different types based on their characteristics:
 
 
 ## Feature Engineering Techniques
-Common techniques for feature engineering include:
-- Date formatting
-- Standardization
+Some of the most common techniques for feature engineering include:
+
+- Feature Selection
+- Scaling and Normalization
+- Data Type Conversion and Formatting
 - Dimensionality Reduction
 - Creating Polynomial Features
-- One-Hot Encoding and other encoding techniques
-- Scaling and Normalization
+- Encoding techniques
+
+## Feature Selection
+To Identify and select a subset of the most relevant features from the dataset, based on their importance or impact on the model. This process can be integral to model development, aiming to improve model accuracy, reduce overfitting, and enhance model interpretability.
+
+### Filter Methods
+Filter methods evaluate the relevance of features based on statistical measures, such as correlation, chi-square tests, or mutual information. They rank features based on their individual characteristics, without considering the interaction between features or the model.
+
+Filter methods are generally used as a preprocessing step, independent of the model.
+
+### Wrapper Methods
+Wrapper methods evaluate the importance of features by training and evaluating the model with different subsets of features. They use the model's performance as a criterion for selecting the best subset of features.
+
+**Recursive Feature Elimination (RFE)** is a popular wrapper method that recursively removes features from the dataset based on their importance, using the model's performance as a guide. So, in this method, we train the model with all the features, then remove the least important feature, and retrain the model with the remaining features. This process is repeated until the desired number of features is reached.
+
+> Cross Validation is a key component of wrapper methods to ensure the model's performance is evaluated accurately and consistently across different subsets of features.
+
+
+### Embedded Methods
+Embedded methods combine feature selection with the model training process, selecting the most relevant features during model training. They are built into the model's learning algorithm and automatically select the most important features based on the model's performance.
+
+The most common embedded method is **Lasso Regression**, which uses L1 regularization to penalize the coefficients of less important features, effectively setting them to zero. This results in a sparse model with only the most relevant features.
 
 
 ## Scaling and Normalization
@@ -317,8 +339,8 @@ Other Examples:
 - **Geographical Features**: You may have coordinates (latitude, longitude) in your dataset, which can be used to create new features like distance to key locations (e.g., city center, landmark, etc) and replace this new feature with the original coordinates in the dataset.
 
 
-## Feature Dimensionality
-The number of features in a dataset is known as the feature dimensionality. For example the above house price prediction dataset has 5 features (size, bedrooms, population, schools, and population to schools ratio). So it has a feature dimensionality of 5.
+## Dimensionality Reduction
+The number of features in a dataset is known as the **feature dimensionality**. For example the above house price prediction dataset has 5 features (size, bedrooms, population, schools, and population to schools ratio). So it has a feature dimensionality of 5.
 
 **Curse of Dimensionality**:
 
@@ -339,3 +361,21 @@ PCA is widely used in preprocessing for machine learning when there is a need to
 > PCA is a good technique especially when the original features are **highly correlated** or when the feature space is **high-dimensional**.
 
 To calculate PCA in practical implementation, you can use built-in features of ML libraries such as `scikit-learn`, `tensorflow`, `pytorch`, etc.
+
+
+## Encoding Techniques
+
+### Binary Variables
+For binary categorical features which have only two categories (Yes/No or True/False), we usually convert them to 0 and 1.
+
+### Nominal Variables
+For categorical features with more than two categories, we can use **one-hot encoding** to convert them to numerical values.
+For example if a feature with the name of "Color" has three categories "Red", "Green", and "Blue", we can convert it to three features "Color_Red", "Color_Green", and "Color_Blue" and then use 0 and 1 to represent the categories.
+
+> Don't convert nominal to numerical data. For example, if a feature has three categories "Red", "Green", and "Blue", don't convert them to 1, 2, and 3. This is because the model may think that "Blue" is greater than "Red" and "Green", which is not true.
+
+### Ordinal Encoding
+
+It involves converting ordinal categorical data (categories with a natural order) into numerical values to reflect the inherent order among the categories. This encoding technique respects the relative ordering of the categories, such as "Small," "Medium," and "Large" for garden sizes, by assigning them increasing numerical values based on their order. For example, instead of Small we can use 5, Medium 10, and Large 15, and for Null we can use 0.
+
+Ordinal encoding allows machine learning algorithms to understand the order of the categories and use this information in the modeling process. The `map` function in Pandas is a convenient way to apply this encoding to a dataset.
