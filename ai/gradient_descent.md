@@ -224,6 +224,23 @@ We repeat steps of backward pass, forward pass and updating the parameters (step
 >
 > Thus, convergence does not guarantee that the algorithm found the global minimum; it only means the algorithm has reached a point where the gradient is close to zero (or sufficiently small). Advanced optimization techniques help mitigate these risks by increasing the chances of escaping such points.
 
+## Epochs and Iterations
+[_Epochs_](https://developers.google.com/machine-learning/crash-course/linear-regression/hyperparameters#epochs) is the number of times the model sees the entire dataset. In other words, one epoch is a complete pass (forward pass, backward pass, and parameter update) over the entire training dataset. Whereas each _iteration_ is the number of updates the model makes to the parameters during the training process.
+
+
+
+**Epochs:**
+- One full cycle through the entire dataset.
+- One epoch consists of going through all the training samples exactly once.
+- If you have a training set of 10,000 samples, then a single epoch means you perform training steps that collectively use all 10,000 samples one time.
+
+**Iterations:**
+- One complete round of _parameters update_ (includes forward pass, backward pass, and parameter update), which applies on a single example in SGD, or a batch of examples in mini-batch gradient descent, or entire dataset in batch gradient descent.
+- **Batch Gradient Descent:** One iteration corresponds to processing the entire training set and updating the parameters once. So, with 10,000 samples, one epoch contains one iteration.
+- **Stochastic Gradient Descent (SGD with batch size 1):** One iteration corresponds to processing a single training sample. So, with 10,000 samples, one epoch contains 10,000 iterations, which means the model's parameters are updated 10,000 times.
+- **Mini-Batch Gradient Descent:** One iteration corresponds to using number of samples in a batch to compute the gradient and update the parameters. For example, with a batch size of 100 and 10,000 samples, one epoch contains 100 iterations, which means 100 times the model's parameters are updated.
+
+
 
 ### Gradient Descent Summary:
 We can simply summarize all the steps of the Gradient Descent algorithm for $n$ parameters as follows:
@@ -252,13 +269,15 @@ where:
 
 > This whole process of running the Gradient Descent algorithm, is also called **training** the model. The goal of training is to find the best values of the parameters (weights and biases) that minimize the cost function $J$.
 
-We can simply state the training (Gradient Descent) process as:
-```
-Many Iterations of {
-    1. Forward Pass: Compute the cost
-    2. Backward Pass (Backpropagation): Compute the gradient
-    3. Update all parameters simultaneously, to reduce the cost.
-}
+We can simply state the training (Gradient Descent) process as many epochs (cycles through the entire dataset):
+
+```sh
+for each epoch:
+    for each iteration (batch):
+        forward pass  # Calculate predictions
+        compute cost  # Compare predictions with actual values
+        backward pass (backpropagation)  # Compute the gradients
+        update all parameters simultaneously # Reduce the cost
 ```
 
 **Learning Curve (Plot of Cost vs Iterations)**
@@ -295,7 +314,17 @@ As we discussed, Gradient descent minimizes a given objective function by iterat
 BGD computes the gradient of the objective function using the *entire dataset* at each step. It updates the model's parameters based on the average gradient calculated from all data points. This method provides a more accurate estimate of the true gradient, which leads to a smoother convergence. However, it can be computationally expensive for large datasets since it requires processing all data points before updating the parameters.
 
 ### Stochastic Gradient Descent (SGD)
-Traditionally, SGD is indeed associated with a batch size of 1. In this case, the model updates its parameters after computing the gradient of the loss with respect to each individual training example. This is why it's called "stochastic" — the updates are based on a single sample, introducing randomness.
+SGD uses batch size of 1. The model updates its parameters after computing the gradient of the loss with respect to each individual training example. This is why it's called "stochastic" — each round of update is based on a single random example from the dataset.
+
+The general steps for stochastic gradient descent are as follows:
+
+1. Initialize the model parameters randomly or with some predefined values.
+2. Randomly select a subset of training data (a mini-batch or a single data point) from the dataset.
+3. Compute the gradient of the loss function with respect to the model parameters using the selected subset of data.
+4. Update the model parameters using the computed gradient and a learning rate: `parameter = parameter - learning_rate * gradient`
+5. Repeat steps 2-4 until a predefined stopping criterion is met (e.g., a maximum number of iterations, convergence, or a minimum change in the loss function).
+
+SGD has several hyperparameters, such as the learning rate, batch size, and regularization terms, that need to be tuned for optimal performance. Additionally, several variants of SGD exist that incorporate adaptive learning rates and momentum, such as AdaGrad, RMSProp, and Adam, to improve the algorithm's convergence properties and stability.
 
 
 **Highly Stochastic and Noisy Updates**:
@@ -303,7 +332,14 @@ Updates in SGD are noisy because the gradient computed from a single sample is t
 - It helps in **escaping local minima** and **saddle points** by introducing randomness.
 - It provides a form of **implicit regularization**, often leading to better generalization because it avoids overfitting to the training set.
 
-**mini-batch SGD (Modern Usage)**:
+
+**BGD vs SGD**:
+- BGD calculates the gradient using the entire dataset and then updates the model parameters once per pass through the entire dataset (epoch), while SGD update the model parameters using only a single data point (or a small random subset called mini-batch) at each step.
+- BGD has a smoother convergence but can be computationally expensive, especially for large datasets, whereas SGD is faster and more suitable for large datasets.
+- SGD introduces more noise in the gradient estimates, which can sometimes help escape local minima and find better solutions.
+
+
+#### mini-batch SGD
 While SGD with batch size 1 was traditional, in modern machine learning, **mini-batch SGD** (with batch sizes greater than 1 but smaller than the entire dataset) is more commonly used. Mini-batch SGD strikes a balance:
 - It reduces noise compared to true SGD while still being computationally efficient.
 - It leverages vectorized operations, which are more efficient on modern hardware like GPUs.
@@ -325,7 +361,66 @@ The idea that SGD can escape local minima is well-supported, but it’s worth no
 The regularization effect of SGD is an indirect benefit of the noise in the gradient estimation. This noise prevents the optimizer from converging too precisely to a solution that may overfit the training data. However, this "regularization" is not equivalent to explicit regularization methods like weight decay or dropout.
 
 
+
 > **mini-batch SGD** is often referred to simply as SGD in the machine learning literature and practice, even though it technically involves mini-batches.
+
+
+**Batch Size**
+The batch size determines the number of examples the model looks at before updating its internal parameters (weights and biases).
+
+For example,  if we have total number of 10,000 examples and batch size of 100, then the model updates its parameters after looking at 100 examples at a time.
+
+
+1. **Batch Processing:** The dataset of 10,000 examples is divided into smaller batches of 100 examples each.
+
+2. **Backpropagation and Parameter Updates:** For each batch, the model performs a forward pass, where it makes predictions based on the current state of its parameters. Then, it computes the loss (difference between the predicted values and the actual values). Following this, a backpropagation step is performed, where the gradient of the loss function with respect to each parameter is calculated. Finally, the model updates its parameters based on these gradients. This entire process—from forward pass to parameter update—is done **once** per batch.
+---
+> In this example, each epoc consists of 100 iterations, and each iteration consists of one full forward pass, backpropagation, and parameters update step. So, here we run backpropagation and update the parameters 100 times in each epoch.
+
+
+```sh
+for each epoch:
+    for each batch:
+        - forward pass using the batch
+        - compute loss of the batch
+        - backward pass (backpropagation)
+        - update parameters
+```
+**Iteration** = All the steps (forward pass, backward pass, and parameter update) performed on a single batch.
+
+ **for each batch** =   **for each iteration**.
+
+ So, in each epoch, we have multiple iterations for the number of batches (depending on the batch size).
+
+This granular approach of updating weights allows for a more nuanced adjustment of the model's parameters, potentially leading to better learning dynamics compared to updating weights after looking at the entire dataset at once.
+
+
+
+## Practical Problems
+### Escaping Local Minimas and Saddle Points
+A common challenge arises when training models on complex, high-dimensional datasets: the loss function may converge to different, yet stable, values during repeated training runs with identical parameters. This typically indicates the presence of multiple **local minima** or **saddle points** in the optimization landscape of non-convex loss surfaces.
+
+
+**Local Minima:**
+As we discussed earlier, local minima are points in the loss surface where the loss value is lower than in neighboring regions, but not necessarily the global minimum. If the we trapped in different local minima during different runs, the loss function can stabilize at various levels, depending on the specific path taken during optimization. This convergence looks like a stable solution, but it may not be the optimal one as we may have missed the global minimum.
+
+**Saddle Points:**
+Saddle points are regions in the loss landscape where the gradient is zero, but the point is neither a local minimum nor a maximum. Instead, it may be a minimum in some dimensions and a maximum in others. High-dimensional loss surfaces often have more saddle points than local minima. These saddle points can slow down or stall optimization, particularly if the gradient in certain directions is very small. Different runs may escape saddle points differently, leading to variability in convergence.
+
+
+The problem of converging to different minima or stalling at saddle points is influenced by:
+1. **Random Initialization of Weights:** Determines the starting point in the loss landscape.
+2. **Stochastic Optimization:** The randomness introduced by mini-batch sampling in methods like SGD can lead to divergent trajectories.
+3. **Learning Rate and Batch Size:** These hyperparameters dictate the step size and granularity of the optimization process, affecting how the optimizer navigates the loss surface.
+4. **Noise in the Data:** Inherent noise or ambiguities in the dataset can influence the optimization process.
+
+**Solution**
+To mitigate the effects of local minima and saddle points, strategies focus on improving the optimizer's ability to **explore** the landscape effectively:
+
+- **Reduce Batch Size:** Introduces stochasticity, helping the optimizer escape shallow minima or saddle points. It allows the optimizer to explore more of the loss surface, potentially finding better minima.
+- **Reduce the Learning Rate:** A smaller learning rate helps avoid overshooting good minima, while a schedule or warm restarts can aid in navigating the landscape. A reduced learning rate provides fine-grained updates, aiding in precise convergence once near a minimum.
+
+- **Use Optimizer Variants:** Advanced optimizers like Adam or RMSprop adjust learning rates adaptively, which can help traverse complex landscapes.
 
 
 ## Resources:
