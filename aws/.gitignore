@@ -153,3 +153,5 @@ cython_debug/
 
 .pem
 *.env
+
+cfn_params.json

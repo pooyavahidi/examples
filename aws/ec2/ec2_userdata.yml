@@ -1,4 +1,4 @@
-AWSTemplateFormatVersion: '2010-09-09'
+AWSTemplateFormatVersion: "2010-09-09"
 
 Parameters:
   VpcId:
@@ -16,38 +16,46 @@ Parameters:
   ImageId:
     Description: The ID of the AMI to use for the instance.
     Type: String
-    Default: ami-041c914bb6988afbd
+    Default: ami-054b2ea96a24fff47
   KeyPairName:
     Description: The name of the key pair to use for the instance.
     Type: String
     Default: ec2_keypair
+  AppUrl:
+    Description: The URL of the application zip file.
+    Type: String
+  AppExec:
+    Description: The executable script for the application.
+    Type: String
+  AppEnv:
+    Description: The environment variables for the application.
+    Type: String
+  AppName:
+    Description: The name of the application.
+    Type: String
+  S3BucketName:
+    Description: The name of the existing S3 bucket to use for backups.
+    Type: String
 
 Resources:
   SecurityGroup:
     Type: AWS::EC2::SecurityGroup
     Properties:
-      GroupDescription: Allow SSH and ping access from specific IP addresses
+      GroupDescription: Allow SSH and UDP access from specific IP addresses
       VpcId: !Ref VpcId
       SecurityGroupIngress:
         - IpProtocol: tcp
           FromPort: 22
           ToPort: 22
           CidrIp: !Ref MgmtSourceIp
-        - IpProtocol: icmp
-          FromPort: -1
-          ToPort: -1
+        - IpProtocol: udp
+          FromPort: 8000
+          ToPort: 8000
           CidrIp: !Ref UserSourceIp
       GroupName: !Sub "${AWS::StackName}-SecurityGroup"
       Tags:
         - Key: Name
           Value: !Sub "${AWS::StackName}-SecurityGroup"
-  S3Bucket:
-    Type: AWS::S3::Bucket
-    Properties:
-      BucketName: !Sub "${AWS::AccountId}-${AWS::StackName}-backup"
-      Tags:
-        - Key: Name
-          Value: !Sub "${AWS::StackName}-Backup"
 
   InstanceProfile:
     Type: AWS::IAM::InstanceProfile
@@ -72,15 +80,23 @@ Resources:
             Version: "2012-10-17"
             Statement:
               - Effect: Allow
+                Action: "s3:ListBucket"
+                Resource: !Sub "arn:aws:s3:::${S3BucketName}"
+                Condition:
+                  StringLike:
+                    "s3:prefix":
+                      - !Sub "${AppName}/*"
+              - Effect: Allow
                 Action:
                   - "s3:GetObject"
                   - "s3:PutObject"
-                Resource: !Sub "arn:aws:s3:::${S3Bucket}/*"
+                  - "s3:DeleteObject"
+                Resource: !Sub "arn:aws:s3:::${S3BucketName}/${AppName}/*"
 
   EC2Instance:
     Type: AWS::EC2::Instance
     Properties:
-      InstanceType: t4g.small
+      InstanceType: t3.small
       ImageId: !Ref ImageId
       KeyName: !Ref KeyPairName
       SecurityGroupIds:
@@ -90,6 +106,77 @@ Resources:
         - Key: Name
           Value: !Sub "${AWS::StackName}-Instance"
       IamInstanceProfile: !Ref InstanceProfile
+      BlockDeviceMappings:
+        - DeviceName: "/dev/sda1"
+          Ebs:
+            VolumeSize: 10
+      UserData:
+        Fn::Base64: !Sub |
+          #!/bin/bash
+
+          # Redirect all output to a log file
+          exec > /var/log/user-data.log 2>&1
+          set -x
+
+          # Environment variables
+          HOME_DIR=/home/ubuntu
+          WORKSPACE_DIR=$HOME_DIR/workspace
+          APP_URL=${AppUrl}
+          APP_NAME=${AppName}
+          APP_EXEC=${AppExec}
+          APP_DIR=$WORKSPACE_DIR/app
+          APP_ENV=${AppEnv}
+
+          # Update and install packages
+          sudo apt update \
+          && sudo apt install -y \
+            unzip \
+            zsh \
+            git
+
+          # Install AWS CLI
+          sudo snap install aws-cli --classic
+
+          # Install zsh and my dotfiles
+          sudo chsh -s $(which zsh) ubuntu
+          sudo -u ubuntu mkdir -p $WORKSPACE_DIR
+          sudo -u ubuntu git clone https://github.com/pooyavahidi/dotfiles $WORKSPACE_DIR/dotfiles
+          sudo -u ubuntu bash -c "cd $WORKSPACE_DIR/dotfiles && source bootstrap.sh"
+
+          # Set environment variables for the app
+          echo "export BACKUP_BUCKET=${S3BucketName}" >> $HOME_DIR/.zshrc
+          echo "export APP_DIR=$APP_DIR" >> $HOME_DIR/.zshrc
+          echo "export APP_NAME=$APP_NAME" >> $HOME_DIR/.zshrc
+
+          # Download and unzip the app
+          sudo -u ubuntu wget \
+            --user-agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36" \
+            -O $WORKSPACE_DIR/app.zip \
+            $APP_URL
+          sudo -u ubuntu unzip $WORKSPACE_DIR/app.zip -d $APP_DIR
+
+          # Create a systemd service
+          sudo bash -c "cat <<EOF > /etc/systemd/system/$APP_NAME.service
+          [Unit]
+          Description=My Application Service
+          After=network.target
+
+          [Service]
+          User=ubuntu
+          Group=ubuntu
+          WorkingDirectory=$APP_DIR
+          ExecStart=$APP_DIR/$APP_EXEC
+          Environment=$APP_ENV
+          Restart=always
+
+          [Install]
+          WantedBy=multi-user.target
+          EOF"
+
+          # Reload systemd and enable the service
+          sudo systemctl daemon-reload
+          sudo systemctl enable $APP_NAME.service
+          sudo systemctl start $APP_NAME.service
 
 Outputs:
   SecurityGroupId:
