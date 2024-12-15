@@ -1,27 +1,25 @@
 {
-  "name": "AWS Development",
-  "image": "${localEnv:DOCKER_LOCAL_DEVELOPMENT_IMAGE}",
+  "name": "examples-aws",
+  "dockerComposeFile": "docker-compose.yml",
+  "service": "devcontainer",
+  "workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}",
+  "overrideCommand": false,
   "customizations": {
     "vscode": {
       "extensions": [
         "ms-python.python",
         "ms-python.black-formatter",
         "ms-python.pylint",
-        "ms-toolsai.jupyter"
+        "ms-toolsai.jupyter",
+        "github.copilot"
       ]
     }
   },
-  "runArgs": [
-    "--name",
-    "vscode_aws_dev",
-    "--env-file",
-    ".devcontainer/.env"
-  ],
-  "postCreateCommand": "./.devcontainer/post_create.sh",
   "remoteEnv": {
     "AWS_ACCESS_KEY_ID": "${localEnv:AWS_ACCESS_KEY_ID}",
     "AWS_SECRET_ACCESS_KEY": "${localEnv:AWS_SECRET_ACCESS_KEY}",
     "AWS_SESSION_TOKEN": "${localEnv:AWS_SESSION_TOKEN}",
-    "AWS_DEFAULT_REGION": "${localEnv:AWS_DEFAULT_REGION}"
+    "AWS_REGION": "${localEnv:AWS_REGION}",
+    "AWS_DEFAULT_REGION": "us-east-1"
   }
 }
