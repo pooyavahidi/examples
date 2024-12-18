@@ -109,7 +109,7 @@ Resources:
       BlockDeviceMappings:
         - DeviceName: "/dev/sda1"
           Ebs:
-            VolumeSize: 10
+            VolumeSize: 8
       UserData:
         Fn::Base64: !Sub |
           #!/bin/bash
@@ -144,16 +144,17 @@ Resources:
           sudo -u ubuntu bash -c "cd $WORKSPACE_DIR/dotfiles && source bootstrap.sh"
 
           # Set environment variables for the app
-          echo "export BACKUP_BUCKET=${S3BucketName}" >> $HOME_DIR/.zshrc
-          echo "export APP_DIR=$APP_DIR" >> $HOME_DIR/.zshrc
-          echo "export APP_NAME=$APP_NAME" >> $HOME_DIR/.zshrc
+          sudo -u ubuntu touch $HOME_DIR/.extra
+          echo "export BACKUP_BUCKET=${S3BucketName}" >> $HOME_DIR/.extra
+          echo "export APP_DIR=$APP_DIR" >> $HOME_DIR/.extra
+          echo "export APP_NAME=$APP_NAME" >> $HOME_DIR/.extra
 
           # Download and unzip the app
           sudo -u ubuntu wget \
             --user-agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36" \
-            -O $WORKSPACE_DIR/app.zip \
+            -O $WORKSPACE_DIR/$APP_NAME.zip \
             $APP_URL
-          sudo -u ubuntu unzip $WORKSPACE_DIR/app.zip -d $APP_DIR
+          sudo -u ubuntu unzip $WORKSPACE_DIR/$APP_NAME.zip -d $APP_DIR
 
           # Create a systemd service
           sudo bash -c "cat <<EOF > /etc/systemd/system/$APP_NAME.service
@@ -177,6 +178,69 @@ Resources:
           sudo systemctl daemon-reload
           sudo systemctl enable $APP_NAME.service
           sudo systemctl start $APP_NAME.service
+
+  StopEC2LambdaRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: !Sub "${AWS::StackName}-StopEC2LambdaRole"
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+            Action: sts:AssumeRole
+      Policies:
+        - PolicyName: !Sub "${AWS::StackName}-StopEC2Policy"
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action:
+                  - ec2:StopInstances
+                  - ec2:DescribeInstances
+                Resource: !Sub "arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:instance/${EC2Instance}"
+
+  StopEC2LambdaFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: !Sub "${AWS::StackName}-StopEC2LambdaFunction"
+      Handler: index.handler
+      Role: !GetAtt StopEC2LambdaRole.Arn
+      Runtime: python3.13
+      Code:
+        ZipFile: |
+          import boto3
+          import os
+
+          def handler(event, context):
+              ec2 = boto3.client('ec2')
+              instance_id = os.environ['INSTANCE_ID']
+              try:
+                  ec2.stop_instances(InstanceIds=[instance_id])
+                  print(f"Successfully stopped instance {instance_id}")
+              except Exception as e:
+                  print(f"Failed to stop instance {instance_id}: {e}")
+
+      Environment:
+        Variables:
+          INSTANCE_ID: !Ref EC2Instance
+
+  StopEC2LambdaSchedule:
+    Type: AWS::Events::Rule
+    Properties:
+      ScheduleExpression: cron(0 10 * * ? *)
+      Targets:
+        - Arn: !GetAtt StopEC2LambdaFunction.Arn
+          Id: StopEC2LambdaFunction
+
+  PermissionForEventsToInvokeLambda:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: !Ref StopEC2LambdaFunction
+      Action: lambda:InvokeFunction
+      Principal: events.amazonaws.com
+      SourceArn: !GetAtt StopEC2LambdaSchedule.Arn
 
 Outputs:
   SecurityGroupId:
