@@ -153,28 +153,33 @@ The decision boundary is the line that separates the area where y = 0 and where 
 - If $f_{\vec{\mathbf{w}},b}(\vec{\mathbf{x}}) \geq 0.5$, then model predicts class $1$ ($\hat{y} = 1$).
 - If $f_{\vec{\mathbf{w}},b}(\vec{\mathbf{x}}) < 0.5$, then model predicts class $0$ ($\hat{y} = 0$).
 
-We cal also infer that:
-- $f_{\vec{\mathbf{w}},b}(\vec{\mathbf{x}}) \geq 0.5$ then $\hat{y} = 1$, when $z \geq 0$.
-- $f_{\vec{\mathbf{w}},b}(\vec{\mathbf{x}}) < 0.5$ then $\hat{y} = 0$, when $z < 0$.
+We can also infer that:
+- $f_{\vec{\mathbf{w}},b}(\vec{\mathbf{x}}) \geq 0.5$ when $z \geq 0$.
+- $f_{\vec{\mathbf{w}},b}(\vec{\mathbf{x}}) < 0.5$ when $z < 0$.
 
-So, we know $z = \vec{\mathbf{w}} \cdot \vec{\mathbf{x}} + b$, we can say:
+We know $z = \vec{\mathbf{w}} \cdot \vec{\mathbf{x}} + b$, so we can say:
 
-- $\hat{y} = 1$, when $\vec{\mathbf{w}} \cdot \vec{\mathbf{x}} + b \geq 0$.
-- $\hat{y} = 0$, when $\vec{\mathbf{w}} \cdot \vec{\mathbf{x}} + b < 0$.
+- If $\vec{\mathbf{w}} \cdot \vec{\mathbf{x}} + b \geq 0$, then model predicts $\hat{y} = 1$.
+- If $\vec{\mathbf{w}} \cdot \vec{\mathbf{x}} + b < 0$, then model predicts $\hat{y} = 0$.
 
-Let's see this decision boundary in the plot of features $x_1$ and $x_2$.
+And the decision boundary line is:
 
-![sigmoid func decision boundary features](images/sigmoid_func_decision_boundary_features.png)
+$$z = 0 \implies \vec{\mathbf{w}} \cdot \vec{\mathbf{x}} + b = 0$$
 
-In the above plot, the decision boundary is a straight line.
+**Linear Decision Boundary**<br>
+The decision boundary line is the line that separates the area where $\hat{y} = 0$ and $\hat{y} = 1$. This line is where we are neutral about the outcome.
 
-$$\text{Decision Boundary is where}\  z = \vec{\mathbf{w}} \cdot \vec{\mathbf{x}} + b = 0$$
+In the above example, we assumed the threshold as $g(z) = 0.5$. So, the decision boundary is at $z = 0$.
 
+Therefore:
 $$f_{\vec{\mathbf{w}},b}(\vec{\mathbf{x}}) = g(z) = g(w_1x_1 + w_2x_2 + b)$$
+
+$$\text{Decision Boundary Line: }\  z = \vec{\mathbf{w}} \cdot \vec{\mathbf{x}} + b = 0$$
+
 
 $$w_1x_1 + w_2x_2 + b = 0$$
 
-let's say we trained our model well and we have the values of $w_1$, $w_2$ and $b$ as below:
+Let's say now we already trained our model well and we have the values of $w_1$, $w_2$ and $b$ as below:
 
 $$w_1 = 1, w_2 = 1, b = -4$$
 
@@ -183,18 +188,40 @@ $$x_1 + x_2 - 4 = 0 \implies x_2 + x_1 = 4$$
 
 And when we draw this line on the plot, we can see that the decision boundary separates the area where $\hat{y} = 0$ and $\hat{y} = 1$.
 
+![sigmoid func decision boundary features](images/sigmoid_func_decision_boundary_features.png)
+
+**Non-linear Decision Boundary**<br>
+In previous example, the decision boundary was a straight line. But in some cases, due to the nature of the data and our model, the decision boundary can be a curve.
+
+Let's say we have the _polynomial features_ $x_1$ and $x_2$ as below:
+
+$$f_{\vec{\mathbf{w}},b}(\vec{\mathbf{x}}) = g(z) = g(w_1x_1^2 + w_2x_2^2 + b)$$
+
+In this case, the decision boundary is a curve. For example, in specific case of $w_1 = 1, w_2 = 1, b = -1$, the decision boundary is:
+
+$$x_1^2 + x_2^2 - 1 = 0 \implies x_1^2 + x_2^2 = 1$$
+
+Which is a circle with radius $1$.
+
+![sigmoid func decision boundary features circle](images/sigmoid_func_decision_boundary_nonlinear.png)
+
+It means:
+- If $x_1^2 + x_2^2 \geq 1$, then model predicts $\hat{y} = 1$.
+- If $x_1^2 + x_2^2 < 1$, then model predicts $\hat{y} = 0$.
 
 
----
+> The decision boundary can be even a more complex curve in higher dimensions with higher order polynomial features.
 
 
-So far, we assumed the threshold as $0.5$. Although this is a common choice, but depending on the problem and data we can always choose a different threshold. For example, in case of detecting deseases before reviwing by the doctor, we may want to set the threshold to low to not miss any positive cases.
+#### Changing the Threshold
+
+So far, we assumed the threshold as $g(z) = 0.5$. Even though this is a common choice as indicates the equal probability of 50% for each class, but depending on the problem and data we can always choose a different threshold. For example, in case of detecting deseases before reviwing by the doctor, we may want to set the threshold to a lower value to make sure we're not missing any positive cases.
 
 The following plot, shows a lower threshold at $0.2$:
 
 ![sigmoid func decision boundary low](images/sigmoid_func_decision_boundary_low.png)
 
-Now we need to solve for $z$ where $g(z) = 0.2$ to find out the corresponding decision boundary on $z$.
+Now based on threshold $g(z) = 0.2$ we need to find out the corresponding decision boundary on $z$.
 
 $$
 g(z) = 0.2 \implies \frac{1}{1 + e^{-z}} = 0.2
@@ -218,11 +245,31 @@ $$
 $$
 
 
-So, for a decision boundary of $0.2$, the corresponding threshold on $z$ is $z \approx -1.386$.
+So, for a threshold of $0.2$, the corresponding decision boundary on $z$ is $z \approx -1.386$.
 
 This means:
 - If $z \geq -1.386$, model predicts $\hat{y} = 1$.
 - If $z < -1.386$, model predicts $\hat{y} = 0$.
 
+Now the line of $z = -1.386$ will give us the decision boundary on the plot.
 
-> The threshold on $z$ depends on the **choice of decision boundary** for $g(z)$. Changing the decision boundary moves the threshold away from $z = 0$:
+
+### Cost Function for Logistic Regression
+For the introduction, see [Loss and Cost Functions](loss_and_cost_functions.md).
+
+As we discussed, the loss function $L$ which is the measure of error between the predicted value and the actual for a single training example:
+
+$$L(f_{\vec{\mathbf{w}},b}(\vec{\mathbf{x}}^{(i)}), y^{(i)})$$
+
+And the cost function $J$ which is the average of the loss function over all training examples:
+
+$$J(\vec{\mathbf{w}},b) = \frac{1}{m} \sum_{i=1}^{m} L(f_{\vec{\mathbf{w}},b}(\vec{\mathbf{x}}^{(i)}), y^{(i)})$$
+
+For logistic regression, instead of using the squared error loss function, we use [**cross-entropy loss**](loss_and_cost_functions.md#cross-entropy-loss) function.
+
+$$\begin{aligned}
+  L(f_{\mathbf{w},b}(\mathbf{x}^{(i)}), y^{(i)}) = \begin{cases}
+    - \log\left(f_{\mathbf{w},b}\left( \mathbf{x}^{(i)} \right) \right) & \text{if $y^{(i)}=1$}\\
+    - \log \left( 1 - f_{\mathbf{w},b}\left( \mathbf{x}^{(i)} \right) \right) & \text{if $y^{(i)}=0$}
+  \end{cases}
+\end{aligned}$$
