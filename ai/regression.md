@@ -218,50 +218,28 @@ This is the simplest form of regression model where the model tries to fit a str
 > Placing the scalar value $1$ at the end of $\vec{\mathbf{x}}^{(i)}$ ensures consistency with the order of elements in $\theta$. This way the last element of $\vec{\mathbf{x}}^{(i)}$ (the constant $1$) multiplies the last element of $\theta$ (the bias term $b$), and the resulting dot product correctly computes the model function.
 
 
-## Cost Function
-We have defined our model as $f_{\vec{\mathbf{w}},b}(\vec{\mathbf{x}}^{(i)})$. But, how do we know which values of $\vec{\mathbf{w}}$ and $b$ are the best? We need a way to measure how well the model is performing. In other words, how far or close the predicted value $\hat{y}$ is to the actual target value $y$ (labels).
+## Cost Functions
+For the introduction, see [Loss and Cost Functions](loss_and_cost_functions.md).
+
+As we discussed, the loss functin $L$ which is the measure of error between the predicted value and the actual for a single training example:
+
+$$L(f_{\vec{\mathbf{w}},b}(\vec{\mathbf{x}}^{(i)}), y^{(i)})$$
+
+And the cost function $J$ which is the average of the loss function over all training examples:
+
+$$J(\vec{\mathbf{w}},b) = \frac{1}{m} \sum_{i=1}^{m} L(f_{\vec{\mathbf{w}},b}(\vec{\mathbf{x}}^{(i)}), y^{(i)})$$
+
+For linear regression we use the _squared error_ loss function $L$:
+$$L(f_{\vec{\mathbf{w}},b}(\vec{\mathbf{x}}^{(i)}), y^{(i)}) = (f_{\vec{\mathbf{w}},b}(\vec{\mathbf{x}}^{(i)}) - y^{(i)})^2$$
+
+And the cost function is the average of the squared error loss function over all training examples which is  [**Mean Squared Error (MSE)**](loss_and_cost_functions.md#mean-squared-error-mse).
+
+$$J(\vec{\mathbf{w}},b) = \frac{1}{m} \sum\limits_{i = 1}^{m} \frac{1}{2}(f_{\vec{\mathbf{w}},b}(\vec{\mathbf{x}}^{(i)}) - y^{(i)})^2$$
+
+> Note: The factor $\frac{1}{2}$ is introduced **purely for mathematical convenience** to simplify derivatives during gradient descent. It does not affect the optimization process or the final result.
 
 
-So, the goal here is to find the best values for $\vec{\mathbf{w}}$ and $b$ that minimize the difference between the predicted value $\hat{y}$ and the actual target value $y$ for all training examples.
 
-For simplicity, we use a univariate linear regression model $f_{w,b}(x) = wx + b$ where we have only one feature $x$. We use this model to explain the concept of cost function and how to minimize it.
-
-
-![cost_function](images/cost_function1.png)
-
-**Error**: is the difference between the predicted value (by the model), and the actual target value.
-
-$$Error =y_{pred} - y_{actual}$$
-
-In a more formal way, Error is the difference between predicted value of the model for the $i^{th}$ training example (denoted as ${\hat{y}}^{(i)}$) and the actual target value $y^{(i)}$.
-
-$$Error(\hat{y}^{(i)}, y^{(i)}) = \hat{y}^{(i)} - y^{(i)}$$
-
-
-
-**Loss function**: A function that measures how well the model's prediction $\hat{y}$ for a single training example is compared to the actual target value $y$.
-
-The _squared error_  and _absolute error_ are common [loss functions](https://developers.google.com/machine-learning/crash-course/linear-regression/loss#types_of_loss) used in regression models. Here, we will use the squared error loss function.
-
-Squared Error Loss function:
-
-$$Loss(\hat{y}^{(i)}, y^{(i)}) = (\hat{y}^{(i)} - y^{(i)})^2$$
-
-Knowing that $\hat{y}^{(i)} = f_{w,b}(x^{(i)})$, we can write the loss function as:
-
-$$Loss(f_{w,b}(x^{(i)}),y^{(i)}) = (f_{w,b}(x^{(i)}) - y^{(i)})^2$$
-
-
-**Cost function**: A function denoted by $J(w,b)$ that measures the average loss over all training examples. This function is also called **Mean Squared Error (MSE)**.
-
-$$J(w,b) = \frac{1}{2m} \sum\limits_{i = 1}^{m} (f_{w,b}(x^{(i)}) - y^{(i)})^2$$
-
-where:
-- $m$: total number of training examples
-- $f_{w,b}(x^{(i)})$: predicted value for the $i^{th}$ training example
-
-
-> Note: The terms **Loss** and **Cost** are often used interchangeably in machine learning. So, in many cases, they refer to the same thing.
 
 ### Summary of MSE Cost Function for Linear Regression
 
