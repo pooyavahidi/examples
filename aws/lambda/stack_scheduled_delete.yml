@@ -1,0 +1,115 @@
+AWSTemplateFormatVersion: "2010-09-09"
+
+Resources:
+  StackScheduledDeleteLambdaRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: "StackScheduledDeleteLambdaRole"
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+            Action: sts:AssumeRole
+      Policies:
+        - PolicyName: "StackScheduledDeleteLambdaPolicy"
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action:
+                  - cloudformation:DescribeStacks
+                  - cloudformation:DeleteStack
+                  - ec2:*
+                  - iam:Remove*
+                  - iam:Delete*
+                  - iam:List*
+                  - iam:Get*
+                Resource: "*"
+              - Effect: Allow
+                Action:
+                  - "ssm:Get*"
+                  - "ssm:PutParameter"
+                Resource:
+                  - !Sub "arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/cfn/*"
+
+  StackScheduledDeleteFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: "StackScheduledDeleteFunction"
+      Handler: index.handler
+      Role: !GetAtt StackScheduledDeleteLambdaRole.Arn
+      Runtime: python3.13
+      Timeout: 30
+      Environment:
+        Variables:
+          SSM_BASE_PATH: "/cfn/"
+      Code:
+        ZipFile: |
+          import boto3
+          import os
+          from botocore.exceptions import BotoCoreError, ClientError
+
+          def handler(event, context):
+              base_path = os.getenv('SSM_BASE_PATH')
+
+              ssm_client = boto3.client('ssm')
+              cfn_client = boto3.client('cloudformation')
+
+              try:
+                  paginator = ssm_client.get_paginator('get_parameters_by_path')
+                  page_iterator = paginator.paginate(
+                      Path=base_path,
+                      Recursive=True,
+                      WithDecryption=False
+                  )
+
+                  for page in page_iterator:
+                      for param in page.get('Parameters', []):
+                          if 'pending-deletion' in param['Name']:
+                              stack_names = [stack_name.strip() for stack_name in param.get('Value', "").split(",") if stack_name.strip()]
+                              removed_stacks = []
+
+                              for stack_name in stack_names:
+                                  try:
+                                      print(f"Attempting to delete stack: {stack_name}")
+                                      cfn_client.delete_stack(StackName=stack_name)
+                                      print(f"Successfully initiated deletion for stack: {stack_name}")
+                                      removed_stacks.append(stack_name)
+                                  except (BotoCoreError, ClientError) as e:
+                                      print(f"Error deleting stack {stack_name}: {str(e)}")
+
+                              # Remove the deleted stack names from the pending-deletion parameter
+                              if removed_stacks:
+                                  new_stack_names = [name for name in stack_names if name not in removed_stacks]
+                                  new_value = ",".join(new_stack_names)
+                                  if new_value:
+                                      ssm_client.put_parameter(
+                                          Name=param['Name'],
+                                          Value=new_value,
+                                          Type='String',
+                                          Overwrite=True
+                                      )
+                                      print(f"Updated parameter {param['Name']} with new value: {new_value}")
+                                  else:
+                                      ssm_client.delete_parameter(Name=param['Name'])
+                                      print(f"Deleted parameter {param['Name']} as it is now empty")
+              except (BotoCoreError, ClientError) as e:
+                  print(f"Error processing parameters: {str(e)}")
+
+  StackScheduledDeleteLambdaSchedule:
+    Type: AWS::Events::Rule
+    Properties:
+      ScheduleExpression: cron(0 10 * * ? *)
+      Targets:
+        - Arn: !GetAtt StackScheduledDeleteFunction.Arn
+          Id: StackScheduledDeleteFunction
+
+  PermissionForEventsToInvokeLambda:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: !Ref StackScheduledDeleteFunction
+      Action: lambda:InvokeFunction
+      Principal: events.amazonaws.com
+      SourceArn: !GetAtt StackScheduledDeleteLambdaSchedule.Arn
