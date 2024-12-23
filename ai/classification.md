@@ -257,19 +257,29 @@ Now the line of $z = -1.386$ will give us the decision boundary on the plot.
 ### Cost Function for Logistic Regression
 For the introduction, see [Loss and Cost Functions](loss_and_cost_functions.md).
 
-As we discussed, the loss function $L$ which is the measure of error between the predicted value and the actual for a single training example:
+As we discussed, the logistic regression for the $i_{th}$ training example is defined as:
+
+$$
+f_{\vec{\mathbf{w}},b}(\vec{\mathbf{x}}^{(i)}) = \frac{1}{1 + e^{-(\vec{\mathbf{w}} \cdot \vec{\mathbf{x}}^{(i)} + b)}}
+$$
+
+The loss function $L$ which is the measure of error between the predicted value and the actual for a single training example defined as:
 
 $$L(f_{\vec{\mathbf{w}},b}(\vec{\mathbf{x}}^{(i)}), y^{(i)})$$
 
-And the cost function $J$ which is the average of the loss function over all training examples:
+And the cost function $J$ which is the average of the loss function over all training examples defined as:
 
 $$J(\vec{\mathbf{w}},b) = \frac{1}{m} \sum_{i=1}^{m} L(f_{\vec{\mathbf{w}},b}(\vec{\mathbf{x}}^{(i)}), y^{(i)})$$
 
-For logistic regression, instead of using the squared error loss function, we use [**cross-entropy loss**](loss_and_cost_functions.md#cross-entropy-loss) function.
+For logistic regression, we use [binary cross-entropy loss](loss_and_cost_functions.md#binary-cross-entropy-loss) function.
 
 $$\begin{aligned}
-  L(f_{\mathbf{w},b}(\mathbf{x}^{(i)}), y^{(i)}) = \begin{cases}
-    - \log\left(f_{\mathbf{w},b}\left( \mathbf{x}^{(i)} \right) \right) & \text{if $y^{(i)}=1$}\\
-    - \log \left( 1 - f_{\mathbf{w},b}\left( \mathbf{x}^{(i)} \right) \right) & \text{if $y^{(i)}=0$}
-  \end{cases}
+    L(f_{\vec{\mathbf{w}},b}(\vec{\mathbf{x}}^{(i)}), y^{(i)}) = \begin{cases}
+        - \log\left(f_{\vec{\mathbf{w}},b}\left( \vec{\mathbf{x}}^{(i)} \right) \right) & \text{if $y^{(i)}=1$}\\
+        - \log \left( 1 - f_{\vec{\mathbf{w}},b}\left( \vec{\mathbf{x}}^{(i)} \right) \right) & \text{if $y^{(i)}=0$}
+    \end{cases}
 \end{aligned}$$
+
+> For Logistic Regression, we don't use use squared error loss function, to non-linear nature of the sigmoid function (our model), which results in a wiggly, non-convex loss surface with many potential local minima.
+
+For more details on why and how we use cross-entropy loss function for logistic regression, see [Cross-Entropy Loss](loss_and_cost_functions.md#cross-entropy-loss).
