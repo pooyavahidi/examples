@@ -63,6 +63,12 @@ Resources:
                   - "s3:PutObject"
                   - "s3:DeleteObject"
                 Resource: !Sub "arn:aws:s3:::${S3BucketName}/${AppName}/*"
+              - Effect: Allow
+                Action:
+                  - "ssm:PutParameter"
+                  - "ssm:Get*"
+                Resource:
+                  - !Sub "arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/cfn/${AppName}/*"
 
   EC2Instance:
     Type: AWS::EC2::Instance
@@ -86,13 +92,15 @@ Resources:
           #!/bin/bash
 
           # Redirect all output to a log file
-          exec > /var/log/user-data.log 2>&1
+          exec > /var/log/user_data.log 2>&1
           set -x
 
           # Environment variables
           HOME_DIR=/home/ubuntu
           WORKSPACE_DIR=$HOME_DIR/workspace
+          APP_NAME=${AppName}
           APP_DIR=$WORKSPACE_DIR/${AppName}
+          APP_INSTALL_DIR=$APP_DIR/install
 
           # Update and install packages
           sudo apt update \
@@ -114,76 +122,21 @@ Resources:
           sudo -u ubuntu bash -c "cd $WORKSPACE_DIR/dotfiles && source bootstrap.sh"
 
           # Download the app from S3
-          sudo -u ubuntu aws s3 cp s3://${S3BucketName}/${AppName}/install $APP_DIR --recursive
+          sudo -u ubuntu aws s3 cp s3://${S3BucketName}/${AppName}/install $APP_INSTALL_DIR --recursive
+
+          # Set environment variables for the app installation and execution
+          sudo -u ubuntu cp $APP_INSTALL_DIR/extra.sh $HOME_DIR/.extra
+          sed -i "2i export CFN_STACK_NAME=${AWS::StackName}" $HOME_DIR/.extra
+          sed -i "2i export APP_NAME=$APP_NAME" $HOME_DIR/.extra
+          sed -i "2i export APP_DIR=$APP_DIR" $HOME_DIR/.extra
+          sed -i "2i export APP_INSTALL_DIR=$APP_INSTALL_DIR" $HOME_DIR/.extra
+          sed -i "2i export S3_BUCKET=${S3BucketName}" $HOME_DIR/.extra
 
           # Install the app
-          sudo -u ubuntu chmod +x $APP_DIR/install.sh
-          sudo -u ubuntu $APP_DIR/install.sh
-
-  StopEC2LambdaRole:
-    Type: AWS::IAM::Role
-    Properties:
-      RoleName: !Sub "${AWS::StackName}-StopEC2LambdaRole"
-      AssumeRolePolicyDocument:
-        Version: "2012-10-17"
-        Statement:
-          - Effect: Allow
-            Principal:
-              Service: lambda.amazonaws.com
-            Action: sts:AssumeRole
-      Policies:
-        - PolicyName: !Sub "${AWS::StackName}-StopEC2Policy"
-          PolicyDocument:
-            Version: "2012-10-17"
-            Statement:
-              - Effect: Allow
-                Action:
-                  - ec2:StopInstances
-                  - ec2:DescribeInstances
-                Resource: !Sub "arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:instance/${EC2Instance}"
-
-  StopEC2LambdaFunction:
-    Type: AWS::Lambda::Function
-    Properties:
-      FunctionName: !Sub "${AWS::StackName}-StopEC2LambdaFunction"
-      Handler: index.handler
-      Role: !GetAtt StopEC2LambdaRole.Arn
-      Runtime: python3.13
-      Code:
-        ZipFile: |
-          import boto3
-          import os
-
-          def handler(event, context):
-              ec2 = boto3.client('ec2')
-              instance_id = os.environ['INSTANCE_ID']
-              try:
-                  ec2.stop_instances(InstanceIds=[instance_id])
-                  print(f"Successfully stopped instance {instance_id}")
-              except Exception as e:
-                  print(f"Failed to stop instance {instance_id}: {e}")
-
-      Environment:
-        Variables:
-          INSTANCE_ID: !Ref EC2Instance
-
-  StopEC2LambdaSchedule:
-    Type: AWS::Events::Rule
-    Properties:
-      ScheduleExpression: cron(0 10 * * ? *)
-      Targets:
-        - Arn: !GetAtt StopEC2LambdaFunction.Arn
-          Id: StopEC2LambdaFunction
-
-  PermissionForEventsToInvokeLambda:
-    Type: AWS::Lambda::Permission
-    Properties:
-      FunctionName: !Ref StopEC2LambdaFunction
-      Action: lambda:InvokeFunction
-      Principal: events.amazonaws.com
-      SourceArn: !GetAtt StopEC2LambdaSchedule.Arn
+          sudo -u ubuntu chmod +x $APP_INSTALL_DIR/install.sh
+          sudo -u ubuntu $APP_INSTALL_DIR/install.sh
 
 Outputs:
-  SecurityGroupId:
-    Description: The ID of the created security group
-    Value: !Ref SecurityGroup
+  InstancePublicIp:
+    Description: The public IP address of the EC2 instance
+    Value: !GetAtt EC2Instance.PublicIp
