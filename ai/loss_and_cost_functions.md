@@ -7,13 +7,20 @@ In machine learning, a **loss function** quantifies how well our model's predict
 The main goal during the training of a machine learning model is to minimize this loss function to improve the accuracy of the model's predictions.
 
 **Loss Function**:<br>
-Formally, a loss function $L(\hat{y}, y)$ is a function that takes as input:
+Formally, a loss function $L$ is a function that takes as input:
+
+$$ L(\hat{y}, y) = \text{error }$$
+
+where:
 - $\hat{y}$: the predicted value output by the model for a single instance.
 - $y$: the true value for that instance.
+- $\text{error}$: A non-negative real number, interpreted as the **error** or **penalty** for the model's prediction.
 
-It outputs a non-negative real number, interpreted as the **error** or **penalty** for the model's prediction.
+> In some texts, the **loss function** is also denoted by a lowercase $\ell$ (the Greek letter “ell”):
+>
+>$$\ell\bigl(\hat{y}, y\bigr)$$
 
-For a model $f_{\mathbf{W}, \vec{\mathbf{b}}}$, which outputs predictions $\hat{y} = f_{\mathbf{W}, \vec{\mathbf{b}}}(\mathbf{x})$, the loss for a single instance is given by:
+For the model $f_{\mathbf{W}, \vec{\mathbf{b}}}$, which outputs predictions $\hat{y} = f_{\mathbf{W}, \vec{\mathbf{b}}}(\mathbf{x})$, the loss for a single instance is  written as:
 $$
 L(\hat{y}, y) = L(f_{\mathbf{W}, \vec{\mathbf{b}}}(\mathbf{x}), y)
 $$
@@ -29,6 +36,15 @@ where:
   - For simpler models like linear regression, the bias is a **scalar** $b$.
   - Sometime for batch processing, we use $B$ as the bias matrix which is a matrix of shape $(h, m)$, where $h$ is the number of neurons in the current layer, and $m$ is the number of instances in the batch.
 
+**Using $\theta$ (theta) notation**:<br>
+For simplicity, it's common to use a single parameter set $\theta$ to represent all the learnable parameters of the model, including the weights $\mathbf{W}$ and biases $\vec{\mathbf{b}}$. In this case, the loss function is written as:
+
+$$
+L\bigl(\hat{y}, y\bigr) \;=\; L(f_\theta(\mathbf{x}),\, y)
+$$
+
+where:
+- $\theta$ encapsulates $\mathbf{W}$ and $\vec{\mathbf{b}}$ (all the learnable parameters of the model).
 
 
 ## Loss vs Cost Functions
@@ -41,9 +57,17 @@ $$
 J(\mathbf{W}, \vec{\mathbf{b}}) = \frac{1}{m} \sum_{i=1}^{m} L(f_{\mathbf{W}, \vec{\mathbf{b}}}(\mathbf{x}^{(i)}), y^{(i)})
 $$
 
+**Using $\theta$ (theta) notation**:<br>
+In here again, for simplicity, we use a single parameter set $\theta$ to represent all the learnable parameters of the model. The cost function is written as:
+
+$$
+J(\theta) = \frac{1}{m} \sum_{i=1}^{m} L(f_\theta(\mathbf{x}^{(i)}), y^{(i)})
+$$
+
+
 > Both Loss $L$ and Cost $J$ are scalar values (non-negative real numbers) that quantify the error between the model's predictions and the true values.
 
-Loss can be varied and usually chosen based on the use-case, the problem, model and data. Cost function is simply average of those losses for all examples int the training dataset (or the batch).
+Loss functions vary across models and problems, chosen based on the use-case, data, and objectives. The cost function is simply the average of these losses over the training set (or batch).
 
 **Cost Function for batches**<br>
 In practice, during the process of training, this averaging of losses is typically performed over a **subset** of the total training examples, known as a batch (or mini-batch). This batch-based averaging approach forms the basis of the commonly used [**mini-batch Stochastic Gradient Descent (SGD)**](gradient_descent.md#mini-batch-sgd) and its variants, where the model's parameters are updated incrementally after computing the cost function for each batch.
@@ -132,12 +156,122 @@ $$J(\vec{\mathbf{w}},b) = \frac{1}{2m} \sum\limits_{i = 1}^{m} (f_{\vec{\mathbf{
 
 
 ## Cross-Entropy Loss
-Cross-Entropy measures measures the dissimilarity between the predicted probability distribution and the true (actual) distribution. The name _Cross-Entropy_ comes from the field of information theory, where it is used to quantify the amount of "surprise" or "information" between two probability distributions.
+Cross-Entropy measures the dissimilarity between the predicted probability distribution and the true (actual) distribution by quantifying how far the predictions are from perfectly matching the true labels. It originates from information theory, where it quantifies the "surprise" or "information" difference between two probability distributions.
 
-A lower cross-entropy value indicates that the predicted probabilities align more closely with the true labels, signifying better predictions. For a true class label $y$ and a predicted probability $p$, the cross-entropy is calculated as $-y \log(p)$, where $y$ is 1 for the correct class and 0 otherwise.
+Imagine you are playing a guessing game, and you have to guess which box has candy inside. Cross-Entropy Loss is like a score that tells you how bad your guess is. If your guess is very far from the candy box, the score (or "loss") will be high. But if you make your guesses closer to the right box, the score gets smaller.
 
-Think of it like this: If the model predicts a probability of 0.9 for the correct class, the loss will be low (good prediction). But if the model predicts a probability of 0.1 for the correct class, the loss will be high (poor prediction). The goal is to penalize incorrect predictions more heavily, encouraging the model to produce higher probabilities for the correct class.
+When we try to make the score as small as possible (minimize the loss), we are learning to guess better. In this case, it means we are getting closer to saying the right box has the highest chance (probability) of having the candy.
 
+Let's compare Cross-Entropy Loss with Mean Squared Error (MSE) for better understanding. We know that Mean Squared Error (MSE) and Cross-Entropy Loss both measure the error between the model's predictions, but they do so in fundamentally different ways. MSE does this by measuring the distance between the predicted and true values, treating them as points in space and calculating how far apart they are. On the other hand, Cross-Entropy measures the unlikelihood of the true class by evaluating how much the predicted probability distribution deviates from assigning high probability to the correct class. In essence, while MSE focuses on minimizing the numerical distance between points, Cross-Entropy focuses on reducing the uncertainty and increasing confidence in the true class by penalizing unlikely predictions.
+
+**Cross-Entropy and Maximum Likelihood Estimation (MLE):**<br>
+In machine learning, the cross-entropy loss has a direct connection to maximum likelihood estimation (MLE) in field of statistics. Minimizing the cross-entropy loss is equivalent to maximizing the likelihood of the observed data under the predicted probability distribution.
+
+For a single example, Cross-Entropy Loss is calculated as:
+
+$$
+L = -\log(p_\text{true})
+$$
+
+where:
+- $L$ is the loss for a single example.
+- $p_\text{true}$ is the predicted probability for the correct label.
+
+For a dataset with many examples, the average loss becomes:
+
+$$
+J = -\frac{1}{m} \sum_{i=1}^m \log(p_{\text{true}}^{(i)})
+$$
+where:
+- $J$ is the average loss over all examples.
+- $m$ is the number of examples.
+- $p_{\text{true}}^{(i)}$ is the predicted probability for the correct label of the $i^{th}$ example.
+
+By minimizing this loss, the model adjusts its predictions to increase the likelihood of the correct labels. This connection exists because minimizing Cross-Entropy Loss is mathematically identical to maximizing the likelihood of the data, which is the goal of MLE. In essence, both approaches aim to make the model's predictions align as closely as possible with the actual data.
+
+### Binary Cross-Entropy Loss
+Binary Cross-Entropy Loss is a variant of the Cross-Entropy Loss which is commonly used in binary classification problems such as predicting whether an email is spam or not, or whether a tumor is malignant or benign. Here, the output of our model is a probability that the given input point belongs to a certain class.
+
+In binary classification, the true label is either 0 or 1, and the model outputs a probability. If the true label is 1, we want the predicted probability to be as close to 1 as possible, and vice versa. The binary cross-entropy loss is high when the model's predictions are confident but wrong, and it's low when the predictions are confident and correct.
+
+Formally, the binary cross-entropy loss function $L$ for a single data point is defined as:
+$$
+\begin{aligned}
+  L(\hat{y}^{(i)}, y^{(i)}) = \begin{cases}
+    - \log(\hat{y}^{(i)}) & \text{if $y^{(i)}=1$}\\
+    - \log(1-\hat{y}^{(i)}) & \text{if $y^{(i)}=0$}
+  \end{cases}
+\end{aligned}
+$$
+where:
+- $\hat{y}^{(i)}$ is the predicted probability for the $i^{th}$ instance.
+- $y^{(i)}$ is the true label for the $i^{th}$ instance.
+
+We know $\hat{y}^{(i)} = f_{\vec{\mathbf{w}},b}(\vec{\mathbf{x}}^{(i)})$, so we can write the loss function as:
+
+$$
+L(f_{\vec{\mathbf{w}},b}(\vec{\mathbf{x}}^{(i)}), y^{(i)}) = \begin{cases}
+    - \log(f_{\vec{\mathbf{w}},b}(\vec{\mathbf{x}}^{(i)})) & \text{if $y^{(i)}=1$}\\
+    - \log(1 - f_{\vec{\mathbf{w}},b}(\vec{\mathbf{x}}^{(i)})) & \text{if $y^{(i)}=0$}
+  \end{cases}
+$$
+
+The following plots show the changes of the loss function for $f_{\vec{\mathbf{w}},b}(\vec{\mathbf{x}}^{(i)})$ as the predicted value $\hat{y}$ changes for the true label $y=1$ and $y=0$.
+
+![binary_cross_entropy](images/binary_cross_entropy_loss.png)
+
+As we can see in the above plot:
+
+When $y_{(i)}=1$: The goal is to penalize the model more when the predicted probability is low (close to 0).
+- As $f_{\vec{\mathbf{w}},b}(\vec{\mathbf{x}}^{(i)})$ approaches 1, the loss approaches 0
+- As $f_{\vec{\mathbf{w}},b}(\vec{\mathbf{x}}^{(i)})$ approaches 0, the loss approaches $\infty$
+
+When $y_{(i)}=0$: The goal is to penalize the model more when the predicted probability is high (close to 1).
+- As $f_{\vec{\mathbf{w}},b}(\vec{\mathbf{x}}^{(i)})$ approaches 0, the loss approaches 0
+- As $f_{\vec{\mathbf{w}},b}(\vec{\mathbf{x}}^{(i)})$ approaches 1, the loss approaches $\infty$
+
+>  This loss function penalizes the model heavily when predictions of the model $f_{\vec{\mathbf{w}},b}(\vec{\mathbf{x}}^{(i)})$ goes further away from the true label $y_{(i)}$. Using this loss, the model is strongly encouraged not to predict something too close to 0 or 1.
+
+We can write the loss function $L$ in a more simpler way:
+$$
+L(f_{\vec{\mathbf{w}},b}(\vec{\mathbf{x}}^{(i)}), y^{(i)}) = -y^{(i)} \log(f_{\vec{\mathbf{w}},b}(\vec{\mathbf{x}}^{(i)})) - (1 - y^{(i)}) \log(1 - f_{\vec{\mathbf{w}},b}(\vec{\mathbf{x}}^{(i)}))
+$$
+
+The above notation is embedding the if-else condition in a single equation. Since we know that $y^{(i)}$ is either 0 or 1, the term $-y^{(i)} \log(f_{\vec{\mathbf{w}},b}(\vec{\mathbf{x}}^{(i)}))$ will be zero when $y^{(i)}=0$ and the term $-(1 - y^{(i)}) \log(1 - f_{\vec{\mathbf{w}},b}(\vec{\mathbf{x}}^{(i)}))$ will be zero when $y^{(i)}=1$.
+
+
+Now, knowing that $\hat{y}^{(i)} = f_{\vec{\mathbf{w}},b}(\vec{\mathbf{x}}^{(i)})$, we can write the loss function as:
+$$
+L(\hat{y}^{(i)}, y^{(i)}) = -y^{(i)} \log(\hat{y}^{(i)}) - (1 - y^{(i)}) \log(1 - \hat{y}^{(i)})
+$$
+
+And if factor out $-1$ and write it in a more general form:
+
+$$
+L(\hat{y}, y) = -[y \log(\hat{y}) + (1 - y) \log(1 - \hat{y})]
+$$
+
+In binary classification tasks, the final layer of the neural network typically consists of a single output node with a sigmoid activation function, which gives us the probability $a$ that an instance belongs to class 1 (consequently, the probability that it belongs to class 0 is $1-a$).
+
+Given the true label $y$ (where $y=1$ for class 1 and $y=0$ for class 0) and the predicted probability $a$, the Binary Cross-Entropy Loss $L$ for an individual instance is:
+
+$$
+L(a, y) = -y \log(a) - (1 - y) \log(1 - a)
+$$
+
+This implies that if the true class is 1 ($y=1$), the loss becomes $-\log(a)$, and if the true class is 0 ($y=0$), the loss transforms to $-\log(1-a)$.
+
+**Cost Function for Binary Cross-Entropy:**<br>
+The cost function $J$ measures the average loss (error between the model's predictions and the true labels) for the entire training set of size $m$:
+
+$$
+J(W, \vec{\mathbf{b}}) = -\frac{1}{m} \sum_{i=1}^{m} [y^{(i)} \log(\hat{y}^{(i)}) + (1 - y^{(i)}) \log(1 - \hat{y}^{(i)})]
+$$
+where:
+- $m$ is the number of training examples.
+- $W$ represents the matrix of weights for the model.
+- $\vec{\mathbf{b}}$ is vector of the biases.
+- $\hat{y}^{(i)} = f_{W, \vec{\mathbf{b}}}(\vec{\mathbf{x}}^{(i)})$ is the predicted probability for the $i^{th}$ instance.
 
 
 ### Categorical Cross-Entropy Loss
@@ -252,58 +386,6 @@ To put this all together, if you're working on a multi-class classification prob
 >
 >- $\mathbf{1}\{y == n\} = 1$: This line states that the indicator function outputs 1 when the condition $y==n$ is met.
 >- $\mathbf{1}\{y == n\} = 0$: This line states that the indicator function outputs 0 when the condition $y==n$ is not met.
-
-### Binary Cross-Entropy Loss (N=2)
-This variant of Cross-Entropy Loss is specifically designed for binary classification tasks. Binary Cross-Entropy Loss is commonly used in binary classification problems, such as predicting whether an email is spam or not, or whether a tumor is malignant or benign. Here, the output of our model is a probability that the given input point belongs to a certain class.
-
-In binary classification, the true label is either 0 or 1, and the model outputs a probability. If the true label is 1, we want the predicted probability to be as close to 1 as possible, and vice versa. The binary cross-entropy loss is high when the model's predictions are confident but wrong, and it's low when the predictions are confident and correct.
-
-Formally, the binary cross-entropy loss function $L$ for a single data point is defined as:
-$$
-\begin{aligned}
-  L(\hat{y}^{(i)}, y^{(i)}) = \begin{cases}
-    - \log(\hat{y}^{(i)}) & \text{if $y^{(i)}=1$}\\
-    - \log(1-\hat{y}^{(i)}) & \text{if $y^{(i)}=0$}
-  \end{cases}
-\end{aligned}
-$$
-where:
-- $\hat{y}^{(i)}$ is the predicted probability for the $i^{th}$ instance.
-- $y^{(i)}$ is the true label for the $i^{th}$ instance.
-
-
-
-
-Which we can derive the following:
-$$
-L(\hat{y}, y) = -y\log(\hat{y}) - (1 - y) \log(1 - \hat{y})
-$$
-
-Or factor out $-1$:
-$$
-L(\hat{y}, y) = -[y \log(\hat{y}) + (1 - y) \log(1 - \hat{y})]
-$$
-
-In binary classification tasks, the final layer of the neural network typically consists of a single output node with a sigmoid activation function, which gives us the probability $a$ that an instance belongs to class 1 (consequently, the probability that it belongs to class 0 is $1-a$).
-
-Given the true label $y$ (where $y=1$ for class 1 and $y=0$ for class 0) and the predicted probability $a$, the Binary Cross-Entropy Loss $L$ for an individual instance is:
-
-$$
-L(a, y) = -y \log(a) - (1 - y) \log(1 - a)
-$$
-
-This implies that if the true class is 1 ($y=1$), the loss becomes $-\log(a)$, and if the true class is 0 ($y=0$), the loss transforms to $-\log(1-a)$.
-
-**Cost Function for Binary Cross-Entropy:**<br>
-The cost function $J$ measures the average loss (error between the model's predictions and the true labels) for the entire training set of size $m$:
-
-$$
-J(W, \vec{\mathbf{b}}) = -\frac{1}{m} \sum_{i=1}^{m} [y^{(i)} \log(\hat{y}^{(i)}) + (1 - y^{(i)}) \log(1 - \hat{y}^{(i)})]
-$$
-where:
-- $m$ is the number of training examples.
-- $W$ represents the matrix of weights for the model.
-- $\vec{\mathbf{b}}$ is vector of the biases.
 
 
 ### Mutually Exclusive Multi-Class vs. Multi-Label Classification
