@@ -166,6 +166,13 @@ And the decision boundary line is:
 
 $$z = 0 \implies \vec{\mathbf{w}} \cdot \vec{\mathbf{x}} + b = 0$$
 
+> Note: that the more accurate notation is by denoting the model for the $i_{th}$ training example as below:
+>
+> $f_{\vec{\mathbf{w}},b}(\vec{\mathbf{x}}^{(i)})=g(z^{(i)})=g(\vec{\mathbf{w}} \cdot \vec{\mathbf{x}}^{(i)} + b)$
+>
+> However, for brevity we'll drop the superscript $(i)$ in the following sections.
+
+
 **Linear Decision Boundary**<br>
 The decision boundary line is the line that separates the area where $\hat{y} = 0$ and $\hat{y} = 1$. This line is where we are neutral about the outcome.
 
@@ -189,28 +196,6 @@ $$x_1 + x_2 - 4 = 0 \implies x_2 + x_1 = 4$$
 And when we draw this line on the plot, we can see that the decision boundary separates the area where $\hat{y} = 0$ and $\hat{y} = 1$.
 
 ![sigmoid func decision boundary features](images/sigmoid_func_decision_boundary_features.png)
-
-**Non-linear Decision Boundary**<br>
-In previous example, the decision boundary was a straight line. But in some cases, due to the nature of the data and our model, the decision boundary can be a curve.
-
-Let's say we have the _polynomial features_ $x_1$ and $x_2$ as below:
-
-$$f_{\vec{\mathbf{w}},b}(\vec{\mathbf{x}}) = g(z) = g(w_1x_1^2 + w_2x_2^2 + b)$$
-
-In this case, the decision boundary is a curve. For example, in specific case of $w_1 = 1, w_2 = 1, b = -1$, the decision boundary is:
-
-$$x_1^2 + x_2^2 - 1 = 0 \implies x_1^2 + x_2^2 = 1$$
-
-Which is a circle with radius $1$.
-
-![sigmoid func decision boundary features circle](images/sigmoid_func_decision_boundary_nonlinear.png)
-
-It means:
-- If $x_1^2 + x_2^2 \geq 1$, then model predicts $\hat{y} = 1$.
-- If $x_1^2 + x_2^2 < 1$, then model predicts $\hat{y} = 0$.
-
-
-> The decision boundary can be even a more complex curve in higher dimensions with higher order polynomial features.
 
 
 #### Changing the Threshold
@@ -253,6 +238,28 @@ This means:
 
 Now the line of $z = -1.386$ will give us the decision boundary on the plot.
 
+#### Non-linear Decision Boundary
+In previous example, the decision boundary was a straight line. But in some cases, due to the nature of the data and our model, the decision boundary can be a curve.
+
+Let's say we have the _polynomial features_ $x_1$ and $x_2$ as below:
+
+$$f_{\vec{\mathbf{w}},b}(\vec{\mathbf{x}}) = g(z) = g(w_1x_1^2 + w_2x_2^2 + b)$$
+
+In this case, the decision boundary is a curve. For example, in specific case of $w_1 = 1, w_2 = 1, b = -1$, the decision boundary is:
+
+$$x_1^2 + x_2^2 - 1 = 0 \implies x_1^2 + x_2^2 = 1$$
+
+Which is a circle with radius $1$.
+
+![sigmoid func decision boundary features circle](images/sigmoid_func_decision_boundary_nonlinear.png)
+
+It means:
+- If $x_1^2 + x_2^2 \geq 1$, then model predicts $\hat{y} = 1$.
+- If $x_1^2 + x_2^2 < 1$, then model predicts $\hat{y} = 0$.
+
+
+> The decision boundary can be even a more complex curve in higher dimensions with higher order polynomial features.
+
 
 ### Cost Function for Logistic Regression
 For the introduction, see [Loss and Cost Functions](loss_and_cost_functions.md).
@@ -280,6 +287,19 @@ $$\begin{aligned}
     \end{cases}
 \end{aligned}$$
 
-> For Logistic Regression, we don't use use squared error loss function, to non-linear nature of the sigmoid function (our model), which results in a wiggly, non-convex loss surface with many potential local minima.
+We can combine these two cases into one formula:
+
+$$
+L(f_{\vec{\mathbf{w}},b}(\vec{\mathbf{x}}^{(i)}), y^{(i)}) = -y^{(i)} \log(f_{\vec{\mathbf{w}},b}(\vec{\mathbf{x}}^{(i)})) - (1 - y^{(i)}) \log(1 - f_{\vec{\mathbf{w}},b}(\vec{\mathbf{x}}^{(i)}))
+$$
+
+And the cost function $J$ is the average of the loss function over all training examples:
+
+$$
+J(\vec{\mathbf{w}},b) = -\frac{1}{m} \sum_{i=1}^{m} \left[ y^{(i)} \log(f_{\vec{\mathbf{w}},b}(\vec{\mathbf{x}}^{(i)})) + (1 - y^{(i)}) \log(1 - f_{\vec{\mathbf{w}},b}(\vec{\mathbf{x}}^{(i)})) \right]
+$$
+
 
 For more details on why and how we use cross-entropy loss function for logistic regression, see [Cross-Entropy Loss](loss_and_cost_functions.md#cross-entropy-loss).
+
+> For Logistic Regression, we don't use use squared error loss function, to non-linear nature of the sigmoid function (our model), which results in a wiggly, non-convex loss surface with many potential local minima.
