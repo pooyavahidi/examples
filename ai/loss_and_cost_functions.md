@@ -233,6 +233,7 @@ When $y_{(i)}=0$: The goal is to penalize the model more when the predicted prob
 >  This loss function penalizes the model heavily when predictions of the model $f_{\vec{\mathbf{w}},b}(\vec{\mathbf{x}}^{(i)})$ goes further away from the true label $y_{(i)}$. Using this loss, the model is strongly encouraged not to predict something too close to 0 or 1.
 
 We can write the loss function $L$ in a more simpler way:
+
 $$
 L(f_{\vec{\mathbf{w}},b}(\vec{\mathbf{x}}^{(i)}), y^{(i)}) = -y^{(i)} \log(f_{\vec{\mathbf{w}},b}(\vec{\mathbf{x}}^{(i)})) - (1 - y^{(i)}) \log(1 - f_{\vec{\mathbf{w}},b}(\vec{\mathbf{x}}^{(i)}))
 $$
@@ -265,14 +266,19 @@ This implies that if the true class is 1 ($y=1$), the loss becomes $-\log(a)$, a
 The cost function $J$ measures the average loss (error between the model's predictions and the true labels) for the entire training set of size $m$:
 
 $$
-J(W, \vec{\mathbf{b}}) = -\frac{1}{m} \sum_{i=1}^{m} [y^{(i)} \log(\hat{y}^{(i)}) + (1 - y^{(i)}) \log(1 - \hat{y}^{(i)})]
+J(W, \vec{\mathbf{b}}) = -\frac{1}{m} \sum_{i=1}^{m} \left[ y^{(i)} \log(f_{\vec{\mathbf{w}},b}(\vec{\mathbf{x}}^{(i)})) + (1 - y^{(i)}) \log(1 - f_{\vec{\mathbf{w}},b}(\vec{\mathbf{x}}^{(i)})) \right]
 $$
+
 where:
 - $m$ is the number of training examples.
 - $W$ represents the matrix of weights for the model.
 - $\vec{\mathbf{b}}$ is vector of the biases.
-- $\hat{y}^{(i)} = f_{W, \vec{\mathbf{b}}}(\vec{\mathbf{x}}^{(i)})$ is the predicted probability for the $i^{th}$ instance.
+- $f_{W, \vec{\mathbf{b}}}\vec{\mathbf{x}}^{(i)}=\hat{y}^{(i)}$ is the predicted probability for the $i^{th}$ instance.
 
+We can then write it in a simpler form:
+$$
+J(W, \vec{\mathbf{b}}) = -\frac{1}{m} \sum_{i=1}^{m} [y^{(i)} \log(\hat{y}^{(i)}) + (1 - y^{(i)}) \log(1 - \hat{y}^{(i)})]
+$$
 
 ### Categorical Cross-Entropy Loss
 The Cross-Entropy Loss function for multi-class classification is commonly referred to as **Categorical Cross-Entropy**.
