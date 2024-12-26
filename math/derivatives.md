@@ -1,16 +1,86 @@
 # Derivatives
 
-The derivative of a function $f(x)$ provides a measure of how the value of the function changes with respect to changes in the independent variable $x$. It is defined by the limit of the difference quotient as the increment $\Delta x$ approaches zero. In the limit, the derivative represents the instantaneous rate of change of the function at a specific point, $x$.
-
-$$f'(x) = \frac{df(x)}{dx} = \lim_{\Delta x \to 0} \frac{f(x+\Delta x)-f(x)}{\Delta x}$$
-
-We can also write it this way:
-
-$$\frac{df(x)}{dx}=\lim_{\epsilon\to 0} \frac{f(x+\epsilon)-f(x)}{\epsilon}=\frac{\text{Changes of }f(x)}{\text{In respect to changes of }x}$$
-
-In simple terms, derivative of $f(x)$ is what would be value of function $f(x)$ if $x$ has a very small change $\epsilon$.
+To understand derivatives, it's important to first understand the concept of **slope**.
 
 
+## Slope
+The slope of a line is a measure of how much the line rises or falls vertically for each unit of horizontal movement.
+
+$$\text{Slope} = \frac{\text{rise}}{\text{run}} = \frac{\Delta y}{\Delta x}$$
+
+where:
+- $\Delta y$ is the change in the vertical direction
+- $\Delta x$ is the change in the horizontal direction.
+
+This is also known as the **rise over run** formula.
+
+If we denote the slope of a line as $m$, then the slope of the line passing through two points $(x_1, y_1)$ and $(x_2, y_2)$ is given by:
+
+$$m = \frac{{\text{{change in }} y}}{{\text{{change in }} x}} = \frac{{\Delta y}}{{\Delta x}} = \frac{{y_2 - y_1}}{{x_2 - x_1}}$$
+
+The equation for a tangent line to a function between two points $(x_1, y_1)$ and $(x_2, y_2)$ is given by:
+
+$$y_2 - y_1 = m(x_2 - x_1)$$
+
+where:
+- $(x_1, y_1)$ is a point on the line
+- $(x_2, y_2)$ is another point on the line
+- $m$ is the slope of the line.
+
+
+**Average Rate of Change:**<br>
+The average rate of change of a function over an interval is the slope of the line connecting the two points at the ends of the interval. It is calculated as the change in the function value divided by the change in the input variable over that interval.
+
+The average rate of change of a function $y = f(x)$ is the slope of the line connecting two points $(x_1, y_1)$ and $(x_2, y_2)$ on the curve.
+
+$$ m = \frac{\Delta y}{\Delta x} = \frac{f(x_2) - f(x_1)}{x_2 - x_1}$$
+
+where:
+- $m$ is the average rate of change of the function over the interval $(x_1, x_2)$.
+
+So, we can define the slope line between two points $(x_1, y_1)$ and $(x_2, y_2)$ as:
+
+$$y - y_1 = m(x - x_1) \implies y = m(x - x_1) + y_1$$
+
+where:
+- $m$ is the slope of the line connecting the two points
+- $(x_1, y_1)$ is a point on the line.
+
+## Derivative and Tangent Line
+As we discussed, the slope between two points gives us the average rate of change of a function over an interval. However, what if we want to measure the rate of change at a specific point on the function? We need to find the slope of the curve when these two points are very close to each other. So, the derivative emerges when those two points, $x_1$ and $x_2$, get infinitely close to each other, effectively collapsing into a single point. This process requires taking the **limit** as $x_2 \to x_1$ or in other words, $\Delta x \to 0$.
+
+So, the derivative of a function $f(x)$ at a point $x$ is defined as:
+
+$$\frac{df(x)}{dx} = \lim_{\Delta x \to 0} \frac{f(x+\Delta x)-f(x)}{\Delta x}$$
+
+Let's assume the difference between $x_2$ and $x_1$ is called $\epsilon$ (epsilon), which means $\Delta x = \epsilon$. Then the derivative is the limit as $\epsilon$ approaches zero:
+
+$$\frac{df(x)}{dx}=\lim_{\epsilon\to 0} \frac{f(x+\epsilon)-f(x)}{\epsilon}$$
+
+
+
+
+
+> Derivative of a function measures the rate of change of the function at a particular point. In other words, derivative of $f(x)$ is finding what would be the impact on function $f(x)$, when we make a very tiny change on $x$.
+> $$\frac{df(x)}{dx}=\frac{\text{Changes of }f(x)}{\text{In respect to very tiny changes of }x}$$
+><br>
+> The derivative of a function $f(x)$ is denoted $\frac{df}{dx}$ or using prime notation $f'(x)$.  The symbol $d$ in $\frac{df}{dx}$ is called "differential" and represents a small change in the function $f(x)$ due to a small change in $x$.
+
+<br>
+
+**Tangent Line:**<br>
+As we discussed, slope is a measure of average rate of change over an interval (between two points on a function). However as we discussed, for measuring the rate of change at a specific point, we need to assume the interval between two points is infinitesimally small.
+
+Tangent Line is the slope of the function when the interval between two points is infinitesimally small. It is like a line that just touches the curve at a specific point (without crossing it). The slope of this tangent line at a point is the derivative of the function at that point.
+
+
+The following plot shows the function $J(w) = w^2$ and the tangent line at $w=3$:
+
+![](images/derivatives_tangent_line.png)
+
+
+
+**Example:**<br>
 Let's compute the derivative of $f(x)=x^2$ step by step using this definition:
 
 First, plug $f(x) = x^2$ into the limit definition:
@@ -25,114 +95,16 @@ Simplify by cancelling $x^2$ in the numerator:
 
 $$\frac{df(x)}{dx}=\lim_{\epsilon\to 0} \frac{2x\epsilon+\epsilon^2}{\epsilon}$$
 
-Factor out $\epsilon$ from the numerator:
+Factor out $\epsilon$ from the numerator, and cancel it with the denominator:
 
-$$\frac{df(x)}{dx}=\lim_{\epsilon\to 0} \epsilon (2x+\epsilon)$$
-
-Cancel out $\epsilon$:
 
 $$\frac{df(x)}{dx}=\lim_{\epsilon\to 0} (2x+\epsilon)$$
 
-Finally, as $\epsilon$ approaches zero, the second term in the parenthesis disappears, and we are left with:
+Finally, as $\epsilon$ approaches zero, the second term in the parenthesis disappears (as it also approaches zero), and we are left with:
 
 $$\frac{df(x)}{dx}=2x$$
 
-So the derivative of $f(x) = x^2$ is $f'(x) = 2x$, as expected.
-
-
-For example, let's take the function $J(w) = w^2$. Suppose that $w = 3$. Then $J(w)$ will be equal to $3^2 = 9$. If we increase $w$ by a tiny amount, denoted as $\varepsilon$ (let's say $\varepsilon = 0.001$), we get $w = 3.001$ and $J(w) = (3.001)^2 \approx 9.006001$. This demonstrates that if $w$ increases by $\varepsilon$, $J(w)$ increases by approximately $2w \times \varepsilon = 2 \times 3 \times 0.001 = 0.006$. This isn't exactly accurate due to the fact that $\varepsilon$ is small, but not infinitesimally small. As $\varepsilon$ becomes smaller and approaches zero, this approximation becomes more accurate.
-
-In calculus, we would express this by saying that the derivative of $J(w)$ with respect to $w$ is equal to $2w$. Symbolically, we write this as:
-
-$$\frac{dJ(w)}{dw} = 2w$$
-
-In our specific case, since $w=3$, the derivative at this point would be:
-
-$$\frac{dJ(w)}{dw} = 2 \times 3 = 6$$
-
-This means that, at $w=3$, if $w$ increases by a very small amount, $J(w)$ will increase approximately six times as much. This concept holds true regardless of the specific value of $\varepsilon$, as long as $\varepsilon$ is small.
-
-The informal definition of the derivative is that it gives us the ratio by which the function value changes ($J(w)$) for a small change in the input ($w$). In our case, this ratio is 6:1 when $w=3$. Thus, the derivative $\frac{dJ(w)}{dw}$ equals 6 at $w=3$. This numerical value is commonly known as the slope of the tangent line to the function at that specific point.
-
-
-## Slope and Tangent Line
-The **slope** of a line is a measure of how much the line rises or falls vertically for each unit of horizontal movement. It is typically represented by the letter $m$ in the formula of a line, $y=mx+b$, where $b$ is the y-intercept. The slope is calculated by the formula:
-
-$$m = \frac{{\text{{change in }} y}}{{\text{{change in }} x}} = \frac{{\Delta y}}{{\Delta x}}$$
-
-This is also known as the "rise over run" formula.
-
-A **tangent line** to a function at a specific point is a straight line that just touches the curve of the function at that point. It is the best linear approximation to the function near that point.
-
-The **derivative** of a function at a particular point gives the slope of the tangent line at that point. This is because the derivative represents the instantaneous rate of change of the function at that point, which is exactly the concept of slope.
-
-The equation for a tangent line to a function at a particular point is derived from the point-slope form of a linear equation, which is given as:
-
-$$y - y_1 = m(x - x_1)$$
-
-where $(x_1, y_1)$ is a point on the line, and $m$ is the slope of the line. When the line is tangent to a function $f(x)$ at $x_1$, then $y_1 = f(x_1)$ and $m = f'(x_1)$, where $f'(x_1)$ is the derivative of the function at $x_1$.
-
-So:
-
-$$m = f'(x)=\frac{{\Delta y}}{{\Delta x}}$$
-
-So, the equation of the tangent line to $f(x)$ at $x_1$ is:
-
-$$f'(x_1) = \frac{y - f(x_1)}{x - x_1}$$
-
-So:
-
-$$y - f(x_1) = f'(x_1)(x - x_1)$$
-
-For example, if we have a funciton $f(x) = x^2$ and calculate the tangent line at $x_1=3$. The derivative of the function is $f'(x) = 2x$, so the slope of the tangent line at $x_1=3$ is $f'(3) = 2 \times 3 = 6$.
-
-$$y - f(3) = f'(3)(x - 3)$$
-$$y - 9 = 6(x - 3)$$
-$$y = 6x - 18 + 9 = 6x - 9$$
-
-So the equation of the tangent line to the function $f(x) = x^2$ at the point $(3,9)$ is $y = 6x - 9$, and the slope of this line (which is 6) is the value of the derivative of the function at $x = 3$.
-
-> This relationship holds in general: the derivative of a function at a particular point gives the slope of the tangent line to the function at that point.
-
-
-This can be visually confirmed using matplotlib and numpy in Python:
-
-
-
-```python
-import numpy as np
-import matplotlib.pyplot as plt
-
-w = np.linspace(-5, 5, 100)
-J = w**2
-
-fig, ax = plt.subplots()  # create a figure and an axes object
-
-# the function
-ax.plot(w, J, label="J(w) = w^2")
-
-# the tangent line at w=3
-w_tangent = 3
-J_tangent = w_tangent**2
-slope_tangent = 2 * w_tangent  # which is the derivative at w=3
-tangent_line = slope_tangent * (w - w_tangent) + J_tangent
-ax.plot(w, tangent_line, label=f"Tangent at w={w_tangent}")
-
-ax.set_ylim([0, 20])  # limit the y-axis to 10
-ax.grid(True, which="both")  # add a grid
-ax.legend()  # add a legend
-
-plt.show()
-```
-
-
-
-![](images/derivatives_tangent_line.png)
-
-
-
-
-The plot will show the function $J(w) = w^2$ and the tangent line at $w=3$. The slope of this tangent line is indeed 6, which confirms our mathematical derivation.
+So the derivative of $f(x) = x^2$ is $2x$, as expected.
 
 ## Partial and Total Derivatives
 
@@ -210,7 +182,7 @@ $$\frac{d}{dx}[f(g(h(i(x))))] = \frac{df}{dg}\frac{dg}{dh}\frac{dh}{di}\frac{di}
 The chain rule is crucial in many areas of calculus, including the computation of complex derivatives and integrals, and forms the basis of backpropagation in machine learning.
 
 - This [tutorial](https://www.khanacademy.org/math/ap-calculus-ab/ab-differentiation-2-new/ab-3-1a/v/chain-rule-introduction) is a good tutorial on the chain rule.
-- This [video](https://youtu.be/YG15m2VwSjA) is also another great intro to the chain rule.
+- This [video](https://youtu.be/YG15m2VwSjA) is also another good intro to the chain rule.
 
 
 
@@ -293,7 +265,7 @@ If we substitute everything back, $v = (x + 1)^3$ and $w = x + 1$, we get:
 $$\frac{df}{dx} = 2(x + 1)^3 \cdot 3(x + 1)^2 = 6(x + 1)^5$$
 
 
-**Example - Sigmoid function:**
+#### Derivative of Sigmoid Function
 
 We start with the sigmoid function, defined as:
 
@@ -305,28 +277,49 @@ $$\sigma(x) = (1+e^{-x})^{-1}$$
 
 Now, let's use the chain rule to differentiate. The chain rule states that the derivative of a composite function is the derivative of the outer function times the derivative of the inner function.
 
-If we consider $f(u) = u^{-1}$ and $u(x) = 1 + e^{-x}$ as our outer and inner functions respectively, then the derivative of $\sigma(x)$ is:
+If we let $u$ as the inner function, then:
+
+$u(x) = 1 + e^{-x}$
+
+Then, the outer function $f$ is:
+
+$f(u) = u^{-1}$
+
+So, the sigmoid function can be written as a composition of functions:
+
+$$\sigma(x) = f(u(x))$$
+
+Using the chain rule, the derivative of $\sigma(x)$ with respect to $x$ is:
 
 $$
 \sigma'(x) = f'(u) \cdot u'(x)
 $$
 
-1. Differentiating the outer function $f(u)$ gives $f'(u) = -u^{-2}$.
-2. Differentiating the inner function $u(x)$ gives $u'(x) = -e^{-x}$.
+Which means:
+- Differentiate the outer function $f(u)$ with respect to $u$:
 
-So,
+$$f'(u) = -u^{-2}$$
+
+- Differentiate the inner function $u(x)$ with respect to $x$.
+
+$$u'(x) = \frac{d}{dx}(1 + e^{-x}) = -e^{-x}$$
+
+
+So:
 
 $$
 \sigma'(x) = -u^{-2} \cdot -e^{-x} = \frac{e^{-x}}{(1+e^{-x})^2} = \frac{1}{1+e^{-x}} \cdot \frac{e^{-x}}{1+e^{-x}}
 $$
 
-Then, note that $e^{-x}$ in the numerator can be written as $(1+e^{-x}) - 1$. Substituting this and simplifying, we get:
+Let's add and subtract 1 in the numerator of the second term.
 
-$$
-\sigma'(x) = \frac{1}{1+e^{-x}} \cdot \left(1 - \frac{1}{1+e^{-x}}\right) = \sigma(x)(1-\sigma(x))
-$$
+$$e^{-x} = (1 + e^{-x}) - 1$$
 
-So, the derivative of the sigmoid function is:
+Substitute this back into the derivative:
+
+$$\sigma'(x) = \frac{1}{1+e^{-x}} \left(\frac{1+e^{-x}-1}{1+e^{-x}}\right)=\frac{1}{1+e^{-x}} \left(1 - \frac{1}{1+e^{-x}}\right)$$
+
+We know that $\sigma(x) = \frac{1}{1+e^{-x}}$, so the derivative can be written as:
 
 $$
 \sigma'(x) = \sigma(x)(1-\sigma(x))
@@ -334,7 +327,7 @@ $$
 
 
 
-**Example - Mean Squared Error (MSE) Cost Function:**
+#### Derivative of the Mean Squared Error (MSE) Function
 
 MSE defined as:
 $$J(w,b) = \frac{1}{2m} \sum_{i=1}^{m} (f_{w}(x^{(i)}) - y^{(i)})^2$$
@@ -412,7 +405,7 @@ This expression says that the rate of change of $J$ with respect to $w$ is equal
 
 
 
-## Other Resources
+## Resources
 These are great additional resources for understanding of derivatives in a more visualized way:
 - [The paradox of the derivative](https://www.youtube.com/watch?v=9vKqVkMQHKk&list=PLZHQObOWTQDMsr9K-rj53DwVRMYO3t5Yr&index=2)
 - [Derivative formulas through geometry](https://www.youtube.com/watch?v=S0_qX4VJhMQ&list=PLZHQObOWTQDMsr9K-rj53DwVRMYO3t5Yr&index=3)
