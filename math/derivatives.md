@@ -264,6 +264,9 @@ If we substitute everything back, $v = (x + 1)^3$ and $w = x + 1$, we get:
 
 $$\frac{df}{dx} = 2(x + 1)^3 \cdot 3(x + 1)^2 = 6(x + 1)^5$$
 
+#### Derivative of Exponential Function
+See [Derivative of Exponential Function](euler_number.md#derivative-of-exponentials).
+
 
 #### Derivative of Sigmoid Function
 
