@@ -34,6 +34,7 @@ Here are some fundamental algebraic rules and properties related to arithmetic o
 **Special Rules**
 - Zero Exponent Rule: $a^{0} = 1 \quad \text{for } a \neq 0$
 - Negative Exponent Rule: $a^{-n} = \frac{1}{a^n} \quad \text{for } a \neq 0$
+- Negative Exponent Rule ($n=1$): $a^{-1} = \frac{1}{a} \quad \text{for } a \neq 0$
 
 ## Logarithms
 **Basic Rules**
