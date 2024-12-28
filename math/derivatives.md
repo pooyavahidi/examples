@@ -187,7 +187,9 @@ The chain rule is crucial in many areas of calculus, including the computation o
 
 
 ### Examples
-**Example:**Suppose you have a function:
+
+#### Simple Composite Function
+Suppose you have a function:
 
 $$f(x) = \left(3x + 1\right)^2$$
 
@@ -266,6 +268,56 @@ $$\frac{df}{dx} = 2(x + 1)^3 \cdot 3(x + 1)^2 = 6(x + 1)^5$$
 
 #### Derivative of Exponential Function
 See [Derivative of Exponential Function](euler_number.md#derivative-of-exponentials).
+
+#### Derivative of Natural Logarithm
+
+Let's calculate the derivative of the natural logarithm function $\ln(x)$ using the chain rule.
+
+$$y = \ln(x)$$
+
+Using the [logarithmic rule](algebra_basics.md#logarithms), we can rewrite this as:
+
+$$e^y = x$$
+
+
+Differentiate both sides with respect to $x$:
+
+$$\frac{d}{dx}[e^y] = \frac{d}{dx}[x]$$
+
+Knowing that derivative of $x$ with respect to $x$ is 1, we get:
+
+$$\frac{d}{dx}[e^y] = 1$$
+
+The derivative of $e^y$ with respect to $x$ requires the **chain rule**, because $y$ is a function of $x$. The chain rule says:
+Let's denote $u = y$ and $f(u) = e^u$:
+$$u = y$$
+$$f(u) = e^u$$
+
+The chain rule will be:
+
+$$\frac{df}{dx} = \frac{df}{du} \cdot \frac{du}{dx}$$
+
+The derivative of $e^u$ with respect to $u$ is simply $e^u$. See [Derivative of Exponential Function](euler_number.md#derivative-of-exponentials) for more details:
+$$\frac{df}{du} = e^u$$
+
+
+So, the chain rule gives us:
+$$\frac{df}{dx} = e^u \cdot \frac{du}{dx}$$
+
+Knowing that $u = y$, we can substitute $u$ back to $y$:
+
+$$\frac{df}{dx} = e^y \cdot \frac{dy}{dx}$$
+
+We saw earlier that $\frac{d}{dx}[e^y] = 1$, so we can substitute this back:
+
+$$e^y \cdot \frac{dy}{dx} = 1$$
+
+Substitute $e^y = x$ back into the equation:
+
+$$x \cdot \frac{dy}{dx} = 1$$
+
+Finally, solve for $\frac{dy}{dx}$:
+$$\frac{dy}{dx} = \frac{1}{x}$$
 
 
 #### Derivative of Sigmoid Function
