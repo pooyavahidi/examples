@@ -177,6 +177,9 @@ where:
 - $L$ is the loss for a single example.
 - $p_\text{true}$ is the predicted probability for the correct label.
 
+> Note: The above log function is the natural logarithm (base $e$) and not the logarithm with base 10. Usually in math texts, $log(x)$ without specifically indicating the base is considered as the natural logarithm $ln(x)$.
+
+
 For a dataset with many examples, the average loss becomes:
 
 $$
