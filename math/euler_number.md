@@ -2,6 +2,136 @@
 
 The Euler number shown as $e$ is a fundamental mathematical constant that is the base of the natural logarithm. It is approximately equal to $2.71828$. The Euler number is named after the Swiss mathematician Leonhard Euler.
 
+## Where does Euler's number come from?
+Let's start with the compound interest formula:
+
+$$A = P \left(1 + \frac{r}{n}\right)^{n \cdot t}$$
+
+where:
+- $A$ = the final amount
+- $P$ = the initial principal amount
+- $r$ = the growth rate as a decimal in a unit of time (e.g. annual)
+- $n$ = the number of compounding periods per unit of time (e.g. year)
+- $t$ = the total number of time units
+
+For example, if let's assume the _unit of time_ is a year:
+- $P$ = Initial amount is $1000
+- $r$ = 0.05 (5% growth rate) per _unit of time_ which is a year
+- $n$ = Number of times we apply the compounding in _unit of time_. Our unit of time is a year, and let's say we compound quarterly, so $n = 4$.
+- $t$ = For how many _unit of time_ we want to calculate the final amount. Let's say we want to calculate for 2 _unit of time_ which is 2 years.
+
+So, the formula becomes:
+
+$$A = 1000 \left(1 + \frac{0.05}{4}\right)^{4 \times 2} \approx 1104.94$$
+
+**Discrete Compounding:**<br>
+The above formula is for discrete compounding where the compounding happens at discrete intervals during the time period. For example if our _unit of time_ is a year, and we compound quarterly, then the compounding happens discretely at the end of each quarter in total of 4 times during that period.
+
+
+**Incerase the number of compounding events:**<br>
+Let's use a simpler example:
+- $P = 1$ which is Initial amount
+- $r = 1$ means 100% growth rate
+- $n = 1$ means we compound once in a year
+- $t = 1$ means we want to calculate for 1 year
+
+Without using the formula, intuitively we can guess if we grow $1 by 100% in a year, the final amount should be $2 at the end of the year. Let's calculate this using the formula:
+
+$$A = 1 \left(1 + \frac{1}{1}\right)^{1 \times 1} = 2$$
+
+Now, let's increase the number of compounding events to 4 times in a year (quarterly), we should get more than $2 at the end of the year as we are compounding the compounded amount 4 times in a year. Let's calculate this:
+
+$$(1 + \frac{1}{4}) \cdot (1 + \frac{1}{4}) \cdot (1 + \frac{1}{4}) \cdot (1 + \frac{1}{4}) = 2.4414$$
+
+This means for a 100% growth rate, if we compound the amount 4 times in a year, each time we grow by 25%, the final amount should be $2.4414 at the end of the year:
+
+$$(1 + 0.25) \cdot (1 + 0.25) \cdot (1 + 0.25) \cdot (1 + 0.25) = 2.4414$$
+
+And using the compounding formula:
+
+$$A = 1 \left(1 + \frac{1}{4}\right)^{4 \times 1} = 2.4414$$
+
+Now, if we keep increasing the number of compounding events, we should get more than $2.4414 at the end of the year. Again, because we are compounding the compounded amount more frequently. Let's calculate this for 12 times in a year (monthly):
+
+$$(1 + \frac{1}{12}) \cdot (1 + \frac{1}{12}) \cdot \ldots \cdot (1 + \frac{1}{12}) = 2.6130$$
+
+$$(1 + \frac{1}{12})^{12} = 2.6130$$
+
+Let's calculate the _Daily_ compounding:
+
+$$(1 + \frac{1}{365})^{365} = 2.7146$$
+
+
+**What if we increase the number of compounding events to a very large number?**<br>
+Now, the question arises, if there is any limit to this growth? If we keep increasing the number of compounding events, will this growth goes to infinity or there is ceiling to this growth?
+
+$$\lim_{n \to \infty} \left(1 + \frac{1}{n}\right)^{n}$$
+
+Let's calculate this limit for a large number of compounding events:
+
+$$\lim_{n \to \infty} \left(1 + \frac{1}{n}\right)^{n} = \left(1 + \frac{1}{1000000}\right)^{1000000} \approx 2.71828$$
+
+If plug in any large number for $n$ it turned out that this limit approaches a constant, and that constant is called the Euler number $e$ which is approximately equal to $2.71828$.
+
+$$e = \lim_{n \to \infty} \left(1 + \frac{1}{n}\right)^{n}$$
+
+
+
+**Continuous Compounding:**<br>
+The above limit shows the continuous compounding where the compounding happens at every possible moment during the time period.
+
+Now let's bring back our compound interest formula:
+
+$$A = P \left(1 + \frac{r}{n}\right)^{n \cdot t}$$
+
+If the compounding happens continuously (infinitely many intervals) during the time period:
+
+$$A = \lim_{n \to \infty} P \left(1 + \frac{r}{n}\right)^{n \cdot t}$$
+
+
+
+Factor out $r$ for Simplicity: Rewrite the base $1 + \frac{r}{n}$ as:
+   $$ 1 + \frac{r}{n} = \left(1 + \frac{1}{n/r}\right)$$
+This lets us think of the expression as a form of $1 + \frac{1}{k}$ where $k = n / r$.
+
+Recall the Definition of $e$: By definition, the number $e$ is:
+$$e = \lim_{n \to \infty} \left(1 + \frac{1}{n}\right)^n$$
+
+Substitute into the Limit: From previous step, notice that our expression can now be written as:
+$$\left(1 + \frac{r}{n}\right)^n = \left[\left(1 + \frac{1}{k}\right)^k\right]^r$$
+where $k = n / r$. As $n \to \infty$, $k \to \infty$ too.
+
+
+Simplify Using the Limit of $e$: The inner term $\left(1 + \frac{1}{k}\right)^k$ approaches $e$ as $k \to \infty$:
+
+$$ \lim_{k \to \infty} \left(1 + \frac{1}{k}\right)^k = e $$
+
+So:
+$$ \lim_{n \to \infty} \left(1 + \frac{r}{n}\right)^n = e^r $$
+
+And multiply both sides by $P$ and increase them to the power of $t$:
+
+$$ \lim_{n \to \infty} P \left(1 + \frac{r}{n}\right)^{n \cdot t} = P \cdot e^{r \cdot t} $$
+
+
+So, the **Continuous Compounding** formula becomes:
+
+$$A = P \cdot e^{r \cdot t}$$
+
+where:
+- $A$ = the final amount
+- $P$ = the initial principal amount
+- $r$ = the growth rate as a decimal in a unit of time (e.g. annual)
+- $t$ = the total number of time units
+- $e$ = Euler's number
+
+### Key Difference:
+- **Discrete Compounding** depends on the number of intervals $n$.
+- **Continuous Compounding** assumes growth occurs at every possible moment, leading to the $e^{r \cdot t}$ formula.
+
+Continueous compounding is a theoretical concept, but it is used in many applications like finance, physics, and other fields where the growth is continuous. For example, the growth of bacteria, radioactive decay, etc.
+
+## Derivative of $e^{x}$ is itself
 This [video by 3Blue1Brown](https://www.youtube.com/watch?v=m2MIpDrF7Es) is a good explaination of Euler's number. The following is the summary of that video.
 
 Let's start by seeing how to calculate the derivative of $a^{x}$ where $a$ is a constant e.g. $2^{x}$, $3^{x}$, etc.
