@@ -303,3 +303,29 @@ $$
 For more details on why and how we use cross-entropy loss function for logistic regression, see [Cross-Entropy Loss](loss_and_cost_functions.md#cross-entropy-loss).
 
 > For Logistic Regression, we don't use use squared error loss function, to non-linear nature of the sigmoid function (our model), which results in a wiggly, non-convex loss surface with many potential local minima.
+
+### Gradient Descent for Logistic Regression
+As we discused, now that we have defined our cost function, we want to find the best possible values for our parameters $\vec{\mathbf{w}}$ and $b$ which minimize the cost function $J$. We can use the gradient descent algorithm to do this.
+
+The definition of the gradient descent algorithm as discussed in [Gradient Descent](gradient_descent.md) is:
+
+$$\begin{align*} \text{repeat}&\text{ until convergence: } \lbrace \newline
+& w_j = w_j -  \alpha \frac{\partial J(\vec{\mathbf{w}},b)}{\partial w_j} \; & \text{for j = 0..n-1}\newline
+&b\ \ = b -  \alpha \frac{\partial J(\vec{\mathbf{w}},b)}{\partial b}  \newline \rbrace
+\end{align*}$$
+
+Where:
+- $\alpha$ is the learning rate.
+- $n$ is the number of features and $w_j$ is the $j_{th}$ parameter of $\vec{\mathbf{w}}$.
+
+
+In order to apply the gradient descent algorithm, we need to calculate the partial derivatives of the cost function $J$ with respect to the parameters $\vec{\mathbf{w}}$ and $b$.
+
+The partial derivative of the cost function $J$ with respect to the parameter $w_j$ is:
+
+$$\frac{\partial J(\vec{\mathbf{w}},b)}{\partial w_j} = \frac{1}{m} \sum_{i=1}^{m} \left( f_{\vec{\mathbf{w}},b}(\vec{\mathbf{x}}^{(i)}) - y^{(i)} \right) x_j^{(i)}$$
+
+And for the parameter $b$ is:
+$$\frac{\partial J(\vec{\mathbf{w}},b)}{\partial b} = \frac{1}{m} \sum_{i=1}^{m} \left( f_{\vec{\mathbf{w}},b}(\vec{\mathbf{x}}^{(i)}) - y^{(i)} \right)$$
+
+See [Derivative of Logistic Regression Cost Function](../math/derivatives.md#derivative-of-the-logistic-regression-cost-function) for the details of this derivation.
