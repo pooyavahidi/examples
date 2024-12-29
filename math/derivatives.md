@@ -269,6 +269,39 @@ $$\frac{df}{dx} = 2(x + 1)^3 \cdot 3(x + 1)^2 = 6(x + 1)^5$$
 #### Derivative of Exponential Function
 See [Derivative of Exponential Function](euler_number.md#derivative-of-exponentials).
 
+#### Derivative of $e^{ax}$
+Let's calculate the derivative of $e^{ax}$, where $a$ is a constant.
+
+$$f(x) = e^{ax}$$
+
+Based on what we saw in [Derivative of Exponential Function](euler_number.md#derivative-of-exponentials), the derivative of $e^{x}$ is itself $e^{x}$. However, $ax$ is a composition of two functions: the exponential function $e^x$ and the linear function $ax$. To find the derivative of $f(x) = e^{ax}$, we use the **chain rule**.
+
+
+Let's denote $u = ax$, So:
+
+$$f(u) = e^u$$
+
+The chain rule states:
+
+$$\frac{df}{dx} = \frac{df}{du} \cdot \frac{du}{dx}$$
+
+First, compute the derivative of $e^u$ with respect to $u$:
+$$\frac{df}{du} = \frac{d}{du} e^u = e^u$$
+
+Next, compute the derivative of $g(x) = ax$ with respect to $x$:
+$$\frac{du}{dx} = \frac{d}{dx} ax = a$$
+
+Now, apply the chain rule by multiplying these results:
+$$\frac{df}{dx} = e^{ax} \cdot a$$
+
+
+**Final Answer:**
+$$\frac{d}{dx} e^{ax} = a e^{ax}$$
+
+**Intuition:**<br>
+The intuition behind the derivative of $e^{ax}$ is that the function grows or decays proportionally to its value, but the rate of this change depends on $a$. A larger $a$ means faster growth, a smaller $a$ means slower growth, and a negative $a$ causes decay. The derivative $a \cdot e^{ax}$ captures this by scaling the natural growth rate of $e^{ax}$ by $a$.
+
+
 #### Derivative of Natural Logarithm
 
 Let's calculate the derivative of the natural logarithm function $\ln(x)$ using the chain rule.
@@ -330,41 +363,37 @@ Let's first rewrite the function slightly to make differentiation easier:
 
 $$\sigma(x) = (1+e^{-x})^{-1}$$
 
-Now, let's use the chain rule to differentiate. The chain rule states that the derivative of a composite function is the derivative of the outer function times the derivative of the inner function.
+Now, let's use the chain rule to differentiate. Let's inner function $u = 1 + e^{-x}$, so:
 
-If we let $u$ as the inner function, then:
 
-$u(x) = 1 + e^{-x}$
+$$u(x) = 1 + e^{-x}$$
+$$\sigma(u) = u^{-1}$$
 
-Then, the outer function $f$ is:
-
-$f(u) = u^{-1}$
 
 So, the sigmoid function can be written as a composition of functions:
+$$\sigma(x) = \sigma(u(x))$$
 
-$$\sigma(x) = f(u(x))$$
 
 Using the chain rule, the derivative of $\sigma(x)$ with respect to $x$ is:
 
-$$
-\sigma'(x) = f'(u) \cdot u'(x)
-$$
+$$\frac{d\sigma}{dx} = \frac{d\sigma}{du} \cdot \frac{du}{dx}$$
 
-Which means:
-- Differentiate the outer function $f(u)$ with respect to $u$:
+Differentiate the outer function $\sigma(u)$ with respect to $u$:
 
-$$f'(u) = -u^{-2}$$
 
-- Differentiate the inner function $u(x)$ with respect to $x$.
+$$\frac{d\sigma}{du} = \frac{d}{du} u^{-1} = -u^{-2}$$
 
-$$u'(x) = \frac{d}{dx}(1 + e^{-x}) = -e^{-x}$$
+
+Differentiate the inner function $u(x)$ with respect to $x$. Derivative of $e^{-x}$ is $-e^{-x}$ as we saw earlier in Derivative of $e^{ax}$.
+
+$$\frac{du}{dx} = \frac{d}{dx} (1 + e^{-x}) = 0 - e^{-1 \times x} = -1 \times e^{-x}$$
 
 
 So:
+$$
+\frac{d\sigma}{dx} = -u^{-2} \cdot -e^{-x} = \frac{e^{-x}}{(1+e^{-x})^2} = \frac{1}{1+e^{-x}} \cdot \frac{e^{-x}}{1+e^{-x}}
+$$
 
-$$
-\sigma'(x) = -u^{-2} \cdot -e^{-x} = \frac{e^{-x}}{(1+e^{-x})^2} = \frac{1}{1+e^{-x}} \cdot \frac{e^{-x}}{1+e^{-x}}
-$$
 
 Let's add and subtract 1 in the numerator of the second term.
 
@@ -372,12 +401,12 @@ $$e^{-x} = (1 + e^{-x}) - 1$$
 
 Substitute this back into the derivative:
 
-$$\sigma'(x) = \frac{1}{1+e^{-x}} \left(\frac{1+e^{-x}-1}{1+e^{-x}}\right)=\frac{1}{1+e^{-x}} \left(1 - \frac{1}{1+e^{-x}}\right)$$
+$$\frac{d\sigma}{dx} = \frac{1}{1+e^{-x}} \left(\frac{1+e^{-x}-1}{1+e^{-x}}\right)=\frac{1}{1+e^{-x}} \left(1 - \frac{1}{1+e^{-x}}\right)$$
 
 We know that $\sigma(x) = \frac{1}{1+e^{-x}}$, so the derivative can be written as:
 
 $$
-\sigma'(x) = \sigma(x)(1-\sigma(x))
+\frac{d\sigma}{dx} = \sigma(x)(1-\sigma(x))
 $$
 
 
@@ -415,8 +444,91 @@ Substitute back $u = wx^{(i)} + b - y^{(i)}$:
 
 $$\frac{dJ(w)}{dw} = \frac{1}{m} \sum_{i=1}^{m} (wx^{(i)} + b - y^{(i)}) \cdot x^{(i)}$$
 
+#### Derivative of the Logistic Regression Cost Function
+
+To calculate the derivative (gradient) of $J(\vec{\mathbf{w}}, b)$ with respect to $\vec{\mathbf{w}}$, let's go step by step.
+
+The cost function is:
+
+$$
+J(\vec{\mathbf{w}},b) = -\frac{1}{m} \sum_{i=1}^{m} \left[ y^{(i)} \log(f_{\vec{\mathbf{w}},b}(\vec{\mathbf{x}}^{(i)})) + (1 - y^{(i)}) \log(1 - f_{\vec{\mathbf{w}},b}(\vec{\mathbf{x}}^{(i)})) \right]
+$$
 
 
+Here:
+- $f_{\vec{\mathbf{w}},b}(\vec{\mathbf{x}}^{(i)})$ is a logistic regression model, defined as:
+  $$f_{\vec{\mathbf{w}},b}(\vec{\mathbf{x}}^{(i)}) = \sigma(\vec{\mathbf{w}} \cdot \vec{\mathbf{x}}^{(i)} + b)$$
+  where $\sigma(z) = \frac{1}{1 + e^{-z}}$.
+
+Let $z^{(i)} = \vec{\mathbf{w}} \cdot \vec{\mathbf{x}}^{(i)} + b$, so $f_{\vec{\mathbf{w}},b}(\vec{\mathbf{x}}^{(i)}) = \sigma(z^{(i)})$.
+
+**Partial Derivative with Respect to $\vec{\mathbf{w}}$
+1. Rewrite $J(\vec{\mathbf{w}}, b)$: Substituting $f_{\vec{\mathbf{w}},b}(\vec{\mathbf{x}}^{(i)}) = \sigma(z^{(i)})$:
+
+   $$
+   J(\vec{\mathbf{w}}, b) = -\frac{1}{m} \sum_{i=1}^{m} \left[ y^{(i)} \log(\sigma(z^{(i)})) + (1 - y^{(i)}) \log(1 - \sigma(z^{(i)})) \right]
+   $$
+
+2. Focus on the derivative of a single term in the summation: Let:
+
+   $$
+   L^{(i)} = -\left[ y^{(i)} \log(\sigma(z^{(i)})) + (1 - y^{(i)}) \log(1 - \sigma(z^{(i)}) \right]
+   $$
+
+   We need $\frac{\partial L^{(i)}}{\partial \vec{\mathbf{w}}}$.
+
+3. Take the derivative of $L^{(i)}$: Use the chain rule:
+
+   $$
+   \frac{\partial L^{(i)}}{\partial \vec{\mathbf{w}}} = \frac{\partial L^{(i)}}{\partial \sigma(z^{(i)})} \cdot \frac{\partial \sigma(z^{(i)})}{\partial z^{(i)}} \cdot \frac{\partial z^{(i)}}{\partial \vec{\mathbf{w}}}
+   $$
+
+4. Compute each term:
+    - $\frac{\partial L^{(i)}}{\partial \sigma(z^{(i)})}$: Differentiate $L^{(i)}$ with respect to $\sigma(z^{(i)})$:
+        $$
+        \frac{\partial L^{(i)}}{\partial \sigma(z^{(i)})} = -\frac{y^{(i)}}{\sigma(z^{(i)})} + \frac{1 - y^{(i)}}{1 - \sigma(z^{(i)})}
+        $$
+        Note that in above we also needed to use chain rule again for the derivative of $\log(1-\sigma(z^{(i)})$ as $(1-\sigma(z^{(i)}))$ is a function of $z^{(i)}$. Let's denote $u = \sigma(z^{(i)})$.
+        $$
+        \frac{\partial \log(1-u)}{\partial u} = \frac{\partial \log(1-u)}{\partial (1-u)} \cdot \frac{\partial (1-u)}{\partial u} = -\frac{1}{1-u}$$
+
+         The derivative of $\log(1-\sigma(z^{(i)})$ with respect to $\sigma(z^{(i)})$ is $-\frac{1}{1-\sigma(z^{(i)})}$.
+
+    - $\frac{\partial \sigma(z^{(i)})}{\partial z^{(i)}}$: The derivative of the sigmoid function $\sigma(z)$ is (See [Derivative of Sigmoid Function](#derivative-of-sigmoid-function) for more details):
+
+        $$
+        \frac{\partial \sigma(z)}{\partial z} = \sigma(z)(1 - \sigma(z))
+        $$
+
+    - $\frac{\partial z^{(i)}}{\partial \vec{\mathbf{w}}}$: Since $z^{(i)} = \vec{\mathbf{w}} \cdot \vec{\mathbf{x}}^{(i)} + b$, we have:
+        $$
+        \frac{\partial z^{(i)}}{\partial \vec{\mathbf{w}}} = \vec{\mathbf{x}}^{(i)}
+        $$
+
+5. Combine these results:
+    $$\frac{\partial L^{(i)}}{\partial \vec{\mathbf{w}}} = \left( -\frac{y^{(i)}}{\sigma(z^{(i)})} + \frac{1 - y^{(i)}}{1 - \sigma(z^{(i)})} \right) \cdot \sigma(z^{(i)})(1 - \sigma(z^{(i)})) \cdot \vec{\mathbf{x}}^{(i)}$$
+
+
+6. Simplify the term in parentheses:
+   Use the fact that $\sigma(z^{(i)}) = f_{\vec{\mathbf{w}},b}(\vec{\mathbf{x}}^{(i)})$:
+    $$
+    -\frac{y^{(i)}}{\sigma(z^{(i)})} + \frac{1 - y^{(i)}}{1 - \sigma(z^{(i)})} = \sigma(z^{(i)}) - y^{(i)}
+    $$
+
+    So:
+    $$
+    \frac{\partial L^{(i)}}{\partial \vec{\mathbf{w}}} = (\sigma(z^{(i)}) - y^{(i)}) \cdot \vec{\mathbf{x}}^{(i)}
+    $$
+Now, to get the derivative of the cost function $J(\vec{\mathbf{w}}, b)$ with respect to $\vec{\mathbf{w}}$, we sum over all training examples:
+   The gradient of $J(\vec{\mathbf{w}}, b)$ with respect to $\vec{\mathbf{w}}$ is:
+    $$
+    \frac{\partial J}{\partial \vec{\mathbf{w}}} = \frac{1}{m} \sum_{i=1}^{m} (\sigma(z^{(i)}) - y^{(i)}) \cdot \vec{\mathbf{x}}^{(i)}
+    $$
+
+We can apply the same steps to find the derivative of $J(\vec{\mathbf{w}}, b)$ with respect to $b$. The final result for the gradient of $J(\vec{\mathbf{w}}, b)$ with respect to $b$ is:
+$$
+\frac{\partial J}{\partial b} = \frac{1}{m} \sum_{i=1}^{m} (\sigma(z^{(i)}) - y^{(i)})
+$$
 ### Rate of Change
 
 When we're taking the derivative of a function, we're trying to understand how fast the function is changing at a particular point. If we have a complex function formed by composing several simpler functions, we're interested in how fast that whole composition is changing.
