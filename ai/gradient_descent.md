@@ -1,11 +1,7 @@
 # Gradient Descent
 Gradient Descent is an optimization algorithm used to minimize any function that can be expressed as a sum of differentiable functions.
 
-> Gradient Descent is the most common algorithm used for minimizing the cost function of many machine learning models, from linear regression to the most complex neural networks. It can minimize cost functions with any number of parameters $J(w_1, w_2, ..., w_n, b)$.
-
-The Gradient Descent algorithm start with an initial guess for the parameters, then iteratively adjust these parameters to move towards a minimum of the function.
-
-
+Gradient Descent is the most common algorithm used for minimizing the cost function of many machine learning models, from linear regression to the most complex neural networks.
 
 
 ## Loss Surface
@@ -35,24 +31,71 @@ The cost function $J$ shown below, has a complex surface with multiple local min
 > Note, in more complex model the loss surface may not be a simple parabolic curve, but the concept of finding the minimum of the loss function still applies.
 
 
-**Intuitive Explanation of Gradient Descent:**
-Imagine this surface as a terrain in a hilly area where you want to reach the lowest valley (the global minimum) as quickly as possible. You start at a random point (initial values of $w$ and $b$) and want to find the path to the lowest valley. The gradient descent algorithm helps you find the path to this lowest valley by finding the **steepest descent** at each point, and moving in that direction step by step (with a predefined **step size**).
-
 
 ## Gradient Descent Algorithm
-Gradient Descent steps with more details:
+Gradient descent is like finding your way down a hill in foggy weather. Imagine you're standing somewhere on the hill, but you can’t see the whole landscape—only the slope directly under your feet. To get to the bottom, you take small steps downhill, always choosing the direction that goes **steepest** downward (this is your gradient). Each step brings you closer to the valley (the minimum). The size of your steps matters too—if they're too big, you might overshoot the valley; if they're too small, it’ll take forever to get there. Gradient descent is how machines learn by adjusting their parameters (weights and biases) to minimize errors, or "find the lowest point" on a mathematical loss surface.
 
-1. **Initialize Parameters:** Start with an initial guess for the parameters $w$ and $b$.
-2. **Compute the Cost Function:** Calculate the cost function $J(w,b)$ with the new values of $w$ and $b$. Also called the **forward pass**.
-3. **Compute the Gradient:** Calculate the partial derivative of the cost function $J(w,b)$ with respect to the parameters $w$ and $b$. Also called the **backward pass** or [**backpropagation**](https://developers.google.com/machine-learning/glossary#backpropagation).
-4. **Update the Parameters Simultaneously:** Update the weights and biases (parameters) in the opposite direction of the gradient (to descent down the hill) by a small step size $\alpha$.
+Formally, gradient descent is an iterative optimization algorithm used to minimize a function $f(\theta)$ (the model), where $\theta$ represents all the parameters. At each step, it updates the parameters $\theta$ in the direction opposite to the gradient  $\nabla f(\theta)$ of the function, as the gradient points in the direction of the steepest ascent, the update rule is:
+
+$$\theta_{t+1} = \theta_t - \eta \nabla_{\theta} J(\theta_t)$$
+
+Where:
+- $\theta_t$ represents the parameters (weights and biases) at step $t$ (current parameters).
+- $\theta_{t+1}$ represents the updated parameters at step $t+1$.
+- $\eta$ is the learning rate.
+- $\nabla_{\theta} J(\theta)$ is the gradient of the cost function $J$ with respect to the parameters $\theta$.
+
+The gradient represents the slope, which is mathematically equal to the derivative of the function at a given point. It points in the direction of the steepest ascent (or descent for minimization) on the loss surface, indicating how much the error changes as each weight is adjusted. The gradient is fundamental to optimization techniques like gradient descent, where it **guides** the iterative updates to minimize the cost function.
 
 
-5. **Repeat until Convergence:** Repeat from step 2, for multiple [Iterations](https://developers.google.com/machine-learning/glossary#iteration) until we reach a point where parameters $w$ and $b$ don't change much with each iteration, and the cost function doesn't decrease significantly. This is called **convergence**.
+Gradient Descent steps:
 
-> An **iteration** is a complete cycle of updating the model parameters (weights and biases) based on the gradient of the cost function (step 2 to step 4).
+1. **Initialize Parameters:** Start with an initial guess for the parameters $\theta$ (weights and biases).
 
-Steps 1 and 2 are self-explanatory and have been discussed previously. So, we will focus on steps 3 onwards.
+2. **Compute the Cost Function:** Calculate the cost function $J(\theta)$ with the current values of $\theta$. Also called the **forward pass**.
+
+3. **Compute the Gradient:** Calculate $\nabla_{\theta} J(\theta)$, which is the partial derivative of the cost function $J(\theta)$ with respect to the parameters $\theta$. This step is also called the **backward pass** or [**backpropagation**](https://developers.google.com/machine-learning/glossary#backpropagation).
+
+4. **Update the Parameters:** Update all parameters $\theta$ simultaneously in the opposite direction of the gradient (to descent down the hill) by a small step size $\eta$ (learning rate) which the new parameters $\theta_{t+1}$ is calculated as:
+
+    $\theta_{t+1} = \theta_t - \eta \nabla_{\theta} J(\theta_t)$.
+
+5. **Repeat until Convergence:** Repeat from step 2, for multiple iterations until we reach a point where parameters $\theta$ don't change much with each iteration, and the cost function doesn't decrease significantly. This is called **convergence**.
+
+An **iteration** is a complete cycle of updating the model parameters (weights and biases) based on the gradient of the cost function. One iteration is from step 2 to step 4.
+
+> In the following sections, to show more details instead of $\theta$, we use $w$ (weights) and $b$ (biases) and instead of $J(\theta)$ we use $J(w,b)$ to represent the cost function of the model with respect to the parameters $w$ and $b$.
+>
+> Also instead $\nabla_{\theta} J(\theta)$, we use $\frac{\partial J(w,b)}{\partial w}$ and $\frac{\partial J(w,b)}{\partial b}$ to represent the partial derivatives of the cost function $J(w,b)$ with respect to the parameters $w$ and $b$.
+
+### 1. Initialize Parameters
+The first step in the gradient descent algorithm is to initialize the parameters $w$ and $b$ with some initial values. These initialization can be done using different strategies:
+
+- **Zero Initialization:** Initialize the parameters with zeros. This is a simple strategy but may not work well for all models, especially deep neural networks, where all neurons in the same layer would have the same weights and biases.
+
+- **Random Initialization:** Initialize the parameters with random values. This is common in deep learning models, where the weights are initialized with small random values to break symmetry and prevent the model from getting stuck in local minima.
+
+- **Xavier Initialization:** Initialize the parameters with random values drawn from a Gaussian distribution with zero mean and variance $\frac{1}{n}$, where $n$ is the number of input units to the neuron. This is a common initialization strategy for deep neural networks.
+
+### 2. Compute the Cost Function
+In this step, we calculate the cost function $J(w,b)$ with the current values of the parameters $w$ and $b$. The cost function is a measure of how well the model is performing on the training data. It quantifies the difference between the predicted values and the actual values.
+
+The cost function is the average of the loss function over all training examples.
+
+As we discussed, we choose our model based on the problem we are trying to solve. For example, in linear regression, the cost function is the Mean Squared Error (MSE). Accordingly, the specific type of cost function depends on the model and the problem we are trying to solve is chosen.
+
+In general, the cost function is calculated as:
+
+$$J(w,b) = \frac{1}{m} \sum\limits_{i = 0}^{m-1} L(y^{(i)}, \hat{y}^{(i)})$$
+
+where:
+- $J(w,b)$ is the cost function.
+- $m$ is the number of training examples.
+- $L(y^{(i)}, \hat{y}^{(i)})$ is the loss function, which measures the difference between the actual value $y^{(i)}$ and the predicted value $\hat{y}^{(i)}$ for the $i^{th}$ example.
+
+For further details, see [Loss and Cost Functions](loss_and_cost_functions.md).
+
+
 
 ### 3. Compute the Gradient
 
@@ -140,16 +183,6 @@ where:
 - $w_{\text{new}}$ and $b_{\text{new}}$ are the updated values of the parameters.
 - $w_{\text{current}}$ and $b_{\text{current}}$ are the current values of the parameters.
 - $\alpha$ is the learning rate, which controls the step size in the parameter space.
-
->In machine learning literature, another common notation for the above is:
->
->$$\theta_{t+1} = \theta_t - \eta \nabla_{\theta} J(\theta_t)$$
->
->Where:
->- $\theta_t$ represents the parameters (weights and biases) at step $t$ (current parameters).
->- $\theta_{t+1}$ represents the updated parameters at step $t+1$.
->- $\eta$ is the learning rate.
->- $\nabla_{\theta} J(\theta)$ is the gradient of the cost function $J$ with respect to the parameters $\theta$.
 
 #### Moving Towards the Minimum
 
