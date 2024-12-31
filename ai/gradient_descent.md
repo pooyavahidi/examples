@@ -300,7 +300,7 @@ where:
 - $\theta$ represents all parameters (weights and biases).
 - $\nabla_{\theta} J(\theta)$ is the gradient of the cost function $J$ with respect to all parameters $\theta$ (weights and biases).
 
-> This whole process of running the Gradient Descent algorithm, is also called **training** the model. The goal of training is to find the best values of the parameters (weights and biases) that minimize the cost function $J$.
+> This whole process of running iterations of the Gradient Descent algorithm, is called **training** or **fitting** the model. The goal of training is to find the best values of the parameters (weights and biases) that minimize the cost function $J$.
 
 We can simply state the training (Gradient Descent) process as many epochs (cycles through the entire dataset):
 
