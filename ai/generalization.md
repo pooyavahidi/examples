@@ -95,7 +95,68 @@ Consider fitting a polynomial to a dataset:
 
 
 **How to Address Overfitting:**
-1. **Simplify the model**: Reduce the number of features or lower the model's complexity (e.g., fewer layers in a neural network).
-2. **Regularization**: Add constraints like $L_1$ or $L_2$ regularization to penalize large weights.
-3. **Increase Training Data**: More data helps the model learn the true patterns and reduces overfitting.
+1. **Increase Training Data**: More data helps the model learn the true patterns and reduces overfitting.
+
+2. **Feature Selection and Reduce Model Complexity**: Choose the most relevant features and reduce the model's complexity to prevent it from capturing noise.
+
+3. **Regularization**: Add constraints like $L_1$ or $L_2$ regularization to penalize large weights.
+
 4. **Early Stopping**: Stop training as soon as the validation error stops decreasing.
+
+### Increase Training Data
+Collecting more data is a very effective way to address overfitting, which we should try first if possible. However, collecting more data is not always feasible as we have so much data available to us, or collecting more data might be expensive or time-consuming.
+
+![](images/overfitting_addressing_by_collecting_more_data.png)
+
+With the larget training data, the model can learn to generalize better to new unseen data even with a complex model (e.g. high polynomial degree) and numerous features.
+
+
+### Feature Selection and Reduce Model Complexity
+There are several ways to simplify a model. One of the most common ways is to reduce the number of features. [**Feature selection**](feature_engineering.md#feature-selection) is an important technique to choose the most relevant features to train the model.
+
+In Particular, the large number of features with a small number of training examples is a common cause of overfitting.
+
+Sometimes even after feature selection, we still have many features that are relevant to our model and we don't want to exclude them from our training. In such cases either
+we can use [**dimensionality reduction techniques**](feature_engineering.md#dimensionality-reduction) to reduce the number of features.
+
+If after all of the above, we still have a large number of relevant features, we can either go for other techniques like [**regularization**](#regularization) or use more capable models like [**neural networks**](neural_networks.md) which can handle a large number of features as they can automatically learn important feature interactions and representations through their hidden layers
+
+The other way to simplify the model is to reduce the model's complexity. For example, in the case of linear regression, we can reduce the polynomial degree of the model. In the case of neural networks, we can reduce the number of layers or the number of neurons in each layer.
+
+> Remember, more complex models captures more noise and random fluctuations in the training data. They try to learn the training data too well which leads to inability to generalize well to new unseen data.
+
+### Regularization
+
+
+
+Let's say we have a polynomial regression model as the following:
+
+$$f_{\vec{\mathbf{w}},b}(x) = w_0 + w_1x + w_2x^2 + w_3x^3 + \ldots + w_nx^n + b$$
+
+The more the coefficients of $x$ in the polynomial, the more wiggly the curve will be, and as we reduce the coefficients of $x$ in the polynomial, the sharpness of the curve will be dampened down and it becomes smoother and less wiggly.
+
+
+The following plot shows the difference between high, low and zero coefficients in a polynomial.
+
+The blue curve has high coefficients:
+
+$$ f(x) = -650x - 50x^2 + 170x^3 + 20x^4 + 60x^5 + 175x^6 - 15x^7 - 105x^8 + 35 $$
+
+The orange curve has lower coefficients (divided by 5):
+
+$$ f(x) = -130x - 10x^2 + 34x^3 + 4x^4 + 12x^5 + 35x^6 - 3x^7 - 21x^8 + 7 $$
+
+The green line is when all the coefficients are zero:
+$$ f(x) = 0 \times x + 0 \times x^2 + 0 \times x^3 + 0 \times x^4 + 0 \times x^5 + 0 \times x^6 + 0 \times x^7 + 0 \times x^8 + 35  = 35 $$
+
+![](images/regularization_high_low_coefficients.png)
+
+As we can see, if we make our coefficients too small (near zero), the curve becomes a straight line. If we make the coefficients too large, the curve becomes very wiggly with sharp turns.
+
+So, we can get this intuition that as we decrease the coefficients of $x$ in the polynomial, the curve becomes smoother and less wiggly (going towards a straight line). If you recall, the straight line was the underfit model. So, the idea of regularization is to find the right balance between the overfitting and underfitting by controlling the coefficients of $x$ in the polynomial.
+
+In regularization, we implement this idea by penalizing the model for having large coefficients (parameters $w_j$) to avoid overfitting (sharp turns in the curve). We want the model to have small (but not too small) coefficients to make the curve smooth which fit the data in a more balanced way.
+
+![](images/overfitting_addressing_by_regularization.png)
+
+> Regularization of bias $b$ is optional, but it has no real difference in practice.
