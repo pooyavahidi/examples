@@ -166,7 +166,7 @@ The partial derivative is essentially the limit of the slope as the two points g
 
 Thus:
 
-$$\text{slope exactly at any given point} = \frac{\partial j(w)}{\partial w}$$
+$$\text{slope exactly at any given point} = \frac{\partial J(w)}{\partial w}$$
 "slope at any given point" means the rate of change of the function $J(w) with respect to $w$ at that point.
 
 Further reading on [Slope and Tangent Line](../math/derivatives.md#slope-and-tangent-line).
@@ -284,6 +284,7 @@ $$\begin{align*} \text{repeat}&\text{ until convergence: } \lbrace \newline
 \end{align*}$$
 
 where:
+- $J$ is the cost function.
 - $n$ is the number of parameters (weights).
 - $w_j$ represents the $j^{th}$ parameter (weight) of the model.
 - $\vec{\mathbf{w}}$ represents all weights.
@@ -299,6 +300,9 @@ $$\begin{align*} \text{repeat}&\text{ until convergence: } \lbrace \newline
 where:
 - $\theta$ represents all parameters (weights and biases).
 - $\nabla_{\theta} J(\theta)$ is the gradient of the cost function $J$ with respect to all parameters $\theta$ (weights and biases).
+
+**Note:**<br>
+The cost function $J$ could be made of more than just the average of the loss function over all training examples. For example, the cost function could also include [**regularization term**](generalization.md#regularization) to prevent overfitting. So, when we refer to the cost function $J$, we refer to all of the cost function components, including the loss function and regularization terms.
 
 > This whole process of running iterations of the Gradient Descent algorithm, is called **training** or **fitting** the model. The goal of training is to find the best values of the parameters (weights and biases) that minimize the cost function $J$.
 
