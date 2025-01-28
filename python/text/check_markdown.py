@@ -4,26 +4,43 @@ import re
 from typing import List, Dict
 
 
-def check_missing_images(file) -> List[str]:
-    with open(file, "r") as f:
-        lines = f.readlines()
+def line_err(line, line_number, message) -> List[str]:
+    errors = []
+    errors.append(f">>> Line {line_number} - {message}")
+    errors.append(line)
+    return errors
+
+
+def check_missing_images(lines: List[str], file_dir: str) -> List[str]:
     errors = []
     for i, line in enumerate(lines, start=1):
-        matches = re.findall(r"!\[.*?\](\(.*?\))?", line)
+        matches = re.findall(r"!\[.*?\]\((.*?)\)", line)
         for match in matches:
             if not match:
-                errors.append(f"Line {i} - Found an image without a link")
+                errors.extend(
+                    line_err(line, i, "Found an image without a link")
+                )
                 continue
             # The path inside the parentheses should be a valid relative path
-            image_path = os.path.join(os.path.dirname(file), match.strip("()"))
+            image_path = os.path.join(file_dir, match.strip("()"))
             if not os.path.exists(image_path):
-                errors.append(f"Line {i} - Image not found: {match}")
+                errors.extend(line_err(line, i, f"Image not found: {match}"))
+    return errors
+
+
+def check_missing_links(lines: List[str]) -> List[str]:
+    errors = []
+    for i, line in enumerate(lines, start=1):
+        matches = re.findall(r"\[.*?\]\((.*?)\)", line)
+        for match in matches:
+            if not match:
+                errors.extend(line_err(line, i, "Found a link without a URL"))
 
     return errors
 
 
 def get_all_markdown_files(path):
-    """ Get all markdown files recursively """
+    """Get all markdown files recursively"""
 
     markdown_files = []
     for root, _, files in os.walk(path, topdown=False):
@@ -36,10 +53,13 @@ def get_all_markdown_files(path):
 def check_files(markdown_files) -> List[Dict]:
     output = []
     for file in markdown_files:
+        with open(file, "r", encoding="utf-8") as f:
+            lines = f.readlines()
         output_file = {"file": file, "errors": []}
-        output_file["errors"].extend(check_missing_images(file))
-        # Add other checks here
-
+        output_file["errors"].extend(
+            check_missing_images(lines, os.path.dirname(file))
+        )
+        output_file["errors"].extend(check_missing_links(lines))
         output.append(output_file)
 
     return output
