@@ -85,13 +85,13 @@ if __name__ == "__main__":
 
     if not any(file["errors"] for file in output):
         print("No errors found.")
-        exit(0)
+        sys.exit(0)
 
     print("Errors found:")
     for file in output:
         if file["errors"]:
             print("-" * 50)
-            print(file["file"])
+            print(file["file"], "\n")
             for error in file["errors"]:
                 print(error)
-    exit(1)
+    sys.exit(1)
