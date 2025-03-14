@@ -24,13 +24,42 @@ def check_header_fields(front_matter: Dict, file) -> List[str]:
     return errors
 
 
+def mask_code_blocks(content: str) -> str:
+    """
+    Remove code block content from markdown. This replaces code with spaces but
+    keeps all newlines intact.
+
+    Args:
+        content: String content of the markdown file
+
+    Returns:
+        Content with code blocks masked (replaced with spaces while keeping
+        structure intact)
+    """
+
+    def replace_with_spaces(match):
+        # Keep the backticks and newlines, but replace the rest with spaces
+        text = match.group(0)
+        # Preserve the opening and closing backticks and all newlines
+        return re.sub(r"[^\n`]", " ", text)
+
+    # Match all code blocks (including the backticks and language identifier)
+    code_block_pattern = r"```.*?```"
+
+    return re.sub(
+        code_block_pattern, replace_with_spaces, content, flags=re.DOTALL
+    )
+
+
 def check_title(content: str, file) -> List[str]:
     """
     Check if the markdown should not have any title in the content.
     """
     errors = []
     pattern = r"^# .+"
-    matches = re.finditer(pattern, content, re.MULTILINE)
+    content_without_code = mask_code_blocks(content)
+
+    matches = re.finditer(pattern, content_without_code, re.MULTILINE)
 
     # Add matches to errors if found
     for match in matches:
