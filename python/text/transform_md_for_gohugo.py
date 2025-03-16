@@ -15,12 +15,24 @@ def check_header_fields(front_matter: Dict, file) -> List[str]:
     for field in required_fields:
         if field not in front_matter:
             errors.append(f"Missing required field '{field}' in front matter")
+        if field == "description":
+            errors.extend(check_description(front_matter.get(field)))
 
     # Check if all required fields except 'draft' are not empty
     for field in required_fields - {"draft"}:
         if not front_matter.get(field):
             errors.append(f"Field '{field}' cannot be empty")
 
+    return errors
+
+
+def check_description(description: str) -> List[str]:
+    """Validate the description field in the front matter."""
+    errors = []
+    if len(description) < 50:
+        errors.append("Description should be at least 50 characters long")
+    if len(description) > 150:
+        errors.append("Description should be at most 150 characters long")
     return errors
 
 
