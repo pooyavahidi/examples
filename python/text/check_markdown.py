@@ -84,14 +84,14 @@ if __name__ == "__main__":
     output = check_files(markdown_files)
 
     if not any(file["errors"] for file in output):
-        print("No errors found.")
+        print("\033[92mNo errors found.\033[0m")  # Green text
         sys.exit(0)
 
-    print("Errors found:")
     for file in output:
         if file["errors"]:
             print("-" * 50)
             print(file["file"], "\n")
             for error in file["errors"]:
                 print(error)
+    print("\033[91mErrors found.\033[0m")  # Red text
     sys.exit(1)

@@ -1,6 +1,7 @@
 import os
 import sys
 import re
+import argparse
 from typing import List, Dict
 import yaml
 
@@ -209,7 +210,9 @@ def get_all_markdown_files(path):
     return markdown_files
 
 
-def process_files(markdown_files, checkers, transformers) -> List[Dict]:
+def process_files(
+    markdown_files, checkers, transformers, dry_run=False
+) -> List[Dict]:
     output = []
     for file in markdown_files:
         with open(file, "r", encoding="utf-8") as freader:
@@ -231,8 +234,9 @@ def process_files(markdown_files, checkers, transformers) -> List[Dict]:
                 output_file["changes"].extend(changes)
 
         # Save the modified content back to the file
-        with open(file, "w", encoding="utf-8") as fwriter:
-            fwriter.write(content)
+        if not dry_run:
+            with open(file, "w", encoding="utf-8") as fwriter:
+                fwriter.write(content)
 
         output.append(output_file)
 
@@ -254,13 +258,26 @@ def print_errors_and_changes(output):
 
 
 if __name__ == "__main__":
-    # Run the script with the path to the directory as an argument.
     # Example: python check_markdown.py /path/to/directory
     # If no argument is provided, the current directory is used.
-    if len(sys.argv) > 1:
-        path = sys.argv[1]
-    else:
-        path = os.getcwd()
+    parser = argparse.ArgumentParser(
+        description="Process markdown files for Hugo."
+    )
+    parser.add_argument(
+        "path",
+        nargs="?",
+        default=os.getcwd(),
+        help="Path to directory containing markdown files",
+    )
+    parser.add_argument(
+        "--dry-run",
+        action="store_true",
+        help="Run checks and changes without modifying files",
+    )
+    args = parser.parse_args()
+
+    path = args.path
+    dry_run = args.dry_run
 
     markdown_files = get_all_markdown_files(path)
 
@@ -273,16 +290,18 @@ if __name__ == "__main__":
         markdown_files=markdown_files,
         checkers=[check_header, check_title],
         transformers=[transform_image_links, transform_internal_links],
+        dry_run=dry_run,
     )
 
     has_errors = any(file["errors"] for file in output)
     has_changes = any(file["changes"] for file in output)
 
-    if not has_errors and not has_changes:
-        print("No errors or changes.")
-        sys.exit(0)
-
-    print_errors_and_changes(output)
+    if has_errors or has_changes:
+        print_errors_and_changes(output)
 
     if has_errors:
+        print("\033[91mErrors found.\033[0m")
         sys.exit(1)
+    else:
+        print("\033[92mNo errors found.\033[0m")
+        sys.exit(0)
