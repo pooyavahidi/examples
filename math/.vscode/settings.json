@@ -1,0 +1,6 @@
+{
+  "python.defaultInterpreterPath": "/opt/anaconda3/bin/python3",
+  "python.languageServer": "Pylance",
+  "python.testing.unittestEnabled": false,
+  "python.testing.pytestEnabled": true
+}
