@@ -6,7 +6,7 @@ from typing import List, Dict
 import yaml
 
 
-def check_header_fields(front_matter: Dict, file) -> List[str]:
+def check_header_fields(front_matter: Dict, file, **kwargs) -> List[str]:
     errors = []
 
     # required fields
@@ -30,10 +30,12 @@ def check_header_fields(front_matter: Dict, file) -> List[str]:
 def check_description(description: str) -> List[str]:
     """Validate the description field in the front matter."""
     errors = []
-    if len(description) < 50:
-        errors.append("Description should be at least 50 characters long")
-    if len(description) > 150:
-        errors.append("Description should be at most 150 characters long")
+    if not description:
+        errors.append("description cannot be empty")
+    elif len(description) < 50:
+        errors.append("description should be at least 50 characters long")
+    elif len(description) > 150:
+        errors.append("description should be at most 150 characters long")
     return errors
 
 
@@ -64,7 +66,7 @@ def mask_code_blocks(content: str) -> str:
     )
 
 
-def check_title(content: str, file) -> List[str]:
+def check_title(content: str, file, **kwargs) -> List[str]:
     """
     Check if the markdown should not have any title in the content.
     """
@@ -82,45 +84,61 @@ def check_title(content: str, file) -> List[str]:
     return errors
 
 
-def transform_image_links(content: str, file) -> List[str]:
+def transform_links(content: str, file, domain: str, **kwargs) -> List[str]:
     """
-    Transform the images url by adding `../` at the beginning of the image url.
+    - If the URL starts with http(s)://<domain>, drop that part so the path
+      becomes absolute (e.g. '/images/foo.png').
+    - If the link is a plain relative path (e.g. 'images/foo.png'), prefix it
+      with '../' to be relative to the current file.
+    - Every modification including domain stripping or '../' prefixing, is
+      captured in the `changes` list so it can be reported and applied.
 
-    For example, change this:
+    For example, this function changes this:
     ![](images/image1.png)
-
-    to this:
+    to:
     ![](../images/image1.png)
+
+    Or this:
+    [](https://domain/page1)
+    to:
+    [](/page1)
+
     """
     changes = []
-    pattern = r"(!\[.*?\]\()(.+?)(\))"
-    matches = re.findall(pattern, content)
-
-    # If no image links found, return empty changes list
-    if not matches:
-        return changes, content
-
+    # Get prefix, url, suffix
+    # Example: [prefix](url)
+    pattern = r"(\[.*?\]\()([^)]+)(\))"
     modified_content = content
-    for prefix, path, suffix in matches:
-        # Skip if path already starts with '../' or is a URL
-        if (
-            path.startswith("../")
-            or path.startswith("http://")
-            or path.startswith("https://")
-        ):
-            continue
 
-        old_link = f"{prefix}{path}{suffix}"
-        new_link = f"{prefix}../{path}{suffix}"
+    for match in re.finditer(pattern, content):
+        prefix, path, suffix = match.groups()
+        original_link = match.group(0)
+        new_path = path
 
-        # Record the change
-        changes.append({"old": old_link, "new": new_link})
-        modified_content = modified_content.replace(old_link, new_link)
+        # Remove the protocol + domain if present
+        domain_regex = rf"^https?://{re.escape(domain)}"
+        if re.match(domain_regex, new_path):
+            new_path = re.sub(domain_regex, "", new_path, count=1)
+            # Ensure the resulting path is absolute
+            if not new_path.startswith("/"):
+                new_path = "/" + new_path
+
+        # Add ../ for plain relative paths
+        if not new_path.startswith(("/", "../", "http://", "https://")):
+            new_path = f"../{new_path}"
+
+        # Record and apply the change (if any)
+        if new_path != path:
+            new_link = f"{prefix}{new_path}{suffix}"
+            changes.append({"old": original_link, "new": new_link})
+            modified_content = modified_content.replace(
+                original_link, new_link
+            )
 
     return changes, modified_content
 
 
-def transform_internal_links(content: str, file) -> List[str]:
+def transform_internal_links(content: str, file, **kwargs) -> List[str]:
     """
     Transform the internal links by dropping `..` and add `.md` extension.
 
@@ -151,7 +169,7 @@ def transform_internal_links(content: str, file) -> List[str]:
     return changes, modified_content
 
 
-def check_header(content: str, file) -> List[str]:
+def check_header(content: str, file, **kwargs) -> List[str]:
     """
     Check if the markdown file has a valid Hugo front matter at the very
     beginning. For example:
@@ -211,7 +229,7 @@ def get_all_markdown_files(path):
 
 
 def process_files(
-    markdown_files, checkers, transformers, dry_run=False
+    markdown_files, checkers, transformers, dry_run=False, **kwargs
 ) -> List[Dict]:
     output = []
     for file in markdown_files:
@@ -221,7 +239,7 @@ def process_files(
 
         if checkers:
             for checker in checkers:
-                output_file["errors"].extend(checker(content, file))
+                output_file["errors"].extend(checker(content, file, **kwargs))
 
         # If there are errors, skip the transformation
         if output_file["errors"]:
@@ -230,7 +248,7 @@ def process_files(
 
         if transformers:
             for transformer in transformers:
-                changes, content = transformer(content, file)
+                changes, content = transformer(content, file, **kwargs)
                 output_file["changes"].extend(changes)
 
         # Save the modified content back to the file
@@ -270,6 +288,11 @@ if __name__ == "__main__":
         help="Path to directory containing markdown files",
     )
     parser.add_argument(
+        "--domain",
+        required=True,
+        help="Domain to remove from links",
+    )
+    parser.add_argument(
         "--dry-run",
         action="store_true",
         help="Run checks and changes without modifying files",
@@ -277,6 +300,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     path = args.path
+    domain = args.domain
     dry_run = args.dry_run
 
     markdown_files = get_all_markdown_files(path)
@@ -289,8 +313,9 @@ if __name__ == "__main__":
     output = process_files(
         markdown_files=markdown_files,
         checkers=[check_header, check_title],
-        transformers=[transform_image_links, transform_internal_links],
+        transformers=[transform_links, transform_internal_links],
         dry_run=dry_run,
+        domain=domain,
     )
 
     has_errors = any(file["errors"] for file in output)
