@@ -21,6 +21,10 @@ def check_missing_images(lines: List[str], file_dir: str) -> List[str]:
                     line_err(line, i, "Found an image without a link")
                 )
                 continue
+            # Skip external images
+            if match.startswith(("http", "https")):
+                continue
+
             # The path inside the parentheses should be a valid relative path
             image_path = os.path.join(file_dir, match.strip("()"))
             if not os.path.exists(image_path):

@@ -6,7 +6,7 @@ from typing import List, Dict
 import yaml
 
 
-def check_header_fields(front_matter: Dict, file, **kwargs) -> List[str]:
+def check_header_fields(front_matter: Dict, **kwargs) -> List[str]:
     errors = []
 
     # required fields
@@ -66,7 +66,7 @@ def mask_code_blocks(content: str) -> str:
     )
 
 
-def check_title(content: str, file, **kwargs) -> List[str]:
+def check_title(content: str, **kwargs) -> List[str]:
     """
     Check if the markdown should not have any title in the content.
     """
@@ -84,7 +84,57 @@ def check_title(content: str, file, **kwargs) -> List[str]:
     return errors
 
 
-def transform_links(content: str, file, domain: str, **kwargs) -> List[str]:
+def check_filename(file, **kwargs) -> List[str]:
+    """
+    Check if the filename is valid to be used as url. It checks for:
+    - Invalid characters and spaces
+    - Invalid length
+    """
+    errors = []
+    filename = os.path.basename(file)
+
+    # Check for invalid characters
+    invalid_chars = r"[^a-zA-Z0-9_.-]"
+    if re.search(invalid_chars, filename):
+        errors.append(
+            f"Filename '{filename}' contains invalid characters. "
+            "Only alphanumeric, underscores, hyphens, and periods are allowed."
+        )
+
+    # Check length
+    if len(filename) > 255:
+        errors.append(f"Filename '{filename}' exceeds 255 characters.")
+
+    return errors
+
+
+def transform_filename(file, dry_run, **kwargs) -> tuple:
+    """
+    Transform the filename to be lowercase and replace spaces or underscores
+    with dashes. Returns a tuple of (changes, content).
+    """
+    # Get the directory and filename
+    directory, filename = os.path.split(file)
+
+    # Transform the filename
+    new_filename = filename.lower().replace(" ", "-").replace("_", "-")
+
+    # Combine the directory and new filename
+    new_file = os.path.join(directory, new_filename)
+
+    changes = []
+    if new_file != file:
+        changes.append({"change": "file rename", "old": file, "new": new_file})
+
+        # Actually rename the file if not in dry_run mode
+        if not dry_run:
+            os.rename(file, new_file)
+            # print(f"Renamed: {file} > {new_file}")
+
+    return changes
+
+
+def transform_links(content: str, domain: str, **kwargs) -> List[str]:
     """
     - If the URL starts with http(s)://<domain>, drop that part so the path
       becomes absolute (e.g. '/images/foo.png').
@@ -130,7 +180,13 @@ def transform_links(content: str, file, domain: str, **kwargs) -> List[str]:
         # Record and apply the change (if any)
         if new_path != path:
             new_link = f"{prefix}{new_path}{suffix}"
-            changes.append({"old": original_link, "new": new_link})
+            changes.append(
+                {
+                    "change": "link transform",
+                    "old": original_link,
+                    "new": new_link,
+                }
+            )
             modified_content = modified_content.replace(
                 original_link, new_link
             )
@@ -138,7 +194,7 @@ def transform_links(content: str, file, domain: str, **kwargs) -> List[str]:
     return changes, modified_content
 
 
-def transform_internal_links(content: str, file, **kwargs) -> List[str]:
+def transform_internal_links(content: str, **kwargs) -> List[str]:
     """
     Transform the internal links by dropping `..` and add `.md` extension.
 
@@ -163,13 +219,19 @@ def transform_internal_links(content: str, file, **kwargs) -> List[str]:
         new_link = f"{prefix}/{filename}{section}{suffix}"
 
         # Record the change
-        changes.append({"old": old_link, "new": new_link})
+        changes.append(
+            {
+                "change": "internal link transform",
+                "old": old_link,
+                "new": new_link,
+            }
+        )
         modified_content = modified_content.replace(old_link, new_link)
 
     return changes, modified_content
 
 
-def check_header(content: str, file, **kwargs) -> List[str]:
+def check_header(content: str, **kwargs) -> List[str]:
     """
     Check if the markdown file has a valid Hugo front matter at the very
     beginning. For example:
@@ -210,7 +272,7 @@ def check_header(content: str, file, **kwargs) -> List[str]:
             return errors
 
         # Check front matter fields
-        errors.extend(check_header_fields(front_matter, file))
+        errors.extend(check_header_fields(front_matter, **kwargs))
     except yaml.YAMLError:
         errors.append("Invalid YAML in Hugo front matter")
 
@@ -229,34 +291,81 @@ def get_all_markdown_files(path):
 
 
 def process_files(
-    markdown_files, checkers, transformers, dry_run=False, **kwargs
-) -> List[Dict]:
+    markdown_files,
+    file_checkers,
+    file_transformers,
+    content_checkers,
+    content_transformers,
+    dry_run=False,
+    **kwargs,
+):
+    """
+    Process the markdown files with the provided checkers and transformers for
+    both content and file names.
+    """
     output = []
     for file in markdown_files:
-        with open(file, "r", encoding="utf-8") as freader:
-            content = freader.read()
-        output_file = {"file": file, "errors": [], "changes": []}
+        file_output = {"file": file, "errors": [], "changes": []}
+        # Process the file content
+        process_output = process_content(
+            file,
+            checkers=content_checkers,
+            transformers=content_transformers,
+            dry_run=dry_run,
+            **kwargs,
+        )
+        file_output["errors"].extend(process_output["errors"])
+        file_output["changes"].extend(process_output["changes"])
 
-        if checkers:
-            for checker in checkers:
-                output_file["errors"].extend(checker(content, file, **kwargs))
+        # Process the file itself
+        if file_checkers:
+            for checker in file_checkers:
+                file_output["errors"].extend(checker(file, **kwargs))
 
-        # If there are errors, skip the transformation
-        if output_file["errors"]:
-            output.append(output_file)
+        # If there are any errors from content or file checkers,
+        # skip the transformations and continue to the next file
+        if file_output["errors"]:
             continue
 
-        if transformers:
-            for transformer in transformers:
-                changes, content = transformer(content, file, **kwargs)
-                output_file["changes"].extend(changes)
+        if file_transformers:
+            for transformer in file_transformers:
+                changes = transformer(file, dry_run=dry_run, **kwargs)
+                file_output["changes"].extend(changes)
 
-        # Save the modified content back to the file
-        if not dry_run:
-            with open(file, "w", encoding="utf-8") as fwriter:
-                fwriter.write(content)
+        output.append(file_output)
 
-        output.append(output_file)
+    return output
+
+
+def process_content(
+    file, checkers, transformers, dry_run=False, **kwargs
+) -> List[Dict]:
+    """
+    Process the content of a markdown file with the provided checkers and
+    transformers.
+    """
+
+    output = {"errors": [], "changes": []}
+    with open(file, "r", encoding="utf-8") as freader:
+        content = freader.read()
+
+    if checkers:
+        for checker in checkers:
+            output["errors"].extend(checker(content, **kwargs))
+
+    # If there are errors, skip the transformation
+    if output["errors"]:
+        return output
+
+    if transformers:
+        for transformer in transformers:
+            changes, content = transformer(content, **kwargs)
+            output["changes"].extend(changes)
+
+    # Save the modified content back to the file
+    if not dry_run:
+        with open(file, "w", encoding="utf-8") as fwriter:
+            fwriter.write(content)
 
     return output
 
@@ -312,8 +421,13 @@ if __name__ == "__main__":
     print(f"Processing markdown files in {path} ...")
     output = process_files(
         markdown_files=markdown_files,
-        checkers=[check_header, check_title],
-        transformers=[transform_links, transform_internal_links],
+        file_checkers=[check_filename],
+        file_transformers=[transform_filename],
+        content_checkers=[check_header, check_title],
+        content_transformers=[
+            transform_links,
+            transform_internal_links,
+        ],
         dry_run=dry_run,
         domain=domain,
     )
