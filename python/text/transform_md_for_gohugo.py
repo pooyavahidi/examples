@@ -325,6 +325,7 @@ def process_files(
         # If there are any errors from content or file checkers,
         # skip the transformations and continue to the next file
         if file_output["errors"]:
+            output.append(file_output)
             continue
 
         if file_transformers:
@@ -370,18 +371,18 @@ def process_content(
     return output
 
 
-def print_errors_and_changes(output):
+def print_output(result_type, output):
+    """
+    Print the results of the processing.
+    result_type: str, either "errors" or "changes"
+    """
+    print(f"{result_type.capitalize()}:")
     for file in output:
-        print("-" * 50)
-        print(file["file"])
-        if file["errors"]:
-            print("Errors:")
-            for i in range(len(file["errors"])):
-                print(f"{i+1}. {file['errors'][i]}\n")
-        if file["changes"]:
-            print("Changes:")
-            for i in range(len(file["changes"])):
-                print(f"{i+1}. {file['changes'][i]}\n")
+        if file[result_type]:
+            print("-" * 50)
+            print(file["file"])
+            for i in range(len(file[result_type])):
+                print(f"{i+1}. {file[result_type][i]}\n")
 
 
 if __name__ == "__main__":
@@ -432,15 +433,21 @@ if __name__ == "__main__":
         domain=domain,
     )
 
-    has_errors = any(file["errors"] for file in output)
-    has_changes = any(file["changes"] for file in output)
+    error_count = sum(len(file["errors"]) for file in output)
+    change_count = sum(len(file["changes"]) for file in output)
 
-    if has_errors or has_changes:
-        print_errors_and_changes(output)
-
-    if has_errors:
-        print("\033[91mErrors found.\033[0m")
+    if error_count:
+        print_output("errors", output)
+        print(
+            f"\033[91mchecked {len(output)} files."
+            f" {error_count} errors.\033[0m"
+        )
         sys.exit(1)
-    else:
-        print("\033[92mNo errors found.\033[0m")
+
+    if change_count:
+        print_output("changes", output)
+        print(
+            f"\033[92mchecked {len(output)} files."
+            f" No errors. {change_count} changes.\033[0m"
+        )
         sys.exit(0)

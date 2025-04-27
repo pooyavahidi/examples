@@ -87,8 +87,9 @@ if __name__ == "__main__":
     print(f"Checking markdown files in {path} ...")
     output = check_files(markdown_files)
 
-    if not any(file["errors"] for file in output):
-        print("\033[92mNo errors found.\033[0m")  # Green text
+    error_count = sum(len(file["errors"]) for file in output)
+    if not error_count:
+        print("\033[92mNo errors found.\033[0m")
         sys.exit(0)
 
     for file in output:
@@ -97,5 +98,5 @@ if __name__ == "__main__":
             print(file["file"], "\n")
             for error in file["errors"]:
                 print(error)
-    print("\033[91mErrors found.\033[0m")  # Red text
+    print(f"\033[91m{error_count} Errors found.\033[0m")
     sys.exit(1)
