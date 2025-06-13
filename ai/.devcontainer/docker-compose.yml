@@ -5,7 +5,7 @@ services:
       context: .
       dockerfile: Dockerfile
       args:
-        BASE_IMAGE: "${DOCKER_LOCAL_REGISTRY}/anaconda"
+        BASE_IMAGE: "${DOCKER_LOCAL_REGISTRY}/development"
     volumes:
       - ../..:/workspaces
     # Overrides default command so things don't shut down after the process ends.

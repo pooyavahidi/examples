@@ -21,6 +21,6 @@
     "AWS_SECRET_ACCESS_KEY": "${localEnv:AWS_SECRET_ACCESS_KEY}",
     "AWS_SESSION_TOKEN": "${localEnv:AWS_SESSION_TOKEN}",
     "AWS_REGION": "${localEnv:AWS_REGION}",
-    "AWS_DEFAULT_REGION": "us-east-1"
+    "AWS_DEFAULT_REGION": "us-east-2"
   }
 }

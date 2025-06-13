@@ -9,4 +9,11 @@ RUN pip install --upgrade \
     ipympl \
     tensorflow \
     torch \
-    torchvision
+    torchvision \
+    boto3 \
+    sagemaker \
+    uv \
+    openai \
+    anthropic \
+    "anthropic[bedrock]" \
+    mcp
