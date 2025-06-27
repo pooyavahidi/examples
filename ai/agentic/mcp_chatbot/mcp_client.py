@@ -2,12 +2,16 @@ import json
 from contextlib import AsyncExitStack
 from mcp import ClientSession, StdioServerParameters
 from mcp.client.stdio import stdio_client
+from utils import setup_logger
+
+logger = setup_logger(__name__, level="INFO")
 
 
 class MCPClient:
     """
-    This class manages connections to MCP servers (via separate sessions), and
-    provides methods for accessing their tools, prompts, and resources.
+    This class manages connections to MCP servers (separate sessions for each
+    server) and provides methods for accessing their tools, prompts, and
+    resources.
     """
 
     def __init__(self):
@@ -23,10 +27,10 @@ class MCPClient:
                 data = json.load(file)
             servers = data.get("mcpServers", {})
             for server_name, server_config in servers.items():
-                print(f"Connecting to server: {server_name}")
+                logger.info("Connecting to server: %s", server_name)
                 await self.connect_to_server(server_name, server_config)
         except Exception as err:
-            print(f"Error loading server config: {err}")
+            logger.error("Error loading server config: %s", err)
             raise
 
     async def connect_to_server(self, server_name, server_config):
@@ -93,7 +97,9 @@ class MCPClient:
                     )
 
         except Exception as err:
-            print(f"Error connecting to {server_name}: {err}")
+            logger.error(
+                "Error connecting to server '%s': %s", server_name, err
+            )
             raise
 
     def _get_session(self, server_name):
@@ -137,13 +143,13 @@ class MCPClient:
             result = await session.read_resource(uri=resource_uri)
 
             if result and result.contents:
-                print(f"\nResource: {resource_uri}")
-                print("Content:")
-                print(result.contents[0].text)
+                logger.info("Resource: %s", resource_uri)
+                return result.contents[0].text
             else:
-                print("No content available.")
+                return "No content available."
         except Exception as err:
-            print(f"Error: {err}")
+            logger.error("Error reading resource '%s': %s", resource_uri, err)
+            raise
 
     async def get_prompt(self, prompt_name, args):
         """Get a prompt with the given arguments and return its content."""
@@ -152,7 +158,7 @@ class MCPClient:
             None,
         )
         if not prompt_info:
-            print(f"Prompt '{prompt_name}' not found.")
+            logger.warning("Prompt '%s' not found.", prompt_name)
             return
 
         try:
@@ -179,7 +185,7 @@ class MCPClient:
                 )
             return text
         except Exception as err:
-            print(f"Error: {err}")
+            logger.error("Error getting prompt '%s': %s", prompt_name, err)
 
     async def cleanup(self):
         await self.exit_stack.aclose()

@@ -98,15 +98,18 @@ def get_product_category(category: str) -> str:
 
 
 @mcp.tool()
-def check_product_inventory(product_id: str) -> List[dict]:
+def search_products(
+    category: str = None, size: str = None, color: str = None
+) -> List[dict]:
     """
-    Check the stock availability of a product in the inventory.
+    Search for products based on category, size, and color preferences.
 
     Args:
-        product_id: The ID of the product to check
+        category: Product category (Lifestyle, Running, Training)
+        size: Shoe size
+        color: Preferred color
     Returns:
-        List[dict] of available stock items for the product which includes
-        color, size, and stock quantity.
+        List of matching products with their details and availability
     """
     product_stock = {
         "P001": [
@@ -126,7 +129,7 @@ def check_product_inventory(product_id: str) -> List[dict]:
         "P003": [
             {"color": "Black", "size": "8", "quantity": 5},
             {"color": "Black", "size": "9", "quantity": 10},
-            {"color": "White", "size": "8", "quantity": 15},
+            {"color": "White", "size": "9", "quantity": 15},
             {"color": "Red", "size": "11", "quantity": 5},
             {"color": "Green", "size": "10", "quantity": 10},
         ],
@@ -139,7 +142,85 @@ def check_product_inventory(product_id: str) -> List[dict]:
         ],
     }
 
-    return product_stock.get(product_id, [])
+    results = []
+
+    # Step 1: Filter products by category first if specified
+    filtered_products = product_catalog
+    if category:
+        filtered_products = [
+            p
+            for p in product_catalog
+            if p["category"].lower() == category.lower()
+        ]
+
+    # Step 2: For each filtered product, check inventory and apply more filters
+    for product in filtered_products:
+        product_id = product["product_id"]
+
+        # Get inventory for this product
+        inventory = product_stock.get(product_id, [])
+
+        # Apply size and color filters to inventory
+        matching_inventory = inventory
+
+        if size:
+            matching_inventory = [
+                item
+                for item in matching_inventory
+                if item["size"] == str(size)
+            ]
+
+        if color:
+            matching_inventory = [
+                item
+                for item in matching_inventory
+                if item["color"].lower() == color.lower()
+            ]
+
+        # Only include products that have matching inventory
+        if matching_inventory:
+            product_result = product.copy()
+            product_result["available_options"] = matching_inventory
+            product_result["total_available"] = sum(
+                item["quantity"] for item in matching_inventory
+            )
+            results.append(product_result)
+
+    return results
+
+
+@mcp.prompt()
+def assistant_instructions(
+    additional_context: str = "", brand: str = "Our Shoe Store"
+) -> str:
+    """
+    Generate instructions for being a online store assistant.
+
+    Args:
+        customer_context: Any specific context about the customer interaction
+        brand: The brand/store name to use in the assistant instructions
+
+    Returns:
+        Domain-specific instructions for shoe assistance
+    """
+
+    return f"""You are a knowledgeable {brand} assistant.
+
+CONVERSATION FLOW:
+1. Greet customers warmly and show available categories
+2. Ask clarifying questions to understand their needs:
+   - What activity/purpose?
+   - What size do they wear?
+   - Any color preferences?
+   - Budget considerations?
+3. Use available tools and resources to find matching products
+4. Present options clearly and help them decide
+
+DOMAIN EXPERTISE:
+- Always verify inventory before making final recommendations
+- Focus on matching customer needs to appropriate shoe types
+
+{additional_context}"""
 
 
 if __name__ == "__main__":

@@ -6,3 +6,4 @@ This example has the following components:
 - `mcp_client.py`: The MCP client that connects to the MCP servers and manages the sessions.
 - `product_mcp_server.py`: The MCP server that provides primitives.
 - `server_config.json`: The configuration for the MCP servers.
+- `utils.py`: Utility functions (such as logging, etc) used by different components.
