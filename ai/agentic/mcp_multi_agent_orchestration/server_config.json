@@ -1,0 +1,18 @@
+{
+  "mcpServers": {
+    "product": {
+      "command": "uv",
+      "args": [
+        "run",
+        "product_mcp_server.py"
+      ]
+    },
+    "order": {
+      "command": "uv",
+      "args": [
+        "run",
+        "order_mcp_server.py"
+      ]
+    }
+  }
+}
