@@ -1,0 +1,15 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "wait_for_a2a_server",
+      "type": "shell",
+      "command": "bash",
+      "args": [
+        "-c",
+        "until curl --silent --insecure http://localhost:9999 -o /dev/null; do sleep 0.1; done"
+      ],
+      "problemMatcher": [],
+    }
+  ]
+}

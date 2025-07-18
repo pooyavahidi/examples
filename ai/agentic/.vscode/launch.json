@@ -1,0 +1,47 @@
+{
+  // Use IntelliSense to learn about possible attributes.
+  // Hover to view descriptions of existing attributes.
+  // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Python Debugger: Current File with Arguments",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "${file}",
+      "console": "integratedTerminal",
+      "cwd": "${fileDirname}",
+      // "args": [
+      //   "${command:pickArgs}"
+      // ]
+    },
+    {
+      "name": "a2a: server",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "agent_runner.py",
+      "console": "integratedTerminal",
+      "cwd": "${workspaceFolder}/a2a/a2a_mcp",
+      "justMyCode": true
+    },
+    {
+      "name": "a2a: client",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "host.py",
+      "console": "integratedTerminal",
+      "cwd": "${workspaceFolder}/a2a/a2a_mcp",
+      "justMyCode": true,
+      "preLaunchTask": "wait_for_a2a_server"
+    }
+  ],
+  "compounds": [
+    {
+      "name": "a2a: server and client",
+      "configurations": [
+        "a2a: server",
+        "a2a: client"
+      ],
+    }
+  ]
+}
