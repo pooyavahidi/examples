@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "product": {
+      "command": "uv",
+      "args": [
+        "run",
+        "fx_rate_mcp_server.py"
+      ]
+    }
+  }
+}

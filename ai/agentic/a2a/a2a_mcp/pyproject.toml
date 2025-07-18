@@ -1,0 +1,14 @@
+[project]
+name = "a2a-mcp"
+version = "0.1.0"
+description = "A2A and MCP for multi-agent orchestration"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "a2a-sdk>=0.2.9",
+    "anthropic[bedrock]>=0.55.0",
+    "mcp>=1.11.0",
+    "uv>=0.7.16",
+    "uvicorn>=0.34.3",
+    "yfinance>=0.2.65",
+]

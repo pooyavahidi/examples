@@ -1,0 +1,42 @@
+{
+  "name": "FxAgent",
+  "description": "Agent to retrieve Foreign Exchange (FX) rates for a given currency pair.",
+  "url": "http://localhost:9999/",
+  "provider": null,
+  "version": "1.0.0",
+  "documentationUrl": null,
+  "authentication": {
+    "credentials": null,
+    "schemes": [
+      "public"
+    ]
+  },
+  "capabilities": {
+    "streaming": "True",
+    "pushNotifications": "False",
+    "stateTransitionHistory": "False"
+  },
+  "defaultInputModes": [
+    "text",
+    "text/plain"
+  ],
+  "defaultOutputModes": [
+    "text",
+    "text/plain"
+  ],
+  "skills": [
+    {
+      "id": "fxrate",
+      "name": "FX Rate Query Skill",
+      "description": "Send the currency pair to the agent to retrieve the current FX rate.",
+      "tags": [
+        "fxrate"
+      ],
+      "examples": [
+        "USD to EUR"
+      ],
+      "inputModes": null,
+      "outputModes": null
+    }
+  ]
+}
